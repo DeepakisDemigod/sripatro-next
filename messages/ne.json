@@ -2,5 +2,12 @@
   "HomePage": {
     "title": "namaste",
     "content": "site ma swagat"
+  },
+  "NepaliDateConverter": {
+   "Back": "पछाडि",
+   "Nepali Date": "नेपाली मिति",
+    "Indian Date": "भारतीय मिति",
+    "Date Converter": "मिति परिवर्तन",
+    "If you are looking to convert Indian date to Nepali date or Nepali date to English/Indian date, the SriPatro Date Converter is the best free tool available online   Using the Indian to Nepali Date Converter, you can simply enter a Gregorian (AD) date like 13/06/2025, and it will instantly return the corresponding Nepali date — in this case, २०८२ जेठ ३१, शुक्रवार   Similarly, the reverse function lets you select a Nepali date (Bikram Sambat) such as 2082 Jestha 31 and get the exact English date — June 13, 2025, which is a Friday   This Nepali Patro app works by mapping the Bikram Sambat calendar with the Gregorian calendar through a pre programmed algorithm that considers leap years, month differences, and the 56  7 year gap between the two systems   Whether you are a student, traveler, or working with government forms in Nepal, SriPatro’s accurate, bilingual Nepali calendar date conversion feature ensures that you never make a mistake while translating dates   It’s fast, reliable, and perfect for daily use on mobile and web  ": "यदि तपाईं भारतीय मिति नेपाली मितिमा वा नेपाली मिति अंग्रेजी/भारतीय मितिमा रूपान्तरण गर्न खोजिरहनु भएको छ भने, श्रीपत्रो मिति परिवर्तन (Date Converter) अनलाइन उपलब्ध सर्वश्रेष्ठ निःशुल्क उपकरण हो। भारतीय मितिलाई नेपाली मितिमा रूपान्तरण गर्न, तपाईंले Gregorian (AD) मिति जस्तै 13/06/2025 प्रविष्ट गर्नसक्नुहुन्छ, र यसले तुरुन्तै सम्बन्धित नेपाली मिति देखाउँछ — २०८२ जेठ ३१, शुक्रवार। त्यसैगरी, उल्टो विकल्प प्रयोग गरेर तपाईंले 2082 जेठ 31 जस्तो नेपाली मिति (वि   सं   ) चयन गर्नसक्नुहुन्छ र सटिक अंग्रेजी मिति June 13, 2025 (शुक्रवार) प्राप्त गर्न सक्नुहुन्छ। यो नेपाली पात्रो एप एक पूर्व प्रोग्राम गरिएको एल्गोरिदम प्रयोग गरेर वि   सं    पात्रो र ग्रेगोरियन पात्रो बीचको म्याचिङ् गरेर काम गर्दछ, जसमा लीप वर्ष, महिनाको अन्तर, र ५६   ७ वर्षको फरकलाई ध्यानमा राखिन्छ। तपाईं विद्यार्थी, यात्रा गर्ने व्यक्ति, वा नेपालमा सरकारी कागजातहरूसँग काम गर्ने जो कोही हुनुहोस्, श्रीपत्रोको दुईभाषिक मिति रूपान्तरण सुविधाले मिति अनुवाद गर्दा तपाईं कहिल्यै गल्ती नगर्नुहुने सुनिश्चित गर्छ। यो छिटो, भरपर्दो, र मोबाइल तथा वेब दुबैमा दैनिक प्रयोगको लागि उपयुक्त छ।"
   }
 }

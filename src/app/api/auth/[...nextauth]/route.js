@@ -91,12 +91,16 @@ export const authOptions = {
         const { data, error } = await resend.emails.send({
           from: "auth@sripatro.com", // must be verified in Resend
           to: [identifier],
-          subject: "Login to sripatro.com",
-          html: `
-            <p>Click the link below to login:</p>
-            <a href="${url}">${url}</a>
-            <p>This link expires in 10 minutes.</p>
-          `,
+          subject: "Signin to sripatro.com",
+          html: `<div style="max-width: 400px; padding: 24px; border: 1px solid #eee; border-radius: 8px; font-family: sans-serif;">
+    <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">Sign in to Sripatro.com</h1>
+    <a href="${url}" style="display: block; font-weight: bold; text-align: center; background-color: #dc2626; color: white; padding: 12px 16px; border-radius: 6px; text-decoration: none; font-size: 16px;">
+      Sign In
+    </a>
+    <p style="font-size: 12px; color: #555; margin-top: 12px;">This link expires in 10 minutes.</p>
+  </div>
+`
+
         });
 
         if (error) {
