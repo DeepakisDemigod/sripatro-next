@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div>
       <Header />
-      <Tiles />
+    <Tiles /> 
       <LocaleSwitcher />
       <Patro />
       <Link href="/auth/signin">LOGIN</Link>

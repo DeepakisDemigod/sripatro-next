@@ -1,22 +1,28 @@
-"use client";
-import Slider from "react-slick";
-import { useState, useEffect } from "react";
+'use client';
+
+import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
+const Slider = dynamic(() => import('react-slick'), {
+  ssr: false,
+});
 
 const tiles = [
-  { label: "Panchang", icon: "🇳🇵", tag: "BS", href: "/nepalitoenglish" },
-  { label: "Panchang", icon: " 🇮🇳", tag: "AD", href: "/birthpanchang" },
-  { label: "Kundali", icon: "🪐", tag: "AD", href: "/kundali" },
-  { label: "Horoscope", icon: "🐏", tag: "AD", href: "/horoscope" },
-  { label: "Cheena", icon: "🧧", tag: "AD", href: "/nepali-cheena" },
-  { label: "Date Converter", icon: "🗓", tag: "BS", href: "/date-converter" },
+  { label: 'Panchang', icon: '🇳🇵', tag: 'BS', href: '/nepalitoenglish' },
+  { label: 'Panchang', icon: ' 🇮🇳', tag: 'AD', href: '/birthpanchang' },
+  { label: 'Kundali', icon: '🪐', tag: 'AD', href: '/kundali' },
+  { label: 'Horoscope', icon: '🐏', tag: 'AD', href: '/horoscope' },
+  { label: 'Cheena', icon: '🧧', tag: 'AD', href: '/nepali-cheena' },
+  { label: 'Date Converter', icon: '🗓', tag: 'BS', href: '/date-converter' },
 ];
 
 const Tiles = () => {
   const [loading, setLoading] = useState(true);
 
-  // simulate loading (you can remove this if you fetch real data)
   useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 1000);
+    const timeout = setTimeout(() => setLoading(false), 500); // simulate loading
     return () => clearTimeout(timeout);
   }, []);
 
@@ -66,28 +72,20 @@ const Tiles = () => {
   }
 
   return (
-    <div className="text-base-content">
+    <div className="text-base-content py-2">
       <Slider {...settings}>
         {tiles.map(({ label, icon, tag, href }) => (
-          <div key={href} className="py-2">
+          <div key={href} className="px-1">
             <a
               href={href}
               className="flex items-center justify-between p-2 bg-base-100 rounded-xl shadow hover:shadow-md transition duration-200 hover:bg-base-50"
             >
               <div className="flex items-center gap-4 pl-4">
-                <div className="text-4xl bg-base-200 p-2 rounded-xl">
-                  {icon}
-                </div>
+                <div className="text-4xl bg-base-200 p-2 rounded-xl">{icon}</div>
                 <div>
                   <div className="text-xs text-gray-500 font-medium">{tag}</div>
                   <div className="text-md font-semibold">{label}</div>
                 </div>
-              </div>
-              <div className="">
-                {/*<img
-                  width={60}
-                  src='/watermark.png'
-                />*/}
               </div>
             </a>
           </div>
