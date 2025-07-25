@@ -78,18 +78,19 @@ export default async function LocaleLayout({ children, params }) {
 }
 */
 
-import { NextIntlClientProvider, hasLocale } from 'next-intl';
-import { routing } from '@/i18n/routing';
-import { notFound } from 'next/navigation';
-import { Gabarito } from 'next/font/google';
-import { getMessages } from 'next-intl/server';
-import './globals.css';
-import SessionWrapper from '../../components/SessionWrapper.js'; // 👈 import wrapper
+import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
+import { Gabarito } from "next/font/google";
+import { getMessages } from "next-intl/server";
+import "./globals.css";
+import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import wrapper
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const gabarito = Gabarito({
-  subsets: ['latin'],
-  weight: ['400', '700', '800'],
-  variable: '--font-gabarito'
+  subsets: ["latin"],
+  weight: ["400", "700", "800"],
+  variable: "--font-gabarito",
 });
 
 export default async function LocaleLayout({ children, params }) {
@@ -108,11 +109,8 @@ export default async function LocaleLayout({ children, params }) {
     <html lang={locale}>
       <body className={`${gabarito.variable} antialiased`}>
         <SessionWrapper>
-          <NextIntlClientProvider
-            locale={locale}
-            messages={messages}
-          >
-            
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ThemeSwitcher />
             {children}
           </NextIntlClientProvider>
         </SessionWrapper>

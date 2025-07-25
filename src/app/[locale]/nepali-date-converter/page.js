@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl';
 import { CaretLeft, ArrowUpRight } from 'phosphor-react';
 import Link from "next/link"
 import Head from 'next/head'
-import ThemeSwitcher from '@/components/ThemeSwitcher';
 
 
 const nepaliMonths = [
@@ -194,7 +193,6 @@ export default function DateConverter() {
       <link rel="canonical" href="https://sripatro.com/date-converter" />
     </Head>
     <div className='max-w-lg mx-auto my-1 p-6 pt-4 rounded-2xl bg-base-100 text-base-800'>
-      <ThemeSwitcher />
       <Link
         href='/'
         className='hover:underline'

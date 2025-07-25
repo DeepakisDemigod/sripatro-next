@@ -92,13 +92,102 @@ export const authOptions = {
           from: "auth@sripatro.com", // must be verified in Resend
           to: [identifier],
           subject: "Signin to sripatro.com",
-          html: `<div style="max-width: 400px; padding: 24px; border: 1px solid #eee; border-radius: 8px; font-family: sans-serif;">
-    <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">Sign in to Sripatro.com</h1>
-    <a href="${url}" style="display: block; font-weight: bold; text-align: center; background-color: #dc2626; color: white; padding: 12px 16px; border-radius: 6px; text-decoration: none; font-size: 16px;">
-      Sign In
-    </a>
-    <p style="font-size: 12px; color: #555; margin-top: 12px;">This link expires in 10 minutes.</p>
+          html: `
+	  <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Gabarito:wght@400..900&family=TikTok+Sans:opsz,wght@12..36,300..900&display=swap" rel="stylesheet">
+</head>
+
+<div style="
+  max-width: 480px;
+  margin: 2rem auto;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  font-family: 'Gabarito', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  color: #1f2937;
+  line-height: 1.6;
+">
+
+  <!-- Logo -->
+  <div style="text-align: left; margin-bottom: 1rem;">
+    <img
+      src="https://i.ibb.co/0y4DpgGb/Screenshot-2025-07-24-15-57-29-04-40deb401b9ffe8e1df2f1cc5ba480b12.jpg"
+      alt="SriPatro Logo"
+      style="height: 48px; border-radius: 0.5rem;"
+    />
   </div>
+
+  <!-- Title -->
+  <h1 style="
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: left;
+  ">
+    Sign in to sripatro.com
+  </h1>
+
+  <p style="font-size: 0.9rem; color: #374151; margin-bottom: 1rem;">
+    Your Magic Link is ready 💫
+  </p>
+
+  <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 1.5rem;">
+    Click the button below to sign in. Don’t share this link with anyone.
+  </p>
+
+  <!-- Sign In Button -->
+  <div style="margin: 1.5rem 0;">
+    <a href="${url}" target="_blank" style="
+      display: inline-block;
+      background-color: #dc2626;
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s ease;
+    ">
+      Click here to Sign In
+    </a>
+  </div>
+
+  <!-- Fallback URL -->
+  <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.25rem;">
+    Or copy and paste this URL into your browser:
+  </p>
+  <p style="
+    word-break: break-all;
+    background-color: #f9fafb;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    border: 1px solid #e5e7eb;
+    color: #111827;
+  ">
+    ${url}
+  </p>
+
+  <!-- Footer -->
+  <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 1.5rem;">
+    If you didn’t request this, feel free to ignore or delete this email.
+  </p>
+
+  <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem;">
+    This link will expire in 10 minutes.
+  </p>
+
+  <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 0.75rem; color: #9ca3af; text-align: center;">
+    © 2025 SriPatro
+  </p>
+</div>
+
 `
 
         });
