@@ -6,14 +6,10 @@ import { MhahPanchang } from "mhah-panchang";
 
 import NepaliDate from "nepali-date-converter";
 
-import { Sun, SunHorizon } from "phosphor-react";
-
 export default function LivePanchangCard() {
   const [now, setNow] = useState(new Date());
 
   const [panchang, setPanchang] = useState(null);
-
-  const [sun, setSun] = useState(null);
 
   // 1) Clock: updates every second
 
@@ -33,26 +29,7 @@ export default function LivePanchangCard() {
     setPanchang(data);
   }, []);
 
-  // 3) Sunrise/Sunset: fetch once
-
-  useEffect(() => {
-    fetch(
-      "https://api.sunrise-sunset.org/json?lat=28.7041&lng=77.1025&formatted=0"
-    )
-      .then((r) => r.json())
-
-      .then((j) => {
-        setSun({
-          sunrise: new Date(j.results.sunrise),
-
-          sunset: new Date(j.results.sunset),
-        });
-      })
-
-      .catch(console.error);
-  }, []);
-
-  if (!panchang || !sun) {
+  if (!panchang) {
     return (
       <div className="max-w-md mx-4 bg-base-100 rounded-2xl border border-base-300 overflow-hidden font-sans animate-pulse p-4 space-y-4">
         {/* skeleton loader same as before */}
@@ -144,28 +121,6 @@ export default function LivePanchangCard() {
           className="w-24 h-24 rounded-full border border-base-600"
           onError={(e) => (e.target.style.display = "none")}
         />
-      </div>
-
-      {/* sunrise / sunset */}
-
-      <div className="flex justify-around text-sm font-semibold text-base-800 py-2">
-        <div className="flex items-center gap-1">
-          <Sun size={19} weight="bold" />{" "}
-          {sun.sunrise.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })}
-        </div>
-
-        <div className="flex items-center gap-1">
-          <SunHorizon size={19} weight="bold" />
-          {sun.sunset.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })}
-        </div>
       </div>
 
       {/* panchang details */}
