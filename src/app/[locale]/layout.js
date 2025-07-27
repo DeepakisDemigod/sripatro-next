@@ -87,6 +87,7 @@ import "./globals.css";
 import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import wrapper
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
+
 const gabarito = Gabarito({
   subsets: ["latin"],
   weight: ["400", "700", "800"],
@@ -107,6 +108,7 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <html lang={locale}>
+
       <body className={`${gabarito.variable} antialiased`}>
         <SessionWrapper>
           <NextIntlClientProvider locale={locale} messages={messages}>
@@ -118,3 +120,51 @@ export default async function LocaleLayout({ children, params }) {
     </html>
   );
 }
+
+/*
+import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
+import { Gabarito, Poppins } from "next/font/google";
+import { getMessages } from "next-intl/server";
+import "./globals.css";
+import SessionWrapper from "../../components/SessionWrapper.js";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
+
+const gabarito = Gabarito({
+  subsets: ["latin"],
+  weight: ["400", "700", "800"],
+  variable: "--font-gabarito",
+});
+
+const poppins = Poppins({
+  subsets: ["devanagari", "latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-poppins",
+});
+
+export default async function LocaleLayout({ children, params }) {
+  const { locale } = params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  const messages = await getMessages({ locale });
+
+  return (
+    <html lang={locale}>
+      <body
+        className={`${gabarito.variable} ${poppins.variable} antialiased`}
+      >
+        <SessionWrapper>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ThemeSwitcher />
+            {children}
+          </NextIntlClientProvider>
+        </SessionWrapper>
+      </body>
+    </html>
+  );
+}
+*/

@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
-import LocaleSwitcher from "../../components/LocaleSwitcher.js";
 import Footer from "@/components/Footer.js";
 import Header from "@/components/Header.js";
 import Patro from "@/components/Patro.js";
+import Saita from "@/components/Saita.js";
 import Link from "next/link";
 import Tiles from "@/components/Tiles.js";
 
@@ -11,13 +11,13 @@ export default function Home() {
   return (
     <div>
       <Header />
-    <Tiles /> 
-      <LocaleSwitcher />
+      <Tiles /> 
       <Patro />
-      <Link href="/auth/signin">LOGIN</Link>
+	  <Saita />
+	  {/* <Link href="/auth/signin">LOGIN</Link>
       <p>{t("title")}</p>
       Monster is Back
-      <p>{t("content")}</p>
+      <p>{t("content")}</p>*/}
       <Footer />
     </div>
   );

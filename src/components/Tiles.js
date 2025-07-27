@@ -1,28 +1,31 @@
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
 
-const Slider = dynamic(() => import('react-slick'), {
+const Slider = dynamic(() => import("react-slick"), {
   ssr: false,
 });
 
 const tiles = [
-  { label: 'Panchang', icon: '🇳🇵', tag: 'BS', href: '/nepalitoenglish' },
-  { label: 'Panchang', icon: ' 🇮🇳', tag: 'AD', href: '/birthpanchang' },
-  { label: 'Kundali', icon: '🪐', tag: 'AD', href: '/kundali' },
-  { label: 'Horoscope', icon: '🐏', tag: 'AD', href: '/horoscope' },
-  { label: 'Cheena', icon: '🧧', tag: 'AD', href: '/nepali-cheena' },
-  { label: 'Date Converter', icon: '🗓', tag: 'BS', href: '/date-converter' },
+  { label: "Panchang", icon: "🇳🇵", tag: "BS", href: "/nepalitoenglish" },
+  { label: "Panchang", icon: "🇮🇳", tag: "AD", href: "/birthpanchang" },
+  { label: "Kundali", icon: "🪐", tag: "AD", href: "/kundali" },
+  { label: "Horoscope", icon: "🐏", tag: "AD", href: "/horoscope" },
+  { label: "Cheena", icon: "🧧", tag: "AD", href: "/nepali-cheena" },
+  {
+    label: "Date Converter",
+    icon: "🗓",
+    tag: "BS",
+    href: "/nepali-date-converter",
+  },
 ];
 
 const Tiles = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 500); // simulate loading
+    const timeout = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timeout);
   }, []);
 
@@ -34,7 +37,7 @@ const Tiles = () => {
     slidesToScroll: 1,
     arrows: false,
     autoplay: true,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 1400,
     responsive: [
       {
         breakpoint: 640,
@@ -49,7 +52,7 @@ const Tiles = () => {
     return (
       <div className="text-base-content py-2">
         <div className="space-y-2">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(1)].map((_, i) => (
             <div
               key={i}
               className="flex items-center justify-between p-2 bg-base-100 rounded-xl shadow"
@@ -72,20 +75,29 @@ const Tiles = () => {
   }
 
   return (
-    <div className="text-base-content py-2">
+    <div className="text-base-content py-2 mx-3">
       <Slider {...settings}>
         {tiles.map(({ label, icon, tag, href }) => (
           <div key={href} className="px-1">
             <a
               href={href}
-              className="flex items-center justify-between p-2 bg-base-100 rounded-xl shadow hover:shadow-md transition duration-200 hover:bg-base-50"
+              className="flex items-center justify-between p-2 bg-base-100 border border-base-300 rounded-xl shadow hover:shadow-md transition duration-200 hover:bg-base-50"
             >
-              <div className="flex items-center gap-4 pl-4">
-                <div className="text-4xl bg-base-200 p-2 rounded-xl">{icon}</div>
+              <div className="flex items-center gap-4 px-2">
+                <div className="text-4xl bg-base-200 p-2 rounded-xl">
+                  {icon}
+                </div>
                 <div>
                   <div className="text-xs text-gray-500 font-medium">{tag}</div>
                   <div className="text-md font-semibold">{label}</div>
                 </div>
+              </div>
+              <div className="">
+                {" "}
+                <img
+                  width={50}
+                  src="https://i.ibb.co/tMMjhW4g/1000052219-removebg-preview.png"
+                />
               </div>
             </a>
           </div>

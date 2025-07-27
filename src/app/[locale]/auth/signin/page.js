@@ -28,14 +28,14 @@ export default function SignIn() {
     <div className="flex flex-col justify-center items-center h-screen">
       <form
         onSubmit={handleSubmit}
-        className="rounded w-96 bg-base-100 p-6 border border-2  border-base-300"
+        className="rounded w-96 bg-base-100 p-6 border m-4 border-base-300"
       >
 	<div className="flex items-center justify-center gap-1"><Image className="rounded-lg" src="/logo.png" alt="logo" width={33} height={33}/><p className="text-2xl font-semibold text-base-700">SriPatro</p></div>
 	  <br/>
         <input
           type="email"
           placeholder="mike@sripatro.com"
-          className="input input-bordered border-2 focus:border-red-600 w-full mb-3 rounded-lg"
+          className="input input-bordered  focus:border-red-600 w-full mb-3 rounded-lg"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

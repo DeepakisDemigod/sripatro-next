@@ -124,7 +124,7 @@ export default function Header() {
           <div className="lg:hidden flex items-center">
             <label
               htmlFor="mobile-drawer"
-              className="border border-base-300 bg-base-200 btn btn-sm rounded-md text-base-400"
+              className="border border-base-300 bg-base-100 btn btn-sm rounded-md text-base-400"
               aria-label="Open menu"
             >
               <svg
@@ -162,7 +162,7 @@ export default function Header() {
               <h1 className="pl-2 text-lg font-bold">SriPatro</h1>
               <label
                 htmlFor="mobile-drawer"
-                className="border border-base-300 bg-base-200 btn btn-sm rounded-md text-base-400"
+                className="border border-base-200 bg-base-100 btn btn-sm rounded-md text-base-400"
                 aria-label="Close menu"
               >
                 ✕
