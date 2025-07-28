@@ -20,6 +20,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'ui-avatars.com',
         pathname: '/api/**'
+      },
+      {
+	protocol: 'https',
+	hostname: 'cdn.weatherapi.com',
+	pathname: '/weather/**'
       }
     ]
   }

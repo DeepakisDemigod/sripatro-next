@@ -3,6 +3,7 @@ import Footer from "@/components/Footer.js";
 import Header from "@/components/Header.js";
 import Patro from "@/components/Patro.js";
 import Saita from "@/components/Saita.js";
+import Weather from "@/components/Weather.js";
 import Link from "next/link";
 import Tiles from "@/components/Tiles.js";
 
@@ -11,10 +12,15 @@ export default function Home() {
   return (
     <div>
       <Header />
-      <Tiles /> 
-      <Patro />
+      <Tiles />
+	  <div className="w-full">
+
+<Patro />
 	  <Saita />
-	  {/* <Link href="/auth/signin">LOGIN</Link>
+	  <Weather />
+
+	  </div>
+      	  {/* <Link href="/auth/signin">LOGIN</Link>
       <p>{t("title")}</p>
       Monster is Back
       <p>{t("content")}</p>*/}

@@ -50,12 +50,12 @@ const Tiles = () => {
 
   if (loading) {
     return (
-      <div className="text-base-content py-2">
-        <div className="space-y-2">
+      <div className="">
+        <div className="space-y-2 ">
           {[...Array(1)].map((_, i) => (
             <div
               key={i}
-              className="flex items-center justify-between p-2 bg-base-100 rounded-xl shadow"
+              className="flex items-center justify-between p-2 bg-base-100 rounded-xl shadow text-base-content py-2 border border-base-300 rounded"
             >
               <div className="flex items-center gap-4 pl-4">
                 <div className="skeleton w-14 h-14 rounded-xl" />
