@@ -1,79 +1,4 @@
-/*import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
 
-export const authOptions = {
-  adapter: MongoDBAdapter(clientPromise),
-  providers: [
-    EmailProvider({
-      server: {
-        host: "smtp-relay.brevo.com",
-        port: 587, //456
-        auth: {
-          user: process.env.BREVO_USER,
-          pass: process.env.BREVO_PASS,
-        },
-      },
-      from: "deepakthapa1423@gmail.com",
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/auth/signin",
-  },
-  callbacks: {
-    async session({ session, token }) {
-      session.user.id = token.sub;
-      return session;
-    },
-    async redirect({ baseUrl }) {
-      return `${baseUrl}/dashboard`;
-    },
-  },
-};
-
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
-*/
-
-/*
-import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export const authOptions = {
-  adapter: MongoDBAdapter(clientPromise),
-  providers: [
-    EmailProvider({
-      async sendVerificationRequest({ identifier, url }) {
-        const { data, error } = await resend.emails.send({
-          from: "auth@sripatro.com", // MUST be verified in Resend
-          to: [identifier],
-          subject: "Login to sripatro.com",
-          html: `
-            <p>Click the link below to login:</p>
-            <a href="${url}">${url}</a>
-            <p>This link expires in 10 minutes.</p>
-          `,
-        });
-
-        if (error) {
-          console.error("Resend error:", error);
-          throw new Error("Failed to send verification email.");
-        }
-      },
-    }),
-  ],
-  secret: process.env.NEXTAUTH_SECRET,
-};
-*/
 
 import NextAuth from "next-auth";
 import EmailProvider from "next-auth/providers/email";
@@ -89,7 +14,7 @@ export const authOptions = {
     EmailProvider({
       async sendVerificationRequest({ identifier, url }) {
         const { data, error } = await resend.emails.send({
-          from: "auth@sripatro.com", // must be verified in Resend
+          from: "Sripatro <auth@sripatro.com>",
           to: [identifier],
           subject: "Signin to sripatro.com",
           html: `
@@ -115,8 +40,8 @@ export const authOptions = {
   <!-- Logo -->
   <div style="text-align: left; margin-bottom: 1rem;">
     <img
-      src="https://i.ibb.co/0y4DpgGb/Screenshot-2025-07-24-15-57-29-04-40deb401b9ffe8e1df2f1cc5ba480b12.jpg"
-      alt="SriPatro Logo"
+      src="https://gzujq4nvwe.ufs.sh/f/Fc4vXyfucodUwfBzApzTclukJTWn2d9VoU7Oe6XQtq5fCwNv"
+      alt="logo"
       style="height: 48px; border-radius: 0.5rem;"
     />
   </div>
@@ -200,6 +125,10 @@ export const authOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  // Exclude Pages to Check
+  pages: {
+    verifyRequest: '/auth/verify-request',
+  },
 };
 
 const handler = NextAuth(authOptions);

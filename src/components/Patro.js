@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import { MhahPanchang } from "mhah-panchang";
-
 import NepaliDate from "nepali-date-converter";
 
 export default function LivePanchangCard() {
@@ -31,7 +29,7 @@ export default function LivePanchangCard() {
 
   if (!panchang) {
     return (
-      <div className="max-w-md mx-4 bg-base-100 rounded-2xl border border-base-300 overflow-hidden font-sans animate-pulse p-4 space-y-4">
+      <div className=" max-w-3xl mx-auto bg-base-100 rounded-2xl border border-base-300 overflow-hidden  animate-pulse p-4 space-y-4">
         {/* skeleton loader same as before */}
 
         <div className="skeleton w-full h-6 rounded"></div>
@@ -73,10 +71,10 @@ export default function LivePanchangCard() {
   const moonSrc = `moon/${pakshaDir}/${tithiName}.png`;
 
   return (
-    <div className="max-w-md mx-4 bg-base-100 rounded-2xl border border-base-300  overflow-hidden ">
+    <div className="max-w-3xl mx-auto bg-base-100 rounded-2xl border border-base-300  overflow-hidden p-4 mx-4">
       {/* header */}
 
-      <div className="flex justify-between p-4">
+      <div className="flex justify-between ">
         <div className="flex flex-col justify-start items-start gap-2">
           <div className="flex items-center gap-2 border border-base-300 bg-base-100 rounded px-2 py-.5">
             <p className="w-1 h-1 bg-red-600 rounded-full animate-ping"></p>

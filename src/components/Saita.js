@@ -1,14 +1,14 @@
-"use client";
+/*"use client";
 import { useEffect, useState } from "react";
 
-export default function SunMoonCycle() {
+export default function SunMoonCycle(props) {
   const [data, setData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
-    const getLocation = () => {
-      if (!navigator.geolocation) {
+   /* const getLocation = () => {
+	      if (!navigator.geolocation) {
         setStatus("Geolocation not supported");
         return;
       }
@@ -25,9 +25,9 @@ export default function SunMoonCycle() {
     getLocation();
 
     const interval = setInterval(() => setCurrentTime(new Date()), 60000); // Update every minute
-    return () => clearInterval(interval);
-  }, []);
-
+    return () => clearInterval(interval);*/
+ /* }, []);
+  const {lat,lng} = props
   const fetchData = async (lat, lng) => {
     const today = new Date();
     const tomorrow = new Date(today);
@@ -185,205 +185,35 @@ export default function SunMoonCycle() {
     </div>
   );
 }
+*/
 
 /*
-"use client"
 
-import React, { useEffect, useState } from "react";
-
-
-
-const API_KEY = "ce549ad848684bb2852155006230309";
-
-
-
-function Saita() {
-
- const [weather, setWeather] = useState(null);
-
- const [locationError, setLocationError] = useState(null);
-
- const [loading, setLoading] = useState(true);
-
-
-
- useEffect(() => {
-
-  // Step 1: Get user location
-
-  if (navigator.geolocation) {
-
-   navigator.geolocation.getCurrentPosition(
-
-    (position) => {
-
-     const lat = position.coords.latitude;
-
-     const lon = position.coords.longitude;
-
-     fetchWeather(lat, lon);
-
-    },
-
-    (err) => {
-
-     setLocationError("Location access denied or unavailable.");
-
-     setLoading(false);
-
-    }
-
-   );
-
-  } else {
-
-   setLocationError("Geolocation not supported.");
-
-   setLoading(false);
-
-  }
-
- }, []);
-
-
-
- // Step 2: Fetch weather data
-
- const fetchWeather = (lat, lon) => {
-
-  fetch(
-
-   `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${lat},${lon}&aqi=no`
-
-  )
-
-   .then((res) => res.json())
-
-   .then((data) => {
-
-    setWeather(data);
-
-    setLoading(false);
-
-   })
-
-   .catch((err) => {
-
-    console.error("Weather API error:", err);
-
-    setLoading(false);
-
-   });
-
- };
-
-
-
- if (loading) return <p>Loading weather...</p>;
-
- if (locationError) return <p>{locationError}</p>;
-
- if (!weather) return <p>Weather data not available.</p>;
-
-
-
- const {
-
-  location,
-
-  current: {
-
-   temp_c,
-
-   condition,
-
-   humidity,
-
-   wind_kph,
-
-   feelslike_c,
-
-   uv,
-
-   last_updated,
-
-  },
-
- } = weather;
-
-
-
- return (
-
-  <div style={{ padding: "2rem", fontFamily: "Arial", maxWidth: "400px", margin: "auto" }}>
-
-   <h2>🌦️ Current Weather</h2>
-
-   <p><strong>Location:</strong> {location.name}, {location.country}</p>
-
-   <p><strong>Updated:</strong> {last_updated}</p>
-
-   <img src={`https:${condition.icon}`} alt={condition.text} />
-
-   <p><strong>Condition:</strong> {condition.text}</p>
-
-   <p><strong>Temperature:</strong> {temp_c}°C</p>
-
-   <p><strong>Feels like:</strong> {feelslike_c}°C</p>
-
-   <p><strong>Humidity:</strong> {humidity}%</p>
-
-   <p><strong>Wind:</strong> {wind_kph} kph</p>
-
-   <p><strong>UV Index:</strong> {uv}</p>
-
-  </div>
-
- );
-
-}
-
-
-
-export default Saita;*/
-
-/*
 "use client";
-
 import { useEffect, useState } from "react";
 
-const WEATHER_API_KEY = "ce549ad848684bb2852155006230309";
-
-export default function SunMoonCycle() {
+export default function SunMoonCycle({ lat, lng }) {
   const [data, setData] = useState(null);
-  const [weather, setWeather] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setStatus("Geolocation not supported");
-      return;
+    if (lat && lng) {
+      fetchData(lat, lng);
     }
+  }, [lat, lng]);
 
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        fetchSunCycle(coords.latitude, coords.longitude);
-        fetchWeather(coords.latitude, coords.longitude);
-      },
-      () => setStatus("Failed to get location")
-    );
-
-    const interval = setInterval(() => setCurrentTime(new Date()), 60000);
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
 
-  const fetchSunCycle = async (lat, lng) => {
+  const fetchData = async (lat, lng) => {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
-    const formatDate = (d) => d.toISOString().split("T")[0];
+    const formatDate = (d) => d.toISOString().split("T")[0]; // "YYYY-MM-DD"
 
     const url = `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lng}&timezone=auto&date_start=${formatDate(
       today
@@ -392,22 +222,11 @@ export default function SunMoonCycle() {
     try {
       const res = await fetch(url);
       const json = await res.json();
+	    console.log(json)
       setData(json.results);
       setStatus("Success");
     } catch {
-      setStatus("Failed to fetch sun data");
-    }
-  };
-
-  const fetchWeather = async (lat, lon) => {
-    try {
-      const res = await fetch(
-        `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${lat},${lon}&aqi=no`
-      );
-      const json = await res.json();
-      setWeather(json);
-    } catch {
-      console.error("Weather fetch failed");
+      setStatus("Failed to fetch data");
     }
   };
 
@@ -424,7 +243,6 @@ export default function SunMoonCycle() {
   };
 
   if (status !== "Success" || !data?.length) return <p>{status}</p>;
-  if (!weather) return <p>Loading weather...</p>;
 
   const today = data[0];
   const tomorrow = data[1];
@@ -432,9 +250,10 @@ export default function SunMoonCycle() {
   const now = currentTime;
 
   const dawn = parseTime(today.dawn, today.date);
-  const dusk = parseTime(today.dusk, today.date);
   const sunrise = parseTime(today.sunrise, today.date);
   const sunset = parseTime(today.sunset, today.date);
+  const dusk = parseTime(today.dusk, today.date);
+
   const nextDawn = parseTime(tomorrow.dawn, tomorrow.date);
 
   const isDay = now >= dawn && now <= dusk;
@@ -443,80 +262,427 @@ export default function SunMoonCycle() {
     ? getPercentage(dawn, dusk)
     : now > dusk
       ? getPercentage(dusk, nextDawn)
-      : getPercentage(dusk, dawn);
-
-  const {
-    current: {
-      condition: { icon, text: conditionText },
-    },
-  } = weather;
+      : getPercentage(dusk, dawn); // before dawn
 
   return (
-    <div className="max-w-xl mx-auto mt-6 p-4 rounded-xl shadow bg-base-100 text-center space-y-4">
-      <h2 className="text-xl font-bold">{isDay ? "Daytime" : "Nighttime"} Cycle</h2>
+    <div className="max-w-xl m-4 rounded-xl bg-base-100 text-center border border-base-300">
+      <h2 className="text-xl font-bold">{isDay ? "DayTime" : "NightTime"} Cycle</h2>
 
-      <div className="flex flex-wrap justify-center items-center gap-4 text-sm sm:text-base">
+      <div className="flex flex-wrap justify-center gap-2 text-sm sm:text-base my-2">
         {isDay ? (
           <>
-            <CycleItem label="Dawn" value={today.dawn} />
-            <CycleItem label="Sunrise" value={today.sunrise} />
-
-            <div className="carousel rounded-box flex flex-col items-center space-y-2">
-              <div className="carousel-item text-5xl">☀️</div>
-
-		<div className="carousel-item">
-              <img src={`https:${icon}`} alt={conditionText} className="w-10 h-10 " />
-              <div className="text-xs text-gray-600">{conditionText}</div>
-		</div>
-            </div>
-
-            <CycleItem label="Sunset" value={today.sunset} />
-            <CycleItem label="Dusk" value={today.dusk} />
+            <Tile label="Dawn" value={today.dawn} />
+            <Tile label="Sunrise" value={today.sunrise} />
+            <div className="text-4xl sm:text-5xl flex items-center justify-center">☀️</div>
+            <Tile label="Sunset" value={today.sunset} />
+            <Tile label="Dusk" value={today.dusk} />
           </>
         ) : (
           <>
-            <CycleItem label="Sunset" value={today.sunset} />
-            <CycleItem label="Dusk" value={today.dusk} />
-
-            <div className="flex flex-col items-center space-y-2">
-              <div className="text-5xl">🌙</div>
-              <img src={`https:${icon}`} alt={conditionText} className="w-10 h-10" />
-              <div className="text-xs text-gray-600">{conditionText}</div>
-            </div>
-
-            <CycleItem label="Dawn" value={tomorrow.dawn} />
-            <CycleItem label="Sunrise" value={tomorrow.sunrise} />
+            <Tile label="Sunset" value={today.sunset} />
+            <Tile label="Dusk" value={today.dusk} />
+            <div className="text-4xl sm:text-5xl flex items-center justify-center">🌙</div>
+            <Tile label="Dawn" value={tomorrow.dawn} />
+            <Tile label="Sunrise" value={tomorrow.sunrise} />
           </>
         )}
       </div>
 
-      {/* Arc-style progress (optional styling for bent look) 
-      <div className="w-full bg-base-200 h-3 rounded-full overflow-hidden border border-base-300">
+      <div className="w-full mx-2 bg-base-200 h-4 rounded-full overflow-hidden border border-base-300">
         <div
-          className={`h-full transition-all duration-700 ${isDay ? "bg-yellow-400" : "bg-indigo-600"}`}
+          className={`h-full ${isDay ? "bg-yellow-500" : "bg-indigo-600"}`}
           style={{ width: `${progress}%` }}
         ></div>
       </div>
 
-      <p className="text-xs text-base-900">
+      <p className="text-xs border border-base-300 rounded inline p-1 m-1 mb-4">
         {progress}% of{" "}
         {isDay ? (
           <>
-            {today.day_length.slice(0, 2)}h {today.day_length.slice(3, 5)}m{" "}
-            {today.day_length.slice(6, 8)}s of day passed
+            {today.day_length.slice(0, 2)} hours {today.day_length.slice(3, 5)} minutes{" "}
+            {today.day_length.slice(6, 8)} seconds long day
           </>
         ) : (
-          "night passed"
-        )}
+          "night"
+        )}{" "}
+        passed.
       </p>
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1 mx-2">
+        <InfoTile label="First Light" value={today.first_light} />
+        <InfoTile label="Last Light" value={today.last_light} />
+        <InfoTile label="Solar Noon" value={today.solar_noon} />
+        <InfoTile label="Golden Hour" value={today.golden_hour} />
+      </div>
+
+      <p className="text-xs text-left text-base-800 border border-base-300 p-1 m-2 rounded">
+        This data is for your live location of timezone {today.timezone}, for UTC offset {today.utc_offset} as of {today.date}.
+      </p>
+
+      <button className="border border-base-300 rounded px-1.5 text-sm">See Data for whole month</button>
     </div>
   );
 }
 
-const CycleItem = ({ label, value }) => (
-  <div className="flex flex-col items-center border border-base-300 rounded-xl p-2 w-24 sm:w-28 shadow-sm bg-base-100">
-    <div className="text-xs font-semibold text-base-800">{label}</div>
-    <div className="text-xs text-base-900">{value}</div>
-  </div>
-);
+function Tile({ label, value }) {
+  return (
+    <div className="flex flex-col items-center border border-base-300 rounded-xl bg-base-100">
+      <div className="text-sm font-semibold text-base-800">{label}</div>
+      <div className="text-xs text-base-900">{value}</div>
+    </div>
+  );
+}
+
+function InfoTile({ label, value }) {
+  return (
+    <div className="bg-base-100 p-2 rounded-2xl shadow-md border border-base-300">
+      <p className="text-sm text-gray-500 font-semibold">{label}</p>
+      <span className="text-md font-bold">{value}</span>
+    </div>
+  );
+}
 */
+/*
+
+"use client";
+import { useEffect, useState } from "react";
+
+export default function SunMoonCycle({ lat, lng }) {
+  const [data, setData] = useState(null);
+  const [status, setStatus] = useState("Loading...");
+
+  useEffect(() => {
+    if (lat && lng) {
+      fetchData(lat, lng);
+    }
+  }, [lat, lng]);
+
+  const fetchData = async (lat, lng) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const formatDate = (d) => d.toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+    const url = `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lng}&timezone=auto&date_start=${formatDate(
+      today
+    )}&date_end=${formatDate(tomorrow)}`;
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      setData(json.results);
+      setStatus("Success");
+    } catch {
+      setStatus("Failed to fetch data");
+    }
+  };
+
+  const parseTime = (str, dateStr) => {
+    const date = new Date(`${dateStr} ${str}`);
+    return isNaN(date.getTime()) ? null : date;
+  };
+
+  const getPercentage = (start, end, now) => {
+    const total = end.getTime() - start.getTime();
+    const elapsed = now.getTime() - start.getTime();
+    return Math.max(0, Math.min(100, ((elapsed / total) * 100).toFixed(1)));
+  };
+
+  if (status !== "Success" || !data?.length) return <p>{status}</p>;
+
+  const today = data[0];
+  const tomorrow = data[1];
+
+  // Convert current time to the location’s timezone
+  const now = new Date();
+  const localTimeStr = new Intl.DateTimeFormat("en-US", {
+    hour12: false,
+    timeZone: today.timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(now);
+
+  const [month, day, year, hour, minute, second] = localTimeStr.match(/\d+/g);
+  const locationNow = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+
+  const dawn = parseTime(today.dawn, today.date);
+  const sunrise = parseTime(today.sunrise, today.date);
+  const sunset = parseTime(today.sunset, today.date);
+  const dusk = parseTime(today.dusk, today.date);
+
+  const nextDawn = parseTime(tomorrow.dawn, tomorrow.date);
+
+  const isDay = locationNow >= dawn && locationNow <= dusk;
+
+  const progress = isDay
+    ? getPercentage(dawn, dusk, locationNow)
+    : locationNow > dusk
+    ? getPercentage(dusk, nextDawn, locationNow)
+    : getPercentage(dusk, dawn, locationNow); // before dawn
+
+  return (
+    <div className="max-w-xl rounded-xl bg-base-100 text-center border border-base-300">
+      <h2 className="text-xl font-bold">{isDay ? "DayTime" : "NightTime"} Cycle</h2>
+
+      <div className="flex flex-wrap justify-center gap-2 text-sm sm:text-base my-2">
+        {isDay ? (
+          <>
+            <Tile label="Dawn" value={today.dawn} />
+            <Tile label="Sunrise" value={today.sunrise} />
+            <div className="text-4xl sm:text-5xl flex items-center justify-center">☀️</div>
+            <Tile label="Sunset" value={today.sunset} />
+            <Tile label="Dusk" value={today.dusk} />
+          </>
+        ) : (
+          <>
+            <Tile label="Sunset" value={today.sunset} />
+            <Tile label="Dusk" value={today.dusk} />
+            <div className="text-4xl sm:text-5xl flex items-center justify-center">🌙</div>
+            <Tile label="Dawn" value={tomorrow.dawn} />
+            <Tile label="Sunrise" value={tomorrow.sunrise} />
+          </>
+        )}
+      </div>
+
+      <div className="w-full mx-2 bg-base-200 h-4 rounded-full overflow-hidden border border-base-300">
+        <div
+          className={`h-full ${isDay ? "bg-yellow-500" : "bg-indigo-600"}`}
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+
+      <p className="text-xs border border-base-300 rounded inline p-1 m-1 mb-4">
+        {progress}% of{" "}
+        {isDay ? (
+          <>
+            {today.day_length.slice(0, 2)} hours {today.day_length.slice(3, 5)} minutes{" "}
+            {today.day_length.slice(6, 8)} seconds long day
+          </>
+        ) : (
+          "night"
+        )}{" "}
+        passed.
+      </p>
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1 mx-2">
+        <InfoTile label="First Light" value={today.first_light} />
+        <InfoTile label="Last Light" value={today.last_light} />
+        <InfoTile label="Solar Noon" value={today.solar_noon} />
+        <InfoTile label="Golden Hour" value={today.golden_hour} />
+      </div>
+
+      <p className="text-xs text-left text-base-800 border border-base-300 p-1 m-2 rounded">
+        This data is for your live location of timezone {today.timezone}, for UTC offset {today.utc_offset} as of {today.date}.
+      </p>
+
+      <button className="border border-base-300 rounded px-1.5 text-sm">See Data for whole month</button>
+    </div>
+  );
+}
+
+function Tile({ label, value }) {
+  return (
+    <div className="flex flex-col items-center border border-base-300 rounded-xl bg-base-100">
+      <div className="text-sm font-semibold text-base-800">{label}</div>
+      <div className="text-xs text-base-900">{value}</div>
+    </div>
+  );
+}
+
+function InfoTile({ label, value }) {
+  return (
+    <div className="bg-base-100 p-2 rounded-2xl shadow-md border border-base-300">
+      <p className="text-sm text-gray-500 font-semibold">{label}</p>
+      <span className="text-md font-bold">{value}</span>
+    </div>
+  );
+}
+*/
+ 
+
+ "use client";
+import { useEffect, useState } from "react";
+
+export default function SunMoonCycle({ lat, lng }) {
+  const [data, setData] = useState(null);
+  const [status, setStatus] = useState("Loading...");
+  const [locationNow, setLocationNow] = useState(null);
+  const [formattedTime, setFormattedTime] = useState("");
+
+  useEffect(() => {
+    if (lat && lng) {
+      fetchData(lat, lng);
+    }
+  }, [lat, lng]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (data?.[0]?.timezone) {
+        const now = new Date();
+        const timeStr = new Intl.DateTimeFormat("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+          timeZone: data[0].timezone,
+        }).format(now);
+        setFormattedTime(timeStr);
+
+        const localTimeStr = new Intl.DateTimeFormat("en-US", {
+          hour12: false,
+          timeZone: data[0].timezone,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }).format(now);
+        const [month, day, year, hour, minute, second] = localTimeStr.match(/\d+/g);
+        const locNow = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+        setLocationNow(locNow);
+      }
+    }, 1000); // update every second
+    return () => clearInterval(interval);
+  }, [data]);
+
+  const fetchData = async (lat, lng) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const formatDate = (d) => d.toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+    const url = `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lng}&timezone=auto&date_start=${formatDate(
+      today
+    )}&date_end=${formatDate(tomorrow)}`;
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      setData(json.results);
+      setStatus("Success");
+    } catch {
+      setStatus("Failed to fetch data");
+    }
+  };
+
+  const parseTime = (str, dateStr) => {
+    const date = new Date(`${dateStr} ${str}`);
+    return isNaN(date.getTime()) ? null : date;
+  };
+
+  const getPercentage = (start, end, now) => {
+    const total = end.getTime() - start.getTime();
+    const elapsed = now.getTime() - start.getTime();
+    return Math.max(0, Math.min(100, ((elapsed / total) * 100).toFixed(1)));
+  };
+
+  if (status !== "Success" || !data?.length || !locationNow) return <p>{status}</p>;
+
+  const today = data[0];
+  const tomorrow = data[1];
+
+  const dawn = parseTime(today.dawn, today.date);
+  const sunrise = parseTime(today.sunrise, today.date);
+  const sunset = parseTime(today.sunset, today.date);
+  const dusk = parseTime(today.dusk, today.date);
+  const nextDawn = parseTime(tomorrow.dawn, tomorrow.date);
+
+  const isDay = locationNow >= dawn && locationNow <= dusk;
+
+  const progress = isDay
+    ? getPercentage(dawn, dusk, locationNow)
+    : locationNow > dusk
+    ? getPercentage(dusk, nextDawn, locationNow)
+    : getPercentage(dusk, dawn, locationNow);
+
+  return (
+    <div className="w-full rounded-xl bg-base-100 text-center border border-base-300">
+      <h2 className="text-xl font-bold">{isDay ? "DayTime" : "NightTime"} Cycle</h2>
+
+      <div className="flex flex-wrap justify-around gap-2 text-sm sm:text-base my-2">
+        {isDay ? (
+          <div className="flex items-center justify-evenly">
+            <Tile label="Dawn" value={today.dawn} />
+            <Tile label="Sunrise" value={today.sunrise} />
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-5xl animate-spin-slow">☀️</div>
+              <span className="text-xs text-base-900 border border-base-300 rounded p-1">{formattedTime}</span>
+            </div>
+            <Tile label="Sunset" value={today.sunset} />
+            <Tile label="Dusk" value={today.dusk} />
+          </div>
+        ) : (
+          <div className="flex items-center justify-around">
+            <Tile label="Sunset" value={today.sunset} />
+            <Tile label="Dusk" value={today.dusk} />
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-5xl animate-spin-slow">🌙</div>
+              <span className="text-xs text-base-900 border border-base-300 rounded p-1">{formattedTime}</span>
+            </div>
+            <Tile label="Dawn" value={tomorrow.dawn} />
+            <Tile label="Sunrise" value={tomorrow.sunrise} />
+          </div>
+        )}
+      </div>
+
+      <div className="w-full mx-2 bg-base-200 h-4 rounded-full overflow-hidden border border-base-300">
+        <div
+          className={`h-full ${isDay ? "bg-yellow-500" : "bg-indigo-600"}`}
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+
+      <p className="text-xs border border-base-300 rounded inline p-1 m-1 mb-4">
+        {progress}% of{" "}
+        {isDay ? (
+          <>
+            {today.day_length.slice(0, 2)} hours {today.day_length.slice(3, 5)} minutes{" "}
+            {today.day_length.slice(6, 8)} seconds long day
+          </>
+        ) : (
+          "night"
+        )}{" "}
+        passed.
+      </p>
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1 mx-2">
+        <InfoTile label="First Light" value={today.first_light} />
+        <InfoTile label="Last Light" value={today.last_light} />
+        <InfoTile label="Solar Noon" value={today.solar_noon} />
+        <InfoTile label="Golden Hour" value={today.golden_hour} />
+      </div>
+
+      <p className="text-xs text-left text-base-800 border border-base-300 p-1 m-2 rounded">
+        This data is for your live location of timezone {today.timezone}, for UTC offset {today.utc_offset} as of {today.date}.
+      </p>
+
+      <button className="border border-base-300 rounded px-1.5 text-sm">See Data for whole month</button>
+    </div>
+  );
+}
+
+function Tile({ label, value }) {
+  return (
+    <div className="flex flex-col items-center border border-base-300 rounded-xl bg-base-100">
+      <div className="text-sm font-semibold text-base-800">{label}</div>
+      <div className="text-xs text-base-900">{value}</div>
+    </div>
+  );
+}
+
+function InfoTile({ label, value }) {
+  return (
+    <div className="bg-base-100 p-2 rounded-2xl shadow-md border border-base-300">
+      <p className="text-sm text-gray-500 font-semibold">{label}</p>
+      <span className="text-md font-bold">{value}</span>
+    </div>
+  );
+}
+

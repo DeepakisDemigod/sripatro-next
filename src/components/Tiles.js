@@ -19,6 +19,12 @@ const tiles = [
     tag: "BS",
     href: "/nepali-date-converter",
   },
+{
+    label: "Weather",
+    icon: "🌪️",
+    tag: "AD",
+    href: "/weather",
+  },
 ];
 
 const Tiles = () => {
@@ -50,7 +56,7 @@ const Tiles = () => {
 
   if (loading) {
     return (
-      <div className="">
+      <div className="max-w-3xl mx-auto p-4 ">
         <div className="space-y-2 ">
           {[...Array(1)].map((_, i) => (
             <div
@@ -75,10 +81,10 @@ const Tiles = () => {
   }
 
   return (
-    <div className="text-base-content py-2 mx-3">
+    <div className="text-base-content max-w-3xl  mx-3 ">
       <Slider {...settings}>
         {tiles.map(({ label, icon, tag, href }) => (
-          <div key={href} className="px-1">
+          <div key={href} className="">
             <a
               href={href}
               className="flex items-center justify-between p-2 bg-base-100 border border-base-300 rounded-xl shadow hover:shadow-md transition duration-200 hover:bg-base-50"
