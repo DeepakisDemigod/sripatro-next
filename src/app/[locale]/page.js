@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-/*import Footer from "@/components/Footer.js";
+/*import Footer from "@/components/Footer.js";*/
 import Header from "@/components/Header.js";
-import Patro from "@/components/Patro.js";
+/*import Patro from "@/components/Patro.js";
 import Weather from "@/components/Weather.js";
 import Link from "next/link";
 import Tiles from "@/components/Tiles.js";*/
@@ -12,10 +12,10 @@ export default function Home() {
 
   return (
     <div>
+ <Header />
 
         <Comments currentUserId="1" />
-	  {/*<Header />
-      <div className="w-full">
+	 	  {/* <div className="w-full">
 
       <Tiles />
         <Patro />

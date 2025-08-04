@@ -126,7 +126,7 @@ import { useState } from "react";
 import { Chat, PencilSimple, Trash } from "phosphor-react";
 import { useMemo } from "react";
 import Avatar, { genConfig } from "react-nice-avatar";
-
+import {useSession} from "next-auth/react"
 const MAX_DEPTH = 4;
 
 const Comment = ({
@@ -140,8 +140,9 @@ const Comment = ({
   newCommentRef,
   depth,
 }) => {
+	const {data: session} = useSession();
   const config = useMemo(
-    () => genConfig({ seed: comment.userId || comment.username, sex: "woman" }),
+    () => genConfig({ seed: comment.userId || comment.username }),
     [comment.userId, comment.username]
   );
   const isReplying =
@@ -171,7 +172,7 @@ const Comment = ({
               {...config}
             />
             <div className="text-sm font-semibold text-base-content">
-              {comment.username}
+              {comment.username, session?.user?.email}
             </div>
           </div>
 

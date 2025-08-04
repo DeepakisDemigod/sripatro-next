@@ -71,8 +71,7 @@ const Comments = ({ currentUserId }) => {
   return (
     <div className="max-w-2xl mx-auto mt-8">
       <div className="m-2">
-        <h3>Comments</h3>
-        <div>write comment</div>
+        <h3 className="font-bold">Comments</h3>
       </div>
       <CommentForm submitLabel="write" handleSubmit={addComment} />
 
