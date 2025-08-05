@@ -1,10 +1,10 @@
 import { useTranslations } from "next-intl";
-/*import Footer from "@/components/Footer.js";*/
+import Footer from "@/components/Footer.js";
 import Header from "@/components/Header.js";
-/*import Patro from "@/components/Patro.js";
+import Patro from "@/components/Patro.js";
 import Weather from "@/components/Weather.js";
 import Link from "next/link";
-import Tiles from "@/components/Tiles.js";*/
+import Tiles from "@/components/Tiles.js";
 import Comments from "@/components/Comments/Comments";
 
 export default function Home() {
@@ -12,20 +12,18 @@ export default function Home() {
 
   return (
     <div>
- <Header />
-
-        <Comments currentUserId="1" />
-	 	  {/* <div className="w-full">
-
-      <Tiles />
+      <Header />
+      <div className="w-full">
+        <Tiles />
         <Patro />
         <Weather />
-	  </div>
-       <Link href="/auth/signin">LOGIN</Link>
+      </div>
+      <Link href="/auth/signin">LOGIN</Link>
       <p>{t("title")}</p>
       Monster is Back
       <p>{t("content")}</p>
-      <Footer />*/}
+      <Comments currentUserId="1" />
+      <Footer />
     </div>
   );
 }
