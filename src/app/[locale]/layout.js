@@ -87,7 +87,6 @@ import "./globals.css";
 import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import wrapper
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
-
 const gabarito = Gabarito({
   subsets: ["latin"],
   weight: ["400", "700", "800"],
@@ -95,7 +94,7 @@ const gabarito = Gabarito({
 });
 
 export default async function LocaleLayout({ children, params }) {
-  const { locale } = params;
+  const { locale } = await params;
 
   //export default async function LocaleLayout(props) {
   // const { locale } = await props.params;
@@ -108,7 +107,6 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <html lang={locale}>
-
       <body className={`${gabarito.variable} antialiased`}>
         <SessionWrapper>
           <NextIntlClientProvider locale={locale} messages={messages}>
