@@ -104,7 +104,7 @@ export default function Header() {
     );
 
   return (
-    <header className="bg-base-100 border-b border-base-200 sticky top-0 z-50">
+    <header className="backdrop-blur-sm border-b border-base-200 sticky top-0 z-50">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -113,7 +113,13 @@ export default function Header() {
               className="text-xl font-bold flex items-center gap-2"
             >
               {/* Logo can be added here */}
-              SriPatro
+              <Image
+                src="/logo-with-name.png"
+                alt="logo"
+                className="backdrop-bg-sm rounded-lg p-2 "
+                width={150}
+                height={20}
+              />
             </Link>
           </div>
           <DesktopNav />
@@ -147,22 +153,28 @@ export default function Header() {
       </div>
 
       {/* Mobile Drawer */}
-      <div className="drawer lg:hidden z-40">
+      <div className="drawer backdrop-blur-sm lg:hidden z-40">
         <input
           id="mobile-drawer"
           ref={drawerCheckboxRef}
           type="checkbox"
           className="drawer-toggle"
         />
-        <div className="drawer-content"></div>
+        <div className="drawer-content "></div>
         <div className="drawer-side">
           <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
-          <aside className="menu p-4 w-full min-h-full bg-base-100 text-base-content">
+          <aside className="menu p-4 w-full min-h-full backdrop-blur-sm  text-base-content">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="pl-2 text-lg font-bold">SriPatro</h1>
+              <Image
+                src="/logo-with-name.png"
+                alt="logo"
+                className="bg-white rounded-lg p-2 "
+                width={150}
+                height={20}
+              />
               <label
                 htmlFor="mobile-drawer"
-                className="border border-base-200 bg-base-100 btn btn-sm rounded-md text-base-400"
+                className="border border-base-200  btn btn-sm rounded-md text-base-400"
                 aria-label="Close menu"
               >
                 ✕
@@ -210,7 +222,7 @@ export default function Header() {
                         SignOut
                       </li>
                       <li>
-                        	<Link href="https://sripatro.canny.io/">
+                        <Link href="https://sripatro.canny.io/">
                           Suggest a Feature
                         </Link>
                       </li>

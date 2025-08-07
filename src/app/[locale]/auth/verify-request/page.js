@@ -1,19 +1,27 @@
 // app/auth/verify-request/page.js
-'use client'
+"use client";
 import Link from "next/link";
 import Image from "next/image";
-import {ArrowUpRight} from "phosphor-react"
+import { ArrowUpRight } from "phosphor-react";
 
 export default function VerifyRequestPage() {
   return (
     <main className="min-h-screen bg-base-100 text-base-900 flex items-center justify-center px-4">
       <div className="text-center border border-base-300 p-6 rounded-xl w-full max-w-md bg-base-100">
         {/* Success Icon */}
-	 
-	<div className="flex items-center justify-center gap-1.5 border-b border-base-300 pb-4  "><Image className="rounded-lg" src="/logo.png" alt="logo" width={25} height={25}/><p className="text-xl font-semibold text-base-700">SriPatro</p></div>
-	  <br />
+
+        <div className="flex items-center justify-center gap-1.5 border-b border-base-300 pb-4  ">
+          <Image
+            className="rounded-lg"
+            src="/logo.png"
+            alt="logo"
+            width={25}
+            height={25}
+          />
+          <p className="text-xl font-semibold text-base-700">SriPatro</p>
+        </div>
+        <br />
         <div className="my-2 flex justify-center items-center gap-1">
-        
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="30"
@@ -21,12 +29,7 @@ export default function VerifyRequestPage() {
             viewBox="0 0 154 154"
           >
             <g fill="none" stroke="#22AE73" strokeWidth="2">
-              <circle
-                cx="77"
-                cy="77"
-                r="72"
-                className="animate-draw-circle"
-              />
+              <circle cx="77" cy="77" r="72" className="animate-draw-circle" />
               <circle
                 fill="#22AE73"
                 cx="77"
@@ -42,23 +45,32 @@ export default function VerifyRequestPage() {
               />
             </g>
           </svg>
-<h1 className="text-2xl font-semibold">Magic Link Sent!</h1>
-
+          <h1 className="text-2xl font-semibold">Magic Link Sent!</h1>
         </div>
 
-              <p className="text-sm text-base-800">
-          A sign-in link has been sent to your email. Please click the link to sign in.
+        <p className="text-sm text-base-800">
+          A sign-in link has been sent to your email. Please click the link to
+          sign in.
         </p>
-	  <div className="text-center w-full my-4">
-	  <Link href="https://gmail.google.com"><button className="btn bg-red-600  text-white rounded-lg w-full flex items-center justify-center gap-2  p-1 text-sm font-bold"><span>Open Email Inbox</span><ArrowUpRight size={15}  weight="bold" /></button></Link>
-	  </div>
+        <div className="text-center w-full my-4">
+          <Link href="https://gmail.google.com">
+            <button className="btn bg-red-600  text-white rounded-lg w-full flex items-center justify-center gap-2  p-1 text-sm font-bold">
+              <span>Open Email Inbox</span>
+              <ArrowUpRight size={15} weight="bold" />
+            </button>
+          </Link>
+        </div>
 
         {/* Additional Info */}
         <p className="text-xs text-base-700 border-t border-base-300 pt-2">
           Don’t forget to check your spam folder just in case.
           <br />
           Need help?{" "}
-          <Link href="mailto:deepakthapa1423@gmail.com" className="underline text-blue-600">
+          <Link
+            href="mailto:deepakthapa1423@gmail.com"
+            target="_blank"
+            className="underline text-blue-600"
+          >
             Email me
           </Link>
         </p>
@@ -93,4 +105,3 @@ export default function VerifyRequestPage() {
     </main>
   );
 }
-

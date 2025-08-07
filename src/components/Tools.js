@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Tools = () => {
   return (
-    <div className=" text-white text-left">
+    <div className=" text-base-900 text-left">
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-4">Jyotish</h3>
         <ol className="text-sm list-none pl-0 border-l border-l-8 border-l-red-600">
