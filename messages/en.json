@@ -3,6 +3,26 @@
     "title": "hello", 
     "content": "welcome to site"
   },
+    "ShubhSaita": {
+      "Amrit": "Amrit",
+      "Shubh": "Shubh",
+      "Labh": "Labh",
+      "Char": "Char",
+      "Udveg": "Udveg",
+     "Rog": "Rog",
+     "Kaal": "Kaal"
+    },
+    "days": {
+    "Slot": "Slot",
+    "Day" : "day",
+    "Sunday": "Sunday",
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday"
+  } ,
   "NepaliDateConverter": {
    "Back": "Back",
    "Nepali Date": "Nepali Date",

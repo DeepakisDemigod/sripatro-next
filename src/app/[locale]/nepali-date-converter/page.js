@@ -193,7 +193,7 @@ export default function DateConverter() {
       <link rel="canonical" href="https://sripatro.com/date-converter" />
     </Head>
     <Header />
-    <div className='max-w-lg mx-auto my-1 p-6 pt-4 rounded-2xl bg-base-100 text-base-800'>
+    <div className='max-w-lg mx-auto my-1 p-4 pt-4 rounded-2xl bg-base-100 text-base-800'>
       <Link
         href='/'
         className='hover:underline'
@@ -245,7 +245,7 @@ export default function DateConverter() {
       </div>
 
       <br />
-      <h2 className='text-3xl font-bold mb-6'>🗓 {t('Date Converter')}</h2>
+	  {/* <h2 className='text-3xl font-bold mb-6'>🗓 {t('Date Converter')}</h2>*/}
       <div className='max-w-lg mx-auto'>
         {/* AD to BS */}
         <div className='mb-8'>

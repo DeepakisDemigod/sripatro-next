@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 const choghadiyaData = {
   day: [
@@ -46,21 +47,24 @@ function secondsTo12HrTime(totalSeconds) {
 }
 
 // Styling logic
-const auspicious = ["Shubh", "Labh", "Amrit"];
+const auspicious = ["Amrit"];
+const good = ["Shubh", "Labh"];
 const neutral = ["Char"];
-const inauspicious = ["Kaal", "Rog", "Udveg"];
+const bad = ["Rog", "Udveg"];
+const inauspicious = ["Kaal"];
 
 const getCellClass = (value) => {
-  if (auspicious.includes(value))
-    return "bg-[#00800060] text-green-900 hover:bg-[#00800098] hover:text-white";
-  if (neutral.includes(value))
-    return "bg-[#80808060] text-base-500 hover:bg-[#80808080] hover:text-white";
-  if (inauspicious.includes(value))
-    return "bg-[#ff000040] text-red-900 hover:bg-[#ff000080] hover:text-white";
+  if (auspicious.includes(value)) return "bg-[#008000] text-white";
+  if (good.includes(value)) return "bg-[#00800050] text-green-900";
+  if (neutral.includes(value)) return "bg-[#80808060] text-base-500";
+  if (bad.includes(value)) return "bg-[#ff000050] text-red-900";
+  if (inauspicious.includes(value)) return "bg-[#ff0000] text-white";
   return "";
 };
 
 export default function Choghadiya() {
+  const t = useTranslations("ShubhSaita");
+  const dayst = useTranslations("days");
   const [daySegments, setDaySegments] = useState([]);
   const [nightSegments, setNightSegments] = useState([]);
   const [error, setError] = useState(null);
@@ -182,57 +186,60 @@ export default function Choghadiya() {
   ];
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className=" max-w-3xl mx-auto">
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-      <div className="flex justify-around">
-        <div>
+      <div className="carousel space-x-2 w-full overflow-x-auto snap-x snap-mandatory">
+        <div className=" carousel-item flex flex-col p-2 w-70 bg-base-100 rounded-lg shadow snap-center ">
           <h2 className="text-xl font-bold mb-4 text-center">
             आज दिउँसोको चौघडिया
           </h2>
           <table className="table w-full border-collapse mb-8">
             <thead>
               <tr>
-                <th className="border p-2">समय</th>
+                <th className="border p-2">बजे देखी</th>
+                <th className="border p-2">बजे सम्म</th>
+
                 <th className="border p-2">सईत</th>
               </tr>
             </thead>
             <tbody>
               {daySegments.map((seg, i) => (
                 <tr key={`day-${i}`} className="text-center">
-                  <td className="border p-2">
-                    {seg.start} - {seg.end}
-                  </td>
+                  <td className="border p-2">{seg.start}</td>
+                  <td className="border p-2">{seg.end}</td>
+
                   <td
                     className={`border p-2 font-semibold ${getCellClass(seg.name)}`}
                   >
-                    {seg.name}
+                    {t(`${seg.name}`)}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div>
+        <div  className=" carousel-item flex flex-col p-2 w-70 bg-base-100 rounded-lg shadow snap-center ">
           <h2 className="text-xl font-bold mb-4 text-center">
             आज रातको चौघडिया
           </h2>
           <table className="table w-full border-collapse">
             <thead>
               <tr>
-                <th className="border p-2">समय</th>
+                <th className="border p-2">बजे देखी</th>
+                <th className="border p-2">बजे सम्म</th>
+
                 <th className="border p-2">सईत</th>
               </tr>
             </thead>
             <tbody>
               {nightSegments.map((seg, i) => (
                 <tr key={`night-${i}`} className="text-center">
-                  <td className="border p-2">
-                    {seg.start} - {seg.end}
-                  </td>
+                  <td className="border p-2">{seg.start}</td>
+                  <td className="border p-2">{seg.end}</td>
                   <td
                     className={`border p-2 font-semibold ${getCellClass(seg.name)}`}
                   >
-                    {seg.name}
+                    {t(`${seg.name}`)}{" "}
                   </td>
                 </tr>
               ))}
@@ -240,13 +247,43 @@ export default function Choghadiya() {
           </table>
         </div>
       </div>
+      <div className="border border-red-600 bg-[#ff000010]  p-4 rounded-lg ">
+        <h3 className="font-bold text-lg text-red-800">Legend</h3>
+        <div className="flex gap-2 ">
+          {" "}
+          <div className="bg-[#008000] rounded w-6 h-6 "></div>
+          <p className="text-red-800">Auspicious (Very favorable time, best for important activites)</p>
+        </div>
+        <div className="flex gap-2 ">
+          {" "}
+          <div className="bg-[#00800050] rounded w-6 h-6 "></div>
+          <p className="text-red-800">Good (Positive and beneficial, safe for most tasks)</p>
+        </div>
+        <div className="flex gap-2 ">
+          {" "}
+          <div className="bg-gray-300 rounded w-6 h-6 "></div>
+          <p className="text-red-800">Neutral (Niether lucky nor unlucky, okay for routine work)</p>
+        </div>
+        <div className="flex gap-2 ">
+          {" "}
+          <div className="bg-[#ff000050] rounded w-6 h-6"></div>
+          <p className="text-red-800">Bad (Unfavorable, avoid for significant actions)</p>
+        </div>
+        <div className="flex gap-2 ">
+          {" "}
+          <div className="bg-[#ff0000] rounded w-6 h-6"></div>
+          <p className="text-red-800">Inauspicious (very unlucky, avoid starting anything important)</p>
+        </div>
+      </div>
 
-      <div className="overflow-x-auto p-4">
+      <div className="overflow-x-auto">
         <h2 className="text-xl font-semibold mb-2">Choghadiya Table (Day)</h2>
         <table className="table-auto border-collapse border border-base-300 w-full mb-6">
           <thead>
             <tr className="bg-base-200">
-              <th className="border border-base-300 px-4 py-2">Day</th>
+              <th className="border border-base-300 px-4 py-2">
+                {dayst("Day")}
+              </th>
               {[...Array(8)].map((_, i) => (
                 <th key={i} className="border border-base-300 px-4 py-2">
                   Slot {i + 1}
@@ -258,14 +295,14 @@ export default function Choghadiya() {
             {choghadiyaData.day.map((row, i) => (
               <tr key={i}>
                 <td className="border border-base-300 px-4 py-2 font-medium">
-                  {days[i]}
+                  {dayst(`${days[i]}`)}
                 </td>
                 {row.map((value, j) => (
                   <td
                     key={j}
                     className={`border border-base-300 px-4 py-2 text-center ${getCellClass(value)}`}
                   >
-                    {value}
+                    {t(`${value}`)}
                   </td>
                 ))}
               </tr>
@@ -277,10 +314,12 @@ export default function Choghadiya() {
         <table className="table-auto border-collapse border border-base-300 w-full">
           <thead>
             <tr className="bg-base-200">
-              <th className="border border-base-300 px-4 py-2">Day</th>
+              <th className="border border-base-300 px-4 py-2">
+                {dayst("Day")}
+              </th>
               {[...Array(8)].map((_, i) => (
                 <th key={i} className="border border-base-300 px-4 py-2">
-                  Slot {i + 1}
+                  {dayst("Slot")} {i + 1}
                 </th>
               ))}
             </tr>
@@ -289,14 +328,14 @@ export default function Choghadiya() {
             {choghadiyaData.night.map((row, i) => (
               <tr key={i}>
                 <td className="border border-base-300 px-4 py-2 font-medium">
-                  {days[i]}
+                  {dayst(`${days[i]}`)}{" "}
                 </td>
                 {row.map((value, j) => (
                   <td
                     key={j}
                     className={`border border-base-300 px-4 py-2 text-center ${getCellClass(value)}`}
                   >
-                    {value}
+                    {t(`${value}`)}
                   </td>
                 ))}
               </tr>

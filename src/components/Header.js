@@ -11,14 +11,11 @@ const drawerItems = [
     label: "🪐 Jyotish",
     slug: "jyotish",
     subItems: [
-      { label: "🧾 Kundali", href: "/jyotish/kundali" },
-      { label: "❤️ Matchmaking", href: "/jyotish/matchmaking" },
-      { label: "⏰ Muhurta", href: "/jyotish/muhurta" },
+      { label: "Panchang (AD)", href: "/" },
+      { label: "Panchang (BS)", href: "/" },
+      { label: "Kundali", href: "/" },
+      { label: "Nepali Cheena", href: "/"},
     ],
-  },
-  {
-    label: "🕉️ Rituals",
-    href: "/rituals",
   },
   {
     label: "Bug Report",
@@ -63,7 +60,7 @@ export default function Header() {
             </label>
             <ul
               tabIndex={0}
-              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+              className="dropdown-content menu p-2 shadow rounded-box w-52"
             >
               {item.subItems.map((sub, subIdx) => (
                 <li key={subIdx}>
@@ -113,13 +110,16 @@ export default function Header() {
               className="text-xl font-bold flex items-center gap-2"
             >
               {/* Logo can be added here */}
+	  <div className="flex items-center gap-2" >
               <Image
-                src="/logo-with-name.png"
+                src="/logo.png"
                 alt="logo"
-                className="backdrop-bg-sm rounded-lg p-2 "
-                width={150}
-                height={20}
+                className="rounded-lg"
+                width={30}
+                height={30}
               />
+<p className="text-base-900 font-extrabold text-2xl">SriPatro</p>
+	  </div>
             </Link>
           </div>
           <DesktopNav />
@@ -130,12 +130,12 @@ export default function Header() {
           <div className="lg:hidden flex items-center">
             <label
               htmlFor="mobile-drawer"
-              className="border border-base-300 bg-base-100 btn btn-sm rounded-md text-base-400"
+              className="backdrop-blur-bg  rounded-md text-base-400"
               aria-label="Open menu"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-8 w-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -165,16 +165,19 @@ export default function Header() {
           <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
           <aside className="menu p-4 w-full min-h-full backdrop-blur-sm  text-base-content">
             <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2" >
               <Image
-                src="/logo-with-name.png"
+                src="/logo.png"
                 alt="logo"
-                className="bg-white rounded-lg p-2 "
-                width={150}
-                height={20}
+                className="rounded-lg"
+                width={30}
+                height={30}
               />
+<p className="text-base-900 font-extrabold text-2xl">SriPatro</p>
+	  </div>
               <label
                 htmlFor="mobile-drawer"
-                className="border border-base-200  btn btn-sm rounded-md text-base-400"
+                className="border border-base-200 backdrop-blur-sm text-2xl font-medium rounded-md text-base-400"
                 aria-label="Close menu"
               >
                 ✕
@@ -231,8 +234,8 @@ export default function Header() {
                 </div>
               ) : (
                 <Link href="/auth/signin">
-                  <button className="btn bg-red-600  text-md font-medium text-white w-full rounded-lg">
-                    <span className="p-0 m-0">SIGN IN WITH EMAIL</span>
+                  <button className="btn bg-red-700  text-base font-bold text-white w-full rounded-lg">
+                    <span className="p-0 m-0">Sign In with Email</span>
                   </button>
                 </Link>
               )}

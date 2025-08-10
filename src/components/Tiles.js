@@ -13,6 +13,7 @@ const tiles = [
   { label: "Kundali", icon: "🪐", tag: "AD", href: "/kundali" },
   { label: "Horoscope", icon: "🐏", tag: "AD", href: "/horoscope" },
   { label: "Cheena", icon: "🧧", tag: "AD", href: "/nepali-cheena" },
+{ label: "Shubh Saita", icon: "🪔", tag: "AD", href: "/shubh-saita" },
   {
     label: "Date Converter",
     icon: "🗓",
@@ -56,7 +57,7 @@ const Tiles = () => {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto p-4 ">
+      <div className="max-w-3xl mx-auto my-1  p-4 ">
         <div className="space-y-2 ">
           {[...Array(1)].map((_, i) => (
             <div

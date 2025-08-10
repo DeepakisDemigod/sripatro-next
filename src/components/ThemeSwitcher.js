@@ -26,18 +26,24 @@ export default function ThemeSwitcher() {
   return (
     <button
       onClick={toggleTheme}
-      className='btn btn-sm text-base-800 flex items-center gap-4 mx-[-12px] mt-[-5px]'
+      className='btn border border-base-300 p-3 rounded text-base-800 bg-base-100 flex items-center gap-2 h-100'
     >
       {theme === 'light' ? (
+	      <>
         <Moon
           weight='bold'
-          size={22}
+          size={20}
         />
+	      Dark
+	      </>
       ) : (
+	      <>
         <Sun
           weight='bold'
-          size={22}
+          size={20}
         />
+	      Light 
+	      </>
       )}
     </button>
   );

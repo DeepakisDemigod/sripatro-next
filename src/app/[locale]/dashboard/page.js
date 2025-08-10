@@ -13,24 +13,24 @@ import Comments from "@/components/Comments/Comments";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  useEffect(() => {
+	{/* useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
     }
-  }, [status]);
+  }, [status]);*/}
 
   // seed for avatar generation
   const config = genConfig({ seed: session?.user?.email });
 
   const router = useRouter();
 
-  if (status === "loading") {
+	{/*if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-screen">
         <span className="loading loading-spinner loading-lg text-red-600"></span>
       </div>
     );
-  }
+  }*/}
 
   return (
     <div className=" h-screen text-white">

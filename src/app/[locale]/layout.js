@@ -86,6 +86,8 @@ import { getMessages } from "next-intl/server";
 import "./globals.css";
 import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import wrapper
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import LocaleSwitcher from "@/components/LocaleSwitcher"
+
 
 const gabarito = Gabarito({
   subsets: ["latin"],
@@ -110,7 +112,10 @@ export default async function LocaleLayout({ children, params }) {
       <body className={`${gabarito.variable} antialiased`}>
         <SessionWrapper>
           <NextIntlClientProvider locale={locale} messages={messages}>
+	  <div className="flex ">
             <ThemeSwitcher />
+	  <LocaleSwitcher />
+	  </div>
             {children}
           </NextIntlClientProvider>
         </SessionWrapper>
@@ -118,6 +123,14 @@ export default async function LocaleLayout({ children, params }) {
     </html>
   );
 }
+
+
+
+
+
+
+
+
 
 /*
 import { NextIntlClientProvider, hasLocale } from "next-intl";

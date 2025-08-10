@@ -3,6 +3,27 @@
     "title": "namaste",
     "content": "site ma swagat"
   },
+"ShubhSaita": {
+  "Amrit": "अमृत",
+  "Shubh": "शुभ",
+  "Labh": "लाभ",
+  "Char": "चर",
+  "Udveg": "उद्वेग",
+  "Rog": "रोग",
+  "Kaal": "काल"
+},
+"days": {
+	"Slot": "खण्ड",
+"Day" : "बार",
+    "Sunday": "आइतबार",
+    "Monday": "सोमबार",
+    "Tuesday": "मंगलबार",
+    "Wednesday": "बुधबार",
+    "Thursday": "बिहीबार",
+    "Friday": "शुक्रबार",
+    "Saturday": "शनिबार"
+  },
+
   "NepaliDateConverter": {
    "Back": "पछाडि",
    "Nepali Date": "नेपाली मिति",

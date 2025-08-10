@@ -71,7 +71,7 @@ export default function LivePanchangCard() {
   const moonSrc = `moon/${pakshaDir}/${tithiName}.png`;
 
   return (
-    <div className="max-w-3xl mx-auto bg-base-100 rounded-2xl border border-base-300  overflow-hidden p-4 mx-4">
+    <div className="max-w-3xl m-3 bg-base-100 rounded-xl border border-base-300  overflow-hidden p-3">
       {/* header */}
 
       <div className="flex justify-between ">
@@ -123,7 +123,7 @@ export default function LivePanchangCard() {
 
       {/* panchang details */}
 
-      <div className="p-4 space-y-1 text-sm">
+      <div className="py-1 space-y-1 text-sm">
         <div>
           <strong>Tithi:</strong> {tithiName}, {panchang.Paksha.name_en_IN}{" "}
           Paksha
