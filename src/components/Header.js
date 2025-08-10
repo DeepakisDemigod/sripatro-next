@@ -14,7 +14,7 @@ const drawerItems = [
       { label: "Panchang (AD)", href: "/" },
       { label: "Panchang (BS)", href: "/" },
       { label: "Kundali", href: "/" },
-      { label: "Nepali Cheena", href: "/"},
+      { label: "Nepali Cheena", href: "/" },
     ],
   },
   {
@@ -106,20 +106,22 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link
-              href="/"
+              href="/home"
               className="text-xl font-bold flex items-center gap-2"
             >
               {/* Logo can be added here */}
-	  <div className="flex items-center gap-2" >
-              <Image
-                src="/logo.png"
-                alt="logo"
-                className="rounded-lg"
-                width={30}
-                height={30}
-              />
-<p className="text-base-900 font-extrabold text-2xl">SriPatro</p>
-	  </div>
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/logo.png"
+                  alt="logo"
+                  className="rounded-lg"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-base-900 font-extrabold text-2xl">
+                  SriPatro
+                </p>
+              </div>
             </Link>
           </div>
           <DesktopNav />
@@ -165,16 +167,18 @@ export default function Header() {
           <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
           <aside className="menu p-4 w-full min-h-full backdrop-blur-sm  text-base-content">
             <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2" >
-              <Image
-                src="/logo.png"
-                alt="logo"
-                className="rounded-lg"
-                width={30}
-                height={30}
-              />
-<p className="text-base-900 font-extrabold text-2xl">SriPatro</p>
-	  </div>
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/logo.png"
+                  alt="logo"
+                  className="rounded-lg"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-base-900 font-extrabold text-2xl">
+                  SriPatro
+                </p>
+              </div>
               <label
                 htmlFor="mobile-drawer"
                 className="border border-base-200 backdrop-blur-sm text-2xl font-medium rounded-md text-base-400"
