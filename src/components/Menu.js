@@ -1,0 +1,89 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { CaretRight } from "phosphor-react";
+
+const panchang = [
+  { label: "Panchang", icon: "🇳🇵", tag: "BS", href: "/nepalitoenglish", desc: "Panchang from Nepali Date" },
+  { label: "Panchang", icon: "🇮🇳", tag: "AD", href: "/birthpanchang", desc: "Panchang from English Date" },
+];
+
+const jyotish = [
+  { label: "Kundali", icon: "🪐", tag: "AD", href: "/kundali", desc: "Generate Kundali by birth details" },
+  { label: "Cheena", icon: "🧧", tag: "AD", href: "/nepali-cheena", desc: "Nepali Cheena astrology chart" },
+];
+
+const daily = [
+  { label: "Shubh Saita", icon: "🪔", tag: "AD", href: "/shubh-saita", desc: "Find auspicious timings for rituals" },
+  { label: "Horoscope", icon: "🐏", tag: "AD", href: "/horoscope", desc: "Daily Horoscope for all zodiac signs" },
+];
+
+const utilities = [
+  { label: "Date Converter", icon: "🗓", tag: "BS", href: "/nepali-date-converter", desc: "Convert between Nepali (BS) and English (AD) dates" },
+  { label: "Weather", icon: "🌪️", tag: "AD", href: "/weather", desc: "Check today’s local weather" },
+];
+
+const personalise = [
+  { label: "Settings", icon: "⚙️", tag: "AD", href: "/settings", desc: "Personalize your preferences" },
+];
+
+const Section = ({ title, items }) => (
+  <div className="mb-6">
+    <h3 className="px-4 pb-2 text-xs font-semibold text-base-content/70 uppercase tracking-wide">{title}</h3>
+    <div className="bg-base-100 rounded-2xl shadow-sm divide-y divide-base-200">
+      {items.map(({ label, icon, href, desc }) => (
+        <a
+          key={href}
+          href={href}
+          className="flex items-center justify-between px-4 py-3 hover:bg-base-200 transition"
+        >
+          <div className="flex items-center gap-4">
+            <div className="text-2xl">{icon}</div>
+            <div>
+              <div className="text-sm font-medium text-base-content">{label}</div>
+              <div className="text-xs text-base-content/70">{desc}</div>
+            </div>
+          </div>
+          <CaretRight className="text-base-content/60" />
+        </a>
+      ))}
+    </div>
+  </div>
+);
+
+const Menu = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto my-4 p-4">
+        <div className="space-y-3">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="h-14 bg-base-200 animate-pulse rounded-xl"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-base-content max-w-3xl mx-auto my-4 px-2">
+      <Section title="Panchang" items={panchang} />
+      <Section title="Jyotish" items={jyotish} />
+      <Section title="Daily" items={daily} />
+      <Section title="Utilities" items={utilities} />
+      <Section title="Personalise" items={personalise} />
+    </div>
+  );
+};
+
+export default Menu;
+
