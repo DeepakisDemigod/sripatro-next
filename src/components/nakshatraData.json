@@ -1,0 +1,272 @@
+[
+  {
+    "name": "Ashwini",
+    "first syllables": "Chu, Che, Cho, La",
+    "Diety": "Aswini Kumaras",
+    "ganam": "Deva",
+    "animal sign": "Male Horse",
+    "best direction": "East",
+    "Color": "Blood Red",
+    "Symbol": "Horse Head"
+  },
+  {
+    "name": "Dwija",
+    "first syllables": "Lee, Lu, Le, Lo",
+    "Diety": "Yama",
+    "ganam": "Manushya",
+    "animal sign": "Female Elephant",
+    "best direction": "South",
+    "Color": "Crimson",
+    "Symbol": "Yoni (Female Reproductive Organ)"
+  },
+  {
+    "name": "Krittika",
+    "first syllables": "A, Ee, U, Ea",
+    "Diety": "Agni",
+    "ganam": "Rakshasa",
+    "animal sign": "Female Goat",
+    "best direction": "East",
+    "Color": "White",
+    "Symbol": "Axe or Razor"
+  },
+  {
+    "name": "Rohini",
+    "first syllables": "O, Ba, Bee, Bu",
+    "Diety": "Brahma",
+    "ganam": "Manushya",
+    "animal sign": "Serpent",
+    "best direction": "West",
+    "Color": "White",
+    "Symbol": "Chariot or Cart"
+  },
+  {
+    "name": "Mrigashirsha",
+    "first syllables": "Ve, Vo, Ka, Kee",
+    "Diety": "Soma (Chandra)",
+    "ganam": "Deva",
+    "animal sign": "Female Serpent",
+    "best direction": "South",
+    "Color": "Silver",
+    "Symbol": "Deer's Head"
+  },
+  {
+    "name": "Ardra",
+    "first syllables": "Ku, Gha, Ang, Chha",
+    "Diety": "Rudra",
+    "ganam": "Manushya",
+    "animal sign": "Female Canine",
+    "best direction": "North",
+    "Color": "Green",
+    "Symbol": "Teardrop or Diamond"
+  },
+  {
+    "name": "Punarvasu",
+    "first syllables": "Ke, Ko, Ha, Hee",
+    "Diety": "Aditi",
+    "ganam": "Deva",
+    "animal sign": "Female Cat",
+    "best direction": "East",
+    "Color": "Yellow",
+    "Symbol": "Bow and Arrow"
+  },
+  {
+    "name": "Pushya",
+    "first syllables": "Hu, He, Ho, Da",
+    "Diety": "Brihaspati",
+    "ganam": "Deva",
+    "animal sign": "Male Goat",
+    "best direction": "West",
+    "Color": "Black",
+    "Symbol": "Cow's Udder or Circle"
+  },
+  {
+    "name": "Ashlesha",
+    "first syllables": "Dee, Du, De, Do",
+    "Diety": "Sarpa (Naga)",
+    "ganam": "Rakshasa",
+    "animal sign": "Male Cat",
+    "best direction": "South",
+    "Color": "Red",
+    "Symbol": "Coiled Serpent"
+  },
+  {
+    "name": "Magha",
+    "first syllables": "Ma, Mee, Mu, Me",
+    "Diety": "Pitr (Fathers)",
+    "ganam": "Rakshasa",
+    "animal sign": "Male Rat",
+    "best direction": "West",
+    "Color": "Purple",
+    "Symbol": "Royal Throne"
+  },
+  {
+    "name": "Purva Phalguni",
+    "first syllables": "Mo, Ta, Tee, Tu",
+    "Diety": "Bhaga",
+    "ganam": "Manushya",
+    "animal sign": "Female Rat",
+    "best direction": "East",
+    "Color": "Light Brown",
+    "Symbol": "Front Legs of a Bed or Hammock"
+  },
+  {
+    "name": "Uttara Phalguni",
+    "first syllables": "Te, To, Pa, Pee",
+    "Diety": "Aryaman",
+    "ganam": "Manushya",
+    "animal sign": "Male Cow",
+    "best direction": "South",
+    "Color": "Blue",
+    "Symbol": "Back Legs of a Bed"
+  },
+  {
+    "name": "Hasta",
+    "first syllables": "Pu, Sha, Na, Tha",
+    "Diety": "Savitar",
+    "ganam": "Deva",
+    "animal sign": "Female Buffalo",
+    "best direction": "West",
+    "Color": "Green",
+    "Symbol": "Hand or Fist"
+  },
+  {
+    "name": "Chitra",
+    "first syllables": "Pe, Po, Ra, Ree",
+    "Diety": "Tvashtar (Vishwakarma)",
+    "ganam": "Rakshasa",
+    "animal sign": "Female Buffalo",
+    "best direction": "North",
+    "Color": "Black",
+    "Symbol": "Bright Jewel or Pearl"
+  },
+  {
+    "name": "Swati",
+    "first syllables": "Ru, Re, Ro, Ta",
+    "Diety": "Vayu",
+    "ganam": "Deva",
+    "animal sign": "Male Buffalo",
+    "best direction": "East",
+    "Color": "Copper",
+    "Symbol": "Sword or Blade of Grass Swaying in the Wind"
+  },
+  {
+    "name": "Vishakha",
+    "first syllables": "Ti, Tu, Te, To",
+    "Diety": "Indragni",
+    "ganam": "Rakshasa",
+    "animal sign": "Male Tiger",
+    "best direction": "South",
+    "Color": "Golden",
+    "Symbol": "Potter's Wheel or Triumphal Arch"
+  },
+  {
+    "name": "Anuradha",
+    "first syllables": "Na, Nee, Nu, Ne",
+    "Diety": "Mitra",
+    "ganam": "Deva",
+    "animal sign": "Female Deer",
+    "best direction": "West",
+    "Color": "Red",
+    "Symbol": "Triumphal Arch or Lotus"
+  },
+  {
+    "name": "Jyeshtha",
+    "first syllables": "No, Ya, Yee, Yu",
+    "Diety": "Indra",
+    "ganam": "Rakshasa",
+    "animal sign": "Male Deer",
+    "best direction": "North",
+    "Color": "Green",
+    "Symbol": "Circular Amulet or Umbrella"
+  },
+  {
+    "name": "Mula",
+    "first syllables": "Ye, Yo, Ba, Bee",
+    "Diety": "Nirriti (Alakshmi)",
+    "ganam": "Rakshasa",
+    "animal sign": "Male Dog",
+    "best direction": "East",
+    "Color": "Brown",
+    "Symbol": "Bunch of Roots Tied Together"
+  },
+  {
+    "name": "Purva Ashadha",
+    "first syllables": "Bhu, Dha, Pha, Dha",
+    "Diety": "Apah (Water)",
+    "ganam": "Manushya",
+    "animal sign": "Male Monkey",
+    "best direction": "South",
+    "Color": "Black",
+    "Symbol": "Elephant Tusk or Winnowing Basket"
+  },
+  {
+    "name": "Uttara Ashadha",
+    "first syllables": "Bhe, Bo, Ja, Jee",
+    "Diety": "Vishvadevas",
+    "ganam": "Manushya",
+    "animal sign": "Male Mongoose",
+    "best direction": "West",
+    "Color": "Purple",
+    "Symbol": "Small Bed or Plank of Wood"
+  },
+  {
+    "name": "Sravana",
+    "first syllables": "Khi, Khu, Khe, Kho",
+    "Diety": "Vishnu",
+    "ganam": "Deva",
+    "animal sign": "Female Monkey",
+    "best direction": "North",
+    "Color": "Blue",
+    "Symbol": "Three Footprints or Ear"
+  },
+  {
+    "name": "Dhanishta",
+    "first syllables": "Ga, Gee, Gu, Ge",
+    "Diety": "Vasus",
+    "ganam": "Rakshasa",
+    "animal sign": "Female Lion",
+    "best direction": "East",
+    "Color": "Silver",
+    "Symbol": "Drum or Flute"
+  },
+  {
+    "name": "Shatabhisha",
+    "first syllables": "Go, Sa, See, Su",
+    "Diety": "Varuna",
+    "ganam": "Rakshasa",
+    "animal sign": "Male Horse",
+    "best direction": "South",
+    "Color": "Green",
+    "Symbol": "Empty Circle or Hundred Physicians"
+  },
+  {
+    "name": "Purva Bhadrapada",
+    "first syllables": "Se, So, Da, Dee",
+    "Diety": "Aja Ekapada",
+    "ganam": "Manushya",
+    "animal sign": "Male Lion",
+    "best direction": "West",
+    "Color": "Red",
+    "Symbol": "Two Front Legs of a Funeral Cot or a Man with Two Faces"
+  },
+  {
+    "name": "Uttara Bhadrapada",
+    "first syllables": "Du, Tha, Jha, Na",
+    "Diety": "Ahirbudhnya",
+    "ganam": "Manushya",
+    "animal sign": "Female Cow",
+    "best direction": "North",
+    "Color": "Violet",
+    "Symbol": "Twins or Back Legs of a Funeral Cot"
+  },
+  {
+    "name": "Rebati",
+    "first syllables": "De, Do, Cha, Chee",
+    "Diety": "Pushan",
+    "ganam": "Deva",
+    "animal sign": "Female Elephant",
+    "best direction": "East",
+    "Color": "Yellow",
+    "Symbol": "Drum or Fish"
+  }
+]

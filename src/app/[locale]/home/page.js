@@ -7,6 +7,7 @@ import Patro from "@/components/Patro.js";
 import Tiles from "@/components/Tiles.js";
 import Comments from "@/components/Comments/Comments";
 import Menu from "@/components/Menu";
+
 import HoroscopeForm from "@/components/Horoscope/Horoscope";
 
 export default function Dashboard() {
@@ -24,7 +25,8 @@ export default function Dashboard() {
       <div className="w-full">
         <Tiles />
 	  {/* <HoroscopeForm />*/}
-        <Patro />
+
+	  <Patro />
 
         <Menu />
       </div>

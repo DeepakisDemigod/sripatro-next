@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   return (
     <div className=" h-screen text-white">
-      <div className="flex flex-col items-center py-4 bg-[linear-gradient(180deg,_rgba(0,0,0,1)_0%,_rgba(255,0,0,1)_0%,_rgba(3,0,0,1)_100%)]">
+      <div className="flex flex-col items-center py-4">
         <Avatar
           className="rounded-full"
           style={{ width: "100px", height: "100px" }}

@@ -193,172 +193,103 @@ export default function DateConverter() {
       <link rel="canonical" href="https://sripatro.com/date-converter" />
     </Head>
     <Header />
-    <div className='max-w-lg mx-auto my-1 p-4 pt-4 rounded-2xl bg-base-100 text-base-800'>
-      <Link
-        href='/'
-        className='hover:underline'
-      >
-        <div className='breadcrumbs border border-2 border-base-300 rounded pl-2 text-sm hover:bg-base-200'>
-          <ul>
-            <li className='hover:border'>
-              <CaretLeft size={17} weight="bold" /> 
-	  <span>{t('Back')}</span>
-            </li>
-          </ul>
-        </div>
-      </Link>
-	  {/*
-      <div className='mt-2 pt-2 px-2 flex flex-col justify-between bg-base-100 rounded-md border border-2 border-base-300 border-t-red-500'>
-        <div>
-          <h3 className='flex items-center gap-1 font-bold text-lg'>
-            <span>Daily Panchang</span>
-          </h3>
-          <p className='text-xs px-.5'>
-            Get Daily Panchang with Indian Date (AD) Anno Domini and Nepali Date
-            (BS) bikram sambat date and Many more infomation for the day.
-          </p>
-        </div>
-        <div>
-          <div className=''>
-            <a
-              href='/nepalitoenglish'
-              className='my-2 border border-2 border-base-300 flex justify-between bg-base-900 items-center gap-2 text-base-800 rounded-md shadow-sm transition pr-2'
-            >
-              <span className='text-2xl'>
-                🇳🇵
-                <span className='text-sm'>{t('Nepali Date')}</span>
-              </span>
-              <ArrowUpRight weight='bold' />
-            </a>
-            <a
-              href='/birthpanchang'
-              className='my-2 border border-2 border-base-300 flex justify-between bg-base-900 items-center gap-2 text-base-800 rounded-md shadow-sm transition pr-2'
-            >
-              <span className='text-xl pl-1'>
-                🇮🇳
-                <span className='text-sm'> {t('Indian Date')}</span>
-              </span>
-              <ArrowUpRight weight='bold' />
-            </a>
-          </div>
-        </div>
-      </div>*/}
-
-      <br />
-	  {/* <h2 className='text-3xl font-bold mb-6'>🗓 {t('Date Converter')}</h2>*/}
-      <div className='max-w-lg mx-auto'>
-        {/* AD to BS */}
-        <div className='mb-8'>
-          <h3 className='text-lg font-semibold mb-2'>
-            🇮🇳 {t('Indian Date')} <span className='text-2xl font-bold'>→</span>{' '}
-            🇳🇵 {t('Nepali Date')}
-          </h3>
-          <input
-            type='date'
-            value={adDate}
-            onChange={e => {
-              setAdDate(e.target.value);
-              handleAdToBs(e.target.value);
-            }}
-            className='input input-bordered w-full text-lg'
-          />
-          {convertedToBs && (
-            <div className='mt-3 p-4 bg-base-300 text-lg space-y-1'>
-              <div>
-                <span className='text-xl text-base-400'>{convertedToBs}</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className='divider'>OR</div>
-
-        {/* BS to AD */}
-        <div>
-          <h3 className='text-lg font-semibold mb-2'>
-            🇳🇵 {t('Nepali Date')} <span className='text-2xl font-bold'>→</span>{' '}
-            🇮🇳 {t('Indian Date')}
-          </h3>
-          <div className='grid grid-cols-3 gap-2'>
-            {/* BS Year */}
-            <select
-              value={bsDate.year}
-              onChange={e => {
-                const updated = { ...bsDate, year: e.target.value };
-                setBsDate(updated);
-                handleBsToAd(updated.year, updated.month, updated.date);
-              }}
-              className='select select-bordered text-lg'
-            >
-              {years.map(y => (
-                <option
-                  key={y}
-                  value={y}
-                >
-                  {y}
-                </option>
-              ))}
-            </select>
-
-            {/* BS Month */}
-            <select
-              value={bsDate.month}
-              onChange={e => {
-                const updated = { ...bsDate, month: e.target.value };
-                setBsDate(updated);
-                handleBsToAd(updated.year, updated.month, updated.date);
-              }}
-              className='select select-bordered text-lg'
-            >
-              {nepaliMonths.map((name, idx) => (
-                <option
-                  key={idx}
-                  value={idx + 1}
-                >
-                  {name}
-                </option>
-              ))}
-            </select>
-
-            {/* BS Date */}
-            <select
-              value={bsDate.date}
-              onChange={e => {
-                const updated = { ...bsDate, date: e.target.value };
-                setBsDate(updated);
-                handleBsToAd(updated.year, updated.month, updated.date);
-              }}
-              className='select select-bordered text-lg'
-            >
-              {Array.from({ length: maxBsDays }, (_, i) => i + 1).map(day => (
-                <option
-                  key={day}
-                  value={day}
-                >
-                  {day}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {convertedToAd && (
-            <div className='mt-3 p-4 bg-base-300 text-lg space-y-1'>
-              <div>
-                <span className='text-xl '>{convertedToAd}</span>
-                {' , '}
-                <span className='text-xl'>{bsDay}</span>
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="max-w-md mx-auto my-4 p-4 space-y-6">
+  {/* AD to BS */}
+  <div className="bg-white rounded-2xl shadow-md p-5">
+    <h3 className="text-base font-semibold text-gray-700 mb-3">
+      🇮🇳 {t('Indian Date')} <span className="mx-2">→</span> 🇳🇵 {t('Nepali Date')}
+    </h3>
+    <input
+      type="date"
+      value={adDate}
+      onChange={e => {
+        setAdDate(e.target.value);
+        handleAdToBs(e.target.value);
+      }}
+      className="w-full px-4 py-3 rounded-xl bg-gray-100 text-gray-900 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    />
+    {convertedToBs && (
+      <div className="mt-4 rounded-2xl bg-gray-50 p-4 text-center">
+        <span className="text-lg font-medium text-gray-800">
+          {convertedToBs}
+        </span>
       </div>
+    )}
+  </div>
 
-      <p className=' text-sm my-8 text-justify'>
-        {t(
-          'If you are looking to convert Indian date to Nepali date or Nepali date to English/Indian date, the SriPatro Date Converter is the best free tool available online   Using the Indian to Nepali Date Converter, you can simply enter a Gregorian (AD) date like 13/06/2025, and it will instantly return the corresponding Nepali date — in this case, २०८२ जेठ ३१, शुक्रवार   Similarly, the reverse function lets you select a Nepali date (Bikram Sambat) such as 2082 Jestha 31 and get the exact English date — June 13, 2025, which is a Friday   This Nepali Patro app works by mapping the Bikram Sambat calendar with the Gregorian calendar through a pre programmed algorithm that considers leap years, month differences, and the 56  7 year gap between the two systems   Whether you are a student, traveler, or working with government forms in Nepal, SriPatro’s accurate, bilingual Nepali calendar date conversion feature ensures that you never make a mistake while translating dates   It’s fast, reliable, and perfect for daily use on mobile and web  '
-        )}
-      </p>
+  {/* Divider */}
+  <div className="flex items-center justify-center">
+    <span className="px-4 text-sm text-gray-400">OR</span>
+  </div>
+
+  {/* BS to AD */}
+  <div className="bg-white rounded-2xl shadow-md p-5">
+    <h3 className="text-base font-semibold text-gray-700 mb-3">
+      🇳🇵 {t('Nepali Date')} <span className="mx-2">→</span> 🇮🇳 {t('Indian Date')}
+    </h3>
+    <div className="grid grid-cols-3 gap-3">
+      {/* Year */}
+      <select
+        value={bsDate.year}
+        onChange={e => {
+          const updated = { ...bsDate, year: e.target.value };
+          setBsDate(updated);
+          handleBsToAd(updated.year, updated.month, updated.date);
+        }}
+        className="px-3 py-3 rounded-xl bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      >
+        {years.map(y => (
+          <option key={y} value={y}>
+            {y}
+          </option>
+        ))}
+      </select>
+
+      {/* Month */}
+      <select
+        value={bsDate.month}
+        onChange={e => {
+          const updated = { ...bsDate, month: e.target.value };
+          setBsDate(updated);
+          handleBsToAd(updated.year, updated.month, updated.date);
+        }}
+        className="px-3 py-3 rounded-xl bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      >
+        {nepaliMonths.map((name, idx) => (
+          <option key={idx} value={idx + 1}>
+            {name}
+          </option>
+        ))}
+      </select>
+
+      {/* Day */}
+      <select
+        value={bsDate.date}
+        onChange={e => {
+          const updated = { ...bsDate, date: e.target.value };
+          setBsDate(updated);
+          handleBsToAd(updated.year, updated.month, updated.date);
+        }}
+        className="px-3 py-3 rounded-xl bg-base-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      >
+        {Array.from({ length: maxBsDays }, (_, i) => i + 1).map(day => (
+          <option key={day} value={day}>
+            {day}
+          </option>
+        ))}
+      </select>
     </div>
-    </>
+
+    {convertedToAd && (
+      <div className="mt-4 rounded-2xl bg-base-300 p-4 text-center">
+        <span className="text-xl font-medium text-base-content/80">
+          {convertedToAd},{" "}
+        </span>
+        <span className="text-xl font-medium text-base-content/80">{bsDay}</span>
+      </div>
+    )}
+  </div>
+</div>
+</>
   );
 }

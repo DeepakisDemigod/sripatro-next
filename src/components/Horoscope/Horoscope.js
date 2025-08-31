@@ -97,7 +97,7 @@ function HoroscopeForm() {
               horoscopeData[sign] ? (
                 <div
                   key={sign}
-                  className='carousel-item flex flex-col w-60 p-4 mx-3 rounded-lg bg-base-100 snap-center border border-base-300'
+                  className='carousel-item flex flex-col w-60 p-3 mx-3 rounded-lg bg-base-100 snap-center border border-base-300'
                 >
                   <div className='flex items-center justify-between  rounded pr-2 '>
                     <div className=' flex gap-2 items-center'>

@@ -8,8 +8,7 @@ const Slider = dynamic(() => import("react-slick"), {
 });
 
 const tiles = [
-  { label: "Panchang", icon: "🇳🇵", tag: "BS", href: "/nepalitoenglish" },
-  { label: "Panchang", icon: "🇮🇳", tag: "AD", href: "/birthpanchang" },
+  { label: "Daily Panchang", icon: "🗓️", tag: "AD", href: "/daily-panchang" },
   { label: "Kundali", icon: "🪐", tag: "AD", href: "/kundali" },
   { label: "Horoscope", icon: "🐏", tag: "AD", href: "/horoscope" },
   { label: "Cheena", icon: "🧧", tag: "AD", href: "/nepali-cheena" },

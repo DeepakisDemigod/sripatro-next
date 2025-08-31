@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { CaretRight } from "phosphor-react";
 
 const panchang = [
-  { label: "Panchang", icon: "🇳🇵", tag: "BS", href: "/nepalitoenglish", desc: "Panchang from Nepali Date" },
-  { label: "Panchang", icon: "🇮🇳", tag: "AD", href: "/birthpanchang", desc: "Panchang from English Date" },
+  
+{ label: "Daily Panchang", icon: "🗓️", tag: "AD", href: "/daily-panchang" },
 ];
 
 const jyotish = [
@@ -20,6 +20,8 @@ const daily = [
 
 const utilities = [
   { label: "Date Converter", icon: "🗓", tag: "BS", href: "/nepali-date-converter", desc: "Convert between Nepali (BS) and English (AD) dates" },
+{ label: "Shradh Tithi", icon: "🎋", tag: "AD", href: "/shradh-tithi", desc: "Shradh Tithi and Date for 2025" },
+
   { label: "Weather", icon: "🌪️", tag: "AD", href: "/weather", desc: "Check today’s local weather" },
 ];
 

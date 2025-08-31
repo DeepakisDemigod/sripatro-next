@@ -93,7 +93,7 @@ export default function ContactPopup() {
 		  placeholder="mike@sripatro.com"
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="input input-bordered w-full focus:outline-red-500 text-sm"
+                  className="input input-bordered w-full focus:outline-red-500 text-sm rounded-lg"
                 />
                 <ValidationError
                   prefix="Email"
@@ -111,7 +111,7 @@ export default function ContactPopup() {
                   name="message"
                   required
                   placeholder="request a feature..."
-                  className="textarea text-sm textarea-bordered w-full focus:outline-red-500"
+                  className="textarea text-sm textarea-bordered w-full focus:outline-red-500 rounded-lg"
                   rows={3}
                 />
                 <ValidationError
