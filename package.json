@@ -22,6 +22,7 @@
     "html2canvas": "^1.4.1",
     "mhah-panchang": "^1.2.0",
     "mongodb": "^6.17.0",
+    "mongoose": "^8.18.0",
     "nepali-date-converter": "^3.4.0",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
