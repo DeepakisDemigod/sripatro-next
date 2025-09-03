@@ -16,7 +16,12 @@ export async function GET(req) {
       query.role = "astrologer";
     }
     const users = await User.find(query).lean();
-    return NextResponse.json({ users });
+    // Ensure isOnline is present for all users
+    const usersWithOnline = users.map((u) => ({
+      ...u,
+      isOnline: !!u.isOnline,
+    }));
+    return NextResponse.json({ users: usersWithOnline });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

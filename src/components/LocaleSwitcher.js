@@ -34,10 +34,9 @@ export default function LocaleSwitcher() {
   );
 }*/
 
-
-
 "use client";
 
+import { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -47,6 +46,20 @@ export default function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const localeActive = useLocale();
+  const [astrologersOnline, setAstrologersOnline] = useState(0);
+
+  useEffect(() => {
+    async function pollAstrologers() {
+      const res = await fetch("/api/users/profile");
+      if (res.ok) {
+        const data = await res.json();
+        setAstrologersOnline(data.users.filter((u) => u.isOnline).length);
+      }
+    }
+    pollAstrologers();
+    const interval = setInterval(pollAstrologers, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const onSelectChange = (e) => {
     const nextLocale = e.target.value;
@@ -62,19 +75,23 @@ export default function LocaleSwitcher() {
   };
 
   return (
-    <label className="rounded border border-base-300 p-2 font-semibold text-md">
-      <span className="sr-only">Change Language</span>
-      <select
-        className="bg-transparent  focus:outline-none"
-        onChange={onSelectChange}
-        value={localeActive}
-        disabled={isPending}
-      >
-        <option value="en" >🇬🇧 English</option>
-        <option value="ne" > 🇳🇵 Nepali</option>
-      </select>
-    </label>
+    <div className="flex items-center gap-2">
+      <label className="rounded border border-base-300 p-2 font-semibold text-md">
+        <span className="sr-only">Change Language</span>
+        <select
+          className="bg-transparent  focus:outline-none"
+          onChange={onSelectChange}
+          value={localeActive}
+          disabled={isPending}
+        >
+          <option value="en">🇬🇧 English</option>
+          <option value="ne"> 🇳🇵 Nepali</option>
+        </select>
+      </label>
+      <span className="ml-2 text-xs text-green-600 font-semibold">
+        {astrologersOnline} astrologer{astrologersOnline === 1 ? "" : "s"}{" "}
+        online
+      </span>
+    </div>
   );
 }
-
-

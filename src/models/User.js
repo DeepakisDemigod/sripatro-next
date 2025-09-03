@@ -15,6 +15,7 @@ const UserSchema = new mongoose.Schema(
     languages: [String],
     services: [ServiceSchema],
     profileComplete: { type: Boolean, default: false },
+    isOnline: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

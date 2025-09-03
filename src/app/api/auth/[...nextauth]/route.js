@@ -300,10 +300,13 @@ export const authOptions = {
     async signIn({ user }) {
       try {
         await connectDB();
-        // create a minimal app-level user row if it doesn't exist
+        // create a minimal app-level user row if it doesn't exist, and set isOnline true
         await User.findOneAndUpdate(
           { email: user.email },
-          { $setOnInsert: { email: user.email, profileComplete: false } },
+          {
+            $setOnInsert: { email: user.email, profileComplete: false },
+            $set: { isOnline: true },
+          },
           { upsert: true, new: true }
         );
       } catch (err) {
