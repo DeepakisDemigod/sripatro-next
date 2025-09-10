@@ -1,0 +1,288 @@
+{
+  "metadata": {
+    "np": "Baishakh 2081",
+    "en": "April - May 2024"
+  },
+  "days": [
+    {
+      "np": "30",
+      "en": "12",
+      "Tithi": "Panchami S",
+      "MoonTiming": "Mithuna",
+      "Nakshatra": "Ardra 12:58",
+      "weekday": 1
+    },
+    {
+      "np": "31",
+      "en": "13",
+      "Tithi": "Sasthi S",
+      "MoonTiming": "Mithuna 07:37",
+      "Nakshatra": "Punarvasu 13:54",
+      "weekday": 2
+    },
+    {
+      "np": "27",
+      "en": "9",
+      "Tithi": "Pratipada S",
+      "MoonTiming": "Meena 08:25",
+      "Nakshatra": "Revati 08:25",
+      "weekday": 3
+    },
+    {
+      "np": "28",
+      "en": "10",
+      "Tithi": "Dwitiya S",
+      "MoonTiming": "Mesha",
+      "Nakshatra": "Ashwini 07:03",
+      "weekday": 4
+    },
+    {
+      "np": "29",
+      "en": "11",
+      "Tithi": "Tritiya S",
+      "MoonTiming": "Mesha 11:42",
+      "Nakshatra": "Krittika 29:09+",
+      "weekday": 5
+    },
+    {
+      "np": "30",
+      "en": "12",
+      "Tithi": "Chaturthi S",
+      "MoonTiming": "Vrishabha",
+      "Nakshatra": "Rohini 28:46+",
+      "weekday": 6
+    },
+    {
+      "np": "1",
+      "en": "13",
+      "Tithi": "Panchami S",
+      "MoonTiming": "Vrishabha 16:44",
+      "Nakshatra": "Mrigashira 28:49+",
+      "weekday": 7
+    },
+    {
+      "np": "2",
+      "en": "14",
+      "Tithi": "Sasthi S",
+      "MoonTiming": "Mithuna",
+      "Nakshatra": "Ardra 29:21+",
+      "weekday": 1
+    },
+    {
+      "np": "3",
+      "en": "15",
+      "Tithi": "Saptami S",
+      "MoonTiming": "Mithuna 24:05+",
+      "Nakshatra": "Punarvasu",
+      "weekday": 2
+    },
+    {
+      "np": "4",
+      "en": "16",
+      "Tithi": "Astami S",
+      "MoonTiming": "Karka",
+      "Nakshatra": "Punarvasu 06:24",
+      "weekday": 3
+    },
+    {
+      "np": "5",
+      "en": "17",
+      "Tithi": "Nawami S",
+      "MoonTiming": "Karka",
+      "Nakshatra": "Pushya 07:55",
+      "weekday": 4
+    },
+    {
+      "np": "6",
+      "en": "18",
+      "Tithi": "Dashami S",
+      "MoonTiming": "Karka 09:53",
+      "Nakshatra": "Ashlesha 09:53",
+      "weekday": 5
+    },
+    {
+      "np": "7",
+      "en": "19",
+      "Tithi": "Ekadashi S",
+      "MoonTiming": "Simha",
+      "Nakshatra": "Magha 12:12",
+      "weekday": 6
+    },
+    {
+      "np": "8",
+      "en": "20",
+      "Tithi": "Dwadashi S",
+      "MoonTiming": "Simha 21:24",
+      "Nakshatra": "P Phalguni 14:45",
+      "weekday": 7
+    },
+    {
+      "np": "9",
+      "en": "21",
+      "Tithi": "Trayodashi S",
+      "MoonTiming": "Kanya",
+      "Nakshatra": "U Phalguni 17:22",
+      "weekday": 1
+    },
+    {
+      "np": "10",
+      "en": "22",
+      "Tithi": "Chaturdashi S",
+      "MoonTiming": "Kanya",
+      "Nakshatra": "Hasta 19:53",
+      "weekday": 2
+    },
+    {
+      "np": "11",
+      "en": "23",
+      "Tithi": "Purnima S",
+      "MoonTiming": "Kanya 09:03",
+      "Nakshatra": "Chitra 22:09",
+      "weekday": 3
+    },
+    {
+      "np": "12",
+      "en": "24",
+      "Tithi": "Pratipada K",
+      "MoonTiming": "Tula",
+      "Nakshatra": "Swati 24:03+",
+      "weekday": 4
+    },
+    {
+      "np": "13",
+      "en": "25",
+      "Tithi": "Pratipada K",
+      "MoonTiming": "Tula 19:11",
+      "Nakshatra": "Vishakha 25:29+",
+      "weekday": 5
+    },
+    {
+      "np": "14",
+      "en": "26",
+      "Tithi": "Dwitiya K",
+      "MoonTiming": "Vrishchika",
+      "Nakshatra": "Anuradha 26:27+",
+      "weekday": 6
+    },
+    {
+      "np": "15",
+      "en": "27",
+      "Tithi": "Tritiya K",
+      "MoonTiming": "Vrishchika 26:54+",
+      "Nakshatra": "Jyeshtha 26:54+",
+      "weekday": 7
+    },
+    {
+      "np": "16",
+      "en": "28",
+      "Tithi": "Chaturthi K",
+      "MoonTiming": "Dhanu",
+      "Nakshatra": "Mula 26:53+",
+      "weekday": 1
+    },
+    {
+      "np": "17",
+      "en": "29",
+      "Tithi": "Sasthi K",
+      "MoonTiming": "Dhanu",
+      "Nakshatra": "P Ashadha 26:25+",
+      "weekday": 2
+    },
+    {
+      "np": "18",
+      "en": "30",
+      "Tithi": "Saptami K",
+      "MoonTiming": "Dhanu 08:14",
+      "Nakshatra": "U Ashadha 25:35+",
+      "weekday": 3
+    },
+    {
+      "np": "19",
+      "en": "1",
+      "Tithi": "Astami K",
+      "MoonTiming": "Makara",
+      "Nakshatra": "Shravana 24:25+",
+      "weekday": 4
+    },
+    {
+      "np": "20",
+      "en": "2",
+      "Tithi": "Nawami K",
+      "MoonTiming": "Makara 11:44",
+      "Nakshatra": "Dhanishtha 23:01",
+      "weekday": 5
+    },
+    {
+      "np": "21",
+      "en": "3",
+      "Tithi": "Dashami K",
+      "MoonTiming": "Kumbha",
+      "Nakshatra": "Shatabhisha 21:27",
+      "weekday": 6
+    },
+    {
+      "np": "22",
+      "en": "4",
+      "Tithi": "Ekadashi K",
+      "MoonTiming": "Kumbha 14:12",
+      "Nakshatra": "P Bhadrapada 19:47",
+      "weekday": 7
+    },
+    {
+      "np": "23",
+      "en": "5",
+      "Tithi": "Dwadashi K",
+      "MoonTiming": "Meena",
+      "Nakshatra": "U Bhadrapada 18:07",
+      "weekday": 1
+    },
+    {
+      "np": "24",
+      "en": "6",
+      "Tithi": "Trayodashi K",
+      "MoonTiming": "Meena 16:33",
+      "Nakshatra": "Revati 16:33",
+      "weekday": 2
+    },
+    {
+      "np": "25",
+      "en": "7",
+      "Tithi": "Chaturdashi K",
+      "MoonTiming": "Mesha",
+      "Nakshatra": "Ashwini 15:08",
+      "weekday": 3
+    },
+    {
+      "np": "26",
+      "en": "8",
+      "Tithi": "Aaunsi K",
+      "MoonTiming": "Mesha 19:42",
+      "Nakshatra": "Bharani 13:57",
+      "weekday": 4
+    },
+    {
+      "np": "27",
+      "en": "9",
+      "Tithi": "Pratipada S",
+      "MoonTiming": "Vrishabha",
+      "Nakshatra": "Krittika 13:05",
+      "weekday": 5
+    },
+    {
+      "np": "28",
+      "en": "10",
+      "Tithi": "Dwitiya S",
+      "MoonTiming": "Vrishabha 24:31+",
+      "Nakshatra": "Rohini 12:36",
+      "weekday": 6
+    },
+    {
+      "np": "29",
+      "en": "11",
+      "Tithi": "Chaturthi S",
+      "MoonTiming": "Mithuna",
+      "Nakshatra": "Mrigashira 12:33",
+      "weekday": 7
+    }
+  ]
+}

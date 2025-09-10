@@ -22,10 +22,10 @@ export default function ContactPopup() {
     <>
       {/* Floating Chat Button */}
       <button
-        className="fixed bottom-4 right-4 rounded-lg p-2 bg-red-600 text-white shadow-lg"
+        className="flex items-center gap-1 fixed bottom-4 right-4 rounded-lg p-2 bg-red-600 text-white shadow-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Chats size={30} weight="fill" />
+        <Chats size={30} weight="fill" /> <span>Send A FeedBack</span>
       </button>
 
       {/* Popup Form */}

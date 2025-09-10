@@ -1,7 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
 import RatingForm from "@/components/RatingForm";
-import BookingChat from "@/components/BookingChat";
 import { useState, useEffect } from "react";
 
 export default function BookingClient({ booking }) {
@@ -44,15 +43,6 @@ export default function BookingClient({ booking }) {
 
   return (
     <>
-      {/* Only show chat if booking is not completed */}
-      {booking.status !== "completed" && (
-        <BookingChat
-          bookingId={booking._id.toString()}
-          userEmail={booking.userEmail}
-          astrologerEmail={booking.astrologerEmail}
-        />
-      )}
-      {/* Show rating modal if booking is completed, user is the one who booked, and not already rated */}
       {showModal && !alreadyRated && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-base-100 rounded-lg shadow-lg p-6 max-w-md w-full relative">

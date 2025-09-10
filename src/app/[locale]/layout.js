@@ -85,9 +85,12 @@ import { Gabarito } from "next/font/google";
 import { getMessages } from "next-intl/server";
 import "./globals.css";
 import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import wrapper
+
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import LocaleSwitcher from "@/components/LocaleSwitcher"
-import ContactPopup from "@/components/ContactPopup"
+import LocaleSwitcher from "@/components/LocaleSwitcher";
+import AstrologerStatusSwitcher from "@/components/AstrologerStatusSwitcher";
+import ContactPopup from "@/components/ContactPopup";
+import { AstrologerOnlineProvider } from "@/context/AstrologerOnlineContext";
 
 const gabarito = Gabarito({
   subsets: ["latin"],
@@ -111,27 +114,24 @@ export default async function LocaleLayout({ children, params }) {
     <html lang={locale}>
       <body className={`${gabarito.variable} antialiased`}>
         <SessionWrapper>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-	  <div className="flex ">
-            <ThemeSwitcher />
-	  <LocaleSwitcher />
-	  </div>
-            {children}
-	  <ContactPopup />
-          </NextIntlClientProvider>
+          <AstrologerOnlineProvider>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row">
+                  <ThemeSwitcher />
+                  <LocaleSwitcher />
+                  <AstrologerStatusSwitcher />
+                </div>
+              </div>
+              {children}
+              <ContactPopup />
+            </NextIntlClientProvider>
+          </AstrologerOnlineProvider>
         </SessionWrapper>
       </body>
     </html>
   );
 }
-
-
-
-
-
-
-
-
 
 /*
 import { NextIntlClientProvider, hasLocale } from "next-intl";

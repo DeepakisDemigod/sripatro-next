@@ -19,6 +19,8 @@
     "dayjs": "^1.11.13",
     "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.5",
+    "firebase": "^12.2.1",
+    "firebase-admin": "^13.5.0",
     "html2canvas": "^1.4.1",
     "mhah-panchang": "^1.2.0",
     "mongodb": "^6.17.0",

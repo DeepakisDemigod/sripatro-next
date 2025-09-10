@@ -37,6 +37,7 @@ export default function LocaleSwitcher() {
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAstrologerOnline } from "@/context/AstrologerOnlineContext";
 import { useLocale } from "next-intl";
 import { useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -46,19 +47,10 @@ export default function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const localeActive = useLocale();
-  const [astrologersOnline, setAstrologersOnline] = useState(0);
+  const { astrologersOnline } = useAstrologerOnline();
 
   useEffect(() => {
-    async function pollAstrologers() {
-      const res = await fetch("/api/users/profile");
-      if (res.ok) {
-        const data = await res.json();
-        setAstrologersOnline(data.users.filter((u) => u.isOnline).length);
-      }
-    }
-    pollAstrologers();
-    const interval = setInterval(pollAstrologers, 10000);
-    return () => clearInterval(interval);
+    // No polling here, handled by context
   }, []);
 
   const onSelectChange = (e) => {

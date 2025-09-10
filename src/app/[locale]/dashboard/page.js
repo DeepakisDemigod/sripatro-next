@@ -12,8 +12,6 @@ import Tiles from "@/components/Tiles.js";
 import Comments from "@/components/Comments/Comments";
 import Menu from "@/components/Menu";
 import { HourglassMedium, XCircle, CheckCircle } from "phosphor-react";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
-import LocaleSwitcher from "@/components/LocaleSwitcher";
 import AstrologerStatusSwitcher from "@/components/AstrologerStatusSwitcher";
 
 export default function Dashboard() {
@@ -112,16 +110,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-base-200 text-base-content flex flex-col">
       <Header />
-      <div className="flex items-center gap-4 justify-end px-6 py-2">
-        <ThemeSwitcher />
-        <LocaleSwitcher />
-        {profile?.role === "astrologer" && (
-          <AstrologerStatusSwitcher
-            userEmail={profile.email}
-            isOnlineDefault={profile.isOnline}
-          />
-        )}
-      </div>
+
       <main className="flex-1 w-full flex flex-col items-center py-8 gap-8">
         <div className="w-full max-w-3xl flex flex-col gap-8">
           {/* Profile Card */}

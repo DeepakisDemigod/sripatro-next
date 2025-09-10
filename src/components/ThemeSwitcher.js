@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAstrologerOnline } from "@/context/AstrologerOnlineContext";
 import { Sun, Moon } from "phosphor-react";
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState("light");
-  const [astrologersOnline, setAstrologersOnline] = useState(0);
+  const { astrologersOnline } = useAstrologerOnline();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -16,17 +17,7 @@ export default function ThemeSwitcher() {
       document.documentElement.setAttribute("data-theme", theme);
     }
 
-    // Poll astrologers online status
-    async function pollAstrologers() {
-      const res = await fetch("/api/users/profile");
-      if (res.ok) {
-        const data = await res.json();
-        setAstrologersOnline(data.users.filter((u) => u.isOnline).length);
-      }
-    }
-    pollAstrologers();
-    const interval = setInterval(pollAstrologers, 10000);
-    return () => clearInterval(interval);
+    // No polling here, handled by context
   }, [theme]);
 
   const toggleTheme = () => {
@@ -52,10 +43,10 @@ export default function ThemeSwitcher() {
           </>
         )}
       </button>
-      <span className="ml-2 text-xs text-green-600 font-semibold">
+      {/* <span className="ml-2 text-xs text-green-600 font-semibold">
         {astrologersOnline} astrologer{astrologersOnline === 1 ? "" : "s"}{" "}
         online
-      </span>
+      </span> */}
     </div>
   );
 }

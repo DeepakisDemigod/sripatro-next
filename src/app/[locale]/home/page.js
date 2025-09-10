@@ -7,6 +7,7 @@ import Patro from "@/components/Patro.js";
 import Tiles from "@/components/Tiles.js";
 import Comments from "@/components/Comments/Comments";
 import Menu from "@/components/Menu";
+import CalendarMulti from "@/components/CalendarMulti";
 
 import HoroscopeForm from "@/components/Horoscope/Horoscope";
 
@@ -24,9 +25,12 @@ export default function Dashboard() {
       <Header />
       <div className="w-full">
         <Tiles />
-	  {/* <HoroscopeForm />*/}
+        <div className="mt-6">
+          <CalendarMulti defaultYear="2082" defaultMonth={1} />
+        </div>
+        {/* <HoroscopeForm />*/}
 
-	  <Patro />
+        <Patro />
 
         <Menu />
       </div>

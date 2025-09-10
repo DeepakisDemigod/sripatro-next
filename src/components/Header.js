@@ -14,7 +14,7 @@ const drawerItems = [
       { label: "Panchang (AD)", href: "/" },
       { label: "Panchang (BS)", href: "/" },
       { label: "Kundali", href: "/" },
-      { label: "Nepali Cheena", href: "/"},
+      { label: "Nepali Cheena", href: "/" },
     ],
   },
   {
@@ -85,8 +85,19 @@ export default function Header() {
             <li>
               <Link href="/dashboard">Dashboard</Link>
             </li>
-            <li className="px-4" onClick={() => signOut()}>
-              SignOut
+            <li className="px-4">
+              <button
+                type="button"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  await signOut({ redirect: false });
+                  window.location.href = "/";
+                }}
+                className="w-full text-left"
+              >
+                SignOut
+              </button>
             </li>
             <li>
               <Link href="https://sripatro.canny.io">Suggest a Feature</Link>
@@ -110,16 +121,16 @@ export default function Header() {
               className="text-xl font-bold flex items-center gap-2"
             >
               {/* Logo can be added here */}
-	  <div className="flex items-center gap-2" >
-	  {/*<Image
+              <div className="flex items-center gap-2">
+                {/*<Image
                 src="/logo.png"
                 alt="logo"
                 className="rounded-lg"
                 width={25}
                 height={25}
               />*/}
-<p className="text-base-900 font-extrabold text-xl">SriPatro</p>
-	  </div>
+                <p className="text-base-900 font-extrabold text-xl">SriPatro</p>
+              </div>
             </Link>
           </div>
           <DesktopNav />
@@ -153,7 +164,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Drawer */}
-      <div className="drawer bg-black backdrop-blur-sm lg:hidden z-40">
+      <div className="drawer bg-black lg:hidden z-40">
         <input
           id="mobile-drawer"
           ref={drawerCheckboxRef}
@@ -163,18 +174,20 @@ export default function Header() {
         <div className="drawer-content "></div>
         <div className="drawer-side">
           <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
-          <aside className="menu p-4 w-full min-h-full backdrop-blur-sm  text-base-content">
+          <aside className="menu p-4 w-full min-h-full text-base-content">
             <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2" >
-              <Image
-                src="/logo.png"
-                alt="logo"
-                className="rounded-lg"
-                width={30}
-                height={30}
-              />
-<p className="text-base-900 font-extrabold text-2xl">SriPatro</p>
-	  </div>
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/logo.png"
+                  alt="logo"
+                  className="rounded-lg"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-base-900 font-extrabold text-2xl">
+                  SriPatro
+                </p>
+              </div>
               <label
                 htmlFor="mobile-drawer"
                 className="border border-base-200 backdrop-blur-sm text-2xl font-medium rounded-md text-base-400"
@@ -221,8 +234,19 @@ export default function Header() {
                       <li>
                         <Link href="/dashboard">Dashboard</Link>
                       </li>
-                      <li className="px-4 " onClick={() => signOut()}>
-                        SignOut
+                      <li className="px-4 ">
+                        <button
+                          type="button"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            await signOut({ redirect: false });
+                            window.location.href = "/";
+                          }}
+                          className="w-full text-left"
+                        >
+                          SignOut
+                        </button>
                       </li>
                       <li>
                         <Link href="https://sripatro.canny.io/">
