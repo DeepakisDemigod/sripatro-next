@@ -26,7 +26,9 @@ export default function Dashboard() {
       <div className="w-full">
         <Tiles />
         <div className="mt-6">
-          <CalendarMulti defaultYear="2082" defaultMonth={1} />
+          <div onClick={() => {}}>
+            <CalendarMulti defaultYear="2082" defaultMonth={1} showControls={false} />
+          </div>
         </div>
         {/* <HoroscopeForm />*/}
 

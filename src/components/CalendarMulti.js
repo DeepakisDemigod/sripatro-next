@@ -1,6 +1,7 @@
 "use client";
 import { Gear } from "phosphor-react";
 import React, { useEffect, useState, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 // cookie helpers (small, no deps)
 function setCookie(name, value, days = 365) {
@@ -29,6 +30,7 @@ function getCookie(name) {
 export default function CalendarMulti({
   defaultYear = "2082",
   defaultMonth = 1,
+  showControls = true,
 }) {
   const [year, setYear] = useState(defaultYear);
   const [month, setMonth] = useState(defaultMonth); // 1-based
@@ -37,15 +39,74 @@ export default function CalendarMulti({
   const [err, setErr] = useState(null);
 
   // settings: which extra info to show. persisted in cookie 'calendar_settings'
-  const [settings, setSettings] = useState({ tithi: false, nakshatra: false });
+  const [settings, setSettings] = useState({
+    tithi: false,
+    nakshatra: false,
+    rasi: false,
+    enDate: false,
+  });
   const [showSettings, setShowSettings] = useState(false);
   const settingsRef = useRef(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     // read cookie on mount
     const s = getCookie("calendar_settings");
     if (s && typeof s === "object") setSettings((prev) => ({ ...prev, ...s }));
   }, []);
+
+  // if component was mounted with default props, try to auto-detect the BS month
+  // that contains the current Gregorian month (so calendar shows current month)
+  useEffect(() => {
+    // only run detection when user didn't override defaults
+    if (
+      String(defaultYear) !== String(year) ||
+      Number(defaultMonth) !== Number(month)
+    )
+      return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const now = new Date();
+        const monthName = now.toLocaleString("en", { month: "long" });
+        const yearNum = now.getFullYear();
+        // Bikram Sambat is roughly AD + 57
+        const bsGuess = yearNum + 57;
+
+        for (let m = 1; m <= 12; m++) {
+          if (cancelled) return;
+          try {
+            const res = await fetch(`/data/${bsGuess}/${m}.json`);
+            if (!res.ok) continue;
+            const json = await res.json();
+            const meta =
+              json && json.metadata && (json.metadata.en || json.metadata.np);
+            if (
+              meta &&
+              String(meta).includes(String(yearNum)) &&
+              String(meta).includes(monthName)
+            ) {
+              if (!cancelled) {
+                setYear(String(bsGuess));
+                setMonth(m);
+              }
+              return;
+            }
+          } catch (e) {
+            // ignore and continue
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []); // run once on mount
 
   useEffect(() => {
     let mounted = true;
@@ -84,12 +145,12 @@ export default function CalendarMulti({
     const np = data.metadata.np;
     const en = data.metadata.en;
     if (en && np) {
-      // show both English and Nepali month names when available
-      title = `${en} · ${np}`;
-    } else if (en) {
-      title = en;
+      // show Nepali first, English in parentheses
+      title = `${np} (${en})`;
     } else if (np) {
       title = np;
+    } else if (en) {
+      title = en;
     }
   }
 
@@ -126,8 +187,22 @@ export default function CalendarMulti({
     setCookie("calendar_settings", next, 365);
   }
 
+  function handleGridClick() {
+    // only for compact/embedded usage when controls are hidden
+    if (showControls) return;
+    try {
+      const segments = (pathname || "").split("/").filter(Boolean);
+      const locale = segments[0] || "";
+      const target = locale ? `/${locale}/calendar` : `/calendar`;
+      router.push(target);
+    } catch (e) {
+      // fallback
+      router.push("/calendar");
+    }
+  }
+
   return (
-    <div className="bg-base-100 p-4 rounded-lg shadow-sm w-full max-w-3xl">
+    <div className="bg-base-100 p-4 rounded-lg shadow-sm w-full mx-auto max-w-3xl">
       <div className="flex items-center justify-between mb-3">
         <div className="font-semibold text-lg">{title}</div>
         <div className="flex gap-2 items-center">
@@ -162,6 +237,24 @@ export default function CalendarMulti({
                   />
                   Nakshatra
                 </label>
+                <label className="flex items-center gap-2 text-sm mt-1">
+                  <input
+                    type="checkbox"
+                    checked={!!settings.rasi}
+                    onChange={() => toggleSetting("rasi")}
+                    className="checkbox checkbox-sm"
+                  />
+                  Rasi
+                </label>
+                <label className="flex items-center gap-2 text-sm mt-1">
+                  <input
+                    type="checkbox"
+                    checked={!!settings.enDate}
+                    onChange={() => toggleSetting("enDate")}
+                    className="checkbox checkbox-sm"
+                  />
+                  English date
+                </label>
               </div>
             )}
           </div>
@@ -191,15 +284,22 @@ export default function CalendarMulti({
 
       {!loading && data && (
         <>
-          <div className="grid grid-cols-7 text-center text-xs font-medium mb-2">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <div key={d} className="py-1">
+          <div className="grid grid-cols-7 text-center text-xs">
+            {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+              <div
+                key={`dow-${i}-${d}`}
+                className={
+                  i === 6
+                    ? `py-1 text-lg text-left pl-2 font-extrabold border border-base-200/90 text-red-500`
+                    : `py-1 text-lg text-left pl-2 font-extrabold border border-base-200/90 text-base-content/95`
+                }
+              >
                 {d}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-0">
             {weeks.map((row, rIdx) =>
               row.map((cell, cIdx) => {
                 const idx = `${rIdx}-${cIdx}`;
@@ -210,25 +310,57 @@ export default function CalendarMulti({
                       className="h-20 rounded-md bg-base-200/40"
                     ></div>
                   );
-                const label = cell.np;
+                const labelNp = cell.np;
+                const labelEn = cell.en;
+                const isSaturday = cIdx === 6;
                 return (
                   <div
                     key={idx}
-                    className="h-20 p-2 border rounded-md flex flex-col justify-between bg-white"
+                    className="h-20 p-2 border border-base-200/90 flex flex-col justify-between bg-base-100"
                   >
                     <div className="flex items-start justify-between">
-                      <div className="text-sm font-medium">{label}</div>
+                      <div className="flex flex-col">
+                        <div className="text-sm font-medium">
+                          <span
+                            className={`text-xl font-extrabold leading-none ${isSaturday ? "text-red-500" : ""}`}
+                          >
+                            {labelNp}
+                          </span>
+                        </div>
+                        {settings.enDate && labelEn ? (
+                          <div
+                            className={`text-xs mt-0.5 ${isSaturday ? "text-red-500" : "text-muted"}`}
+                          >
+                            {labelEn}
+                          </div>
+                        ) : null}
+                      </div>
                       <div>
                         {settings.tithi && cell.Tithi ? (
-                          <div className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                          <div className="text-xs text-green-600 bg-green-600/10 px-2 py-0.5 rounded-full">
                             T
                           </div>
                         ) : null}
                         {settings.nakshatra && cell.Nakshatra ? (
-                          <div className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full mt-1">
+                          <div className="text-xs text-blue-600 bg-blue-600/10 px-2 py-0.5 rounded-full mt-1">
                             N
                           </div>
                         ) : null}
+                        {settings.rasi
+                          ? (() => {
+                              const rasiVal =
+                                cell.Rasi ||
+                                cell.rasi ||
+                                (cell.MoonTiming
+                                  ? String(cell.MoonTiming).split(" ")[0]
+                                  : null);
+                              return rasiVal ? (
+                                <div className="text-xs text-red-700 bg-red-600/10 px-2 py-0.5 rounded-full mt-1">
+                                  R
+                                </div>
+                              ) : null;
+                            })()
+                          : null}
                       </div>
                     </div>
                     <div className="text-xs text-muted">
@@ -238,6 +370,18 @@ export default function CalendarMulti({
                       {settings.nakshatra && (
                         <div className="truncate">{cell.Nakshatra}</div>
                       )}
+                      {settings.rasi &&
+                        (() => {
+                          const rasiVal =
+                            cell.Rasi ||
+                            cell.rasi ||
+                            (cell.MoonTiming
+                              ? String(cell.MoonTiming).split(" ")[0]
+                              : null);
+                          return rasiVal ? (
+                            <div className="truncate">{rasiVal}</div>
+                          ) : null;
+                        })()}
                     </div>
                   </div>
                 );

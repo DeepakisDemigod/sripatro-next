@@ -262,7 +262,7 @@ export default function LivePanchangCard() {
   };
 
   return (
-    <div className=" fontBaloo max-w-3xl mx-auto m-3 bg-base-100 rounded-xl border border-base-300 overflow-hidden p-3">
+    <div className="max-w-3xl mx-auto m-3 bg-base-100 rounded-xl border border-base-300 overflow-hidden p-3">
       {/* header */}
       <div className="flex justify-between">
         <div className="flex flex-col justify-start items-start gap-2">
