@@ -1,109 +1,54 @@
-export const getComments = async () => {
-
- return [
-
-  {
-
-   id: "1",
-
-   body: "First comment",
-
-   username: "Jack",
-
-   userId: "1",
-
-   parentId: null,
-
-   createdAt: "2021-08-16T23:00:33.010+02:00",
-
-  },
-
-  {
-
-   id: "2",
-
-   body: "Second comment",
-
-   username: "John",
-
-   userId: "2",
-
-   parentId: null,
-
-   createdAt: "2021-08-16T23:00:33.010+02:00",
-
-  },
-
-  {
-
-   id: "3",
-
-   body: "First comment first child",
-
-   username: "John",
-
-   userId: "2",
-
-   parentId: "1",
-
-   createdAt: "2021-08-16T23:00:33.010+02:00",
-
-  },
-
-  {
-
-   id: "4",
-
-   body: "Second comment second child",
-
-   username: "John",
-
-   userId: "2",
-
-   parentId: "2",
-
-   createdAt: "2021-08-16T23:00:33.010+02:00",
-
-  },
-
- ];
-
+export const getComments = async (path) => {
+  const res = await fetch(`/api/comments?path=${encodeURIComponent(path)}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to load comments");
+  const data = await res.json();
+  return data.comments || [];
 };
 
-
-
-export const createComment = async (text, parentId = null) => {
-
- return {
-
-  id: Math.random().toString(36).substr(2, 9),
-
-  body: text,
-
-  parentId,
-
-  userId: "1",
-
-  username: "John",
-
-  createdAt: new Date().toISOString(),
-
- };
-
+export const createComment = async (text, parentId = null, path) => {
+  const res = await fetch(`/api/comments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ page: path, parentId, body: text }),
+  });
+  if (!res.ok) throw new Error("Failed to create comment");
+  const data = await res.json();
+  return data;
 };
 
-
-
-export const updateComment = async (text) => {
-
- return { text };
-
+export const updateComment = async (text, id) => {
+  const res = await fetch(`/api/comments/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ body: text }),
+  });
+  if (!res.ok) throw new Error("Failed to update comment");
+  return await res.json();
 };
 
+export const deleteComment = async (id) => {
+  const res = await fetch(`/api/comments/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to delete comment");
+  return await res.json();
+};
 
-
-export const deleteComment = async () => {
-
- return {};
-
+export const voteComment = async (id, value) => {
+  const res = await fetch(`/api/comments/${id}/vote`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ value }),
+  });
+  if (!res.ok) throw new Error("Failed to vote");
+  return await res.json();
 };

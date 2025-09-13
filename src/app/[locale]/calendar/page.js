@@ -1,14 +1,21 @@
-"use client";
-
-import React from "react";
 import CalendarMulti from "@/components/CalendarMulti";
+import Header from "@/components/Header";
+import Head from "next/head";
 
-export default function CalendarPage() {
+export default function CalendarPage({ params, searchParams }) {
+  // searchParams may contain year and month from the Patro onDateClick handler
+  const { year, month } = searchParams || {};
+
+  const props = {};
+  if (year) props.defaultYear = String(year);
+  if (month) props.defaultMonth = Number(month);
+
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
-        <CalendarMulti defaultYear="2082" defaultMonth={1} showControls={true} />
+    <>
+      <Header />
+      <div className="p-4">
+        <CalendarMulti {...props} />
       </div>
-    </div>
+    </>
   );
 }

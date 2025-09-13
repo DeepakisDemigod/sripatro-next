@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Envelope } from "phosphor-react";
+import Menu from "./Menu";
 
 const drawerItems = [
   {
@@ -164,7 +165,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Drawer */}
-      <div className="drawer bg-black lg:hidden z-40">
+      <div className="drawer bg-base-100/90 lg:hidden z-40">
         <input
           id="mobile-drawer"
           ref={drawerCheckboxRef}
@@ -174,7 +175,7 @@ export default function Header() {
         <div className="drawer-content "></div>
         <div className="drawer-side">
           <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
-          <aside className="menu p-4 w-full min-h-full text-base-content">
+          <aside className="menu p-4 w-full min-h-full bg-base-100/90 text-base-content">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-2">
                 <Image
@@ -196,7 +197,7 @@ export default function Header() {
                 ✕
               </label>
             </div>
-            <ul className="menu space-y-1">
+            {/* <ul className="menu space-y-1">
               {drawerItems.map((item, index) => (
                 <li key={index} className="">
                   {!item.subItems ? (
@@ -223,7 +224,8 @@ export default function Header() {
                   )}
                 </li>
               ))}
-            </ul>
+            </ul> */}
+            <Menu />
             <div className="mt-4 pl-4">
               {session ? (
                 <div className="flex items-center justify-between">

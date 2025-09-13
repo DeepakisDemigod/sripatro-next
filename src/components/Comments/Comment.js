@@ -123,11 +123,50 @@ export default Comment;
 
 */
 import { useState } from "react";
-import { Chat, PencilSimple, Trash } from "phosphor-react";
+import {
+  Chat,
+  PencilSimple,
+  Trash,
+  ArrowFatUp,
+  ArrowFatDown,
+} from "phosphor-react";
 import { useMemo } from "react";
 import Avatar, { genConfig } from "react-nice-avatar";
-import {useSession} from "next-auth/react"
+import { useSession } from "next-auth/react";
 const MAX_DEPTH = 4;
+
+function formatRelativeTime(iso) {
+  try {
+    const date = new Date(iso);
+    const diff = (Date.now() - date.getTime()) / 1000; // seconds
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+    const divisions = [
+      { amount: 60, unit: "second" },
+      { amount: 60, unit: "minute" },
+      { amount: 24, unit: "hour" },
+      { amount: 7, unit: "day" },
+      { amount: 4.34524, unit: "week" },
+      { amount: 12, unit: "month" },
+      { amount: Infinity, unit: "year" },
+    ];
+    let duration = Math.abs(diff);
+    let unit = "second";
+    let value = -Math.round(diff);
+    let accumulated = 1;
+    for (const d of divisions) {
+      if (duration < d.amount) {
+        unit = d.unit;
+        value = -Math.round(diff / accumulated);
+        break;
+      }
+      duration /= d.amount;
+      accumulated *= d.amount;
+    }
+    return rtf.format(value, unit);
+  } catch {
+    return "";
+  }
+}
 
 const Comment = ({
   comment,
@@ -135,27 +174,55 @@ const Comment = ({
   addComment,
   deleteComment,
   updateComment,
+  onVote,
   setActiveComment,
   activeComment,
   newCommentRef,
   depth,
 }) => {
-	const {data: session} = useSession();
+  const { data: session } = useSession();
   const config = useMemo(
     () => genConfig({ seed: comment.userId || comment.username }),
     [comment.userId, comment.username]
   );
   const isReplying =
-    activeComment?.id === comment.id && activeComment?.type === "replying";
+    !comment.isDeleted &&
+    activeComment?.id === comment.id &&
+    activeComment?.type === "replying";
   const isEditing =
-    activeComment?.id === comment.id && activeComment?.type === "editing";
+    !comment.isDeleted &&
+    activeComment?.id === comment.id &&
+    activeComment?.type === "editing";
   const isNew =
     activeComment?.id === comment.id && activeComment?.type === "new";
 
   const [text, setText] = useState(comment.body);
   const [showReplies, setShowReplies] = useState(false);
-
-  const canReply = depth < MAX_DEPTH;
+  const canReply = depth < MAX_DEPTH && !comment.isDeleted;
+  const sessionUserId = session?.user?.id || session?.user?.email;
+  const sessionUserName = session?.user?.name || session?.user?.email;
+  const canEdit =
+    !comment.isDeleted &&
+    (currentUserId === comment.userId ||
+      (sessionUserId && comment.userId === sessionUserId) ||
+      (sessionUserName && comment.username === sessionUserName));
+  const createdAtTitle = comment.createdAt
+    ? new Date(comment.createdAt).toLocaleString()
+    : "";
+  const rel = comment.createdAt ? formatRelativeTime(comment.createdAt) : "";
+  const isEdited =
+    comment.updatedAt &&
+    comment.createdAt &&
+    new Date(comment.updatedAt).getTime() -
+      new Date(comment.createdAt).getTime() >
+      1000;
+  const netScore = (comment.upvoteCount ?? 0) - (comment.downvoteCount ?? 0);
+  const netScoreClass =
+    netScore > 0
+      ? "text-green-600"
+      : netScore < 0
+        ? "text-red-600"
+        : "text-base-content/60";
 
   return (
     <div
@@ -172,7 +239,14 @@ const Comment = ({
               {...config}
             />
             <div className="text-sm font-semibold text-base-content">
-              {comment.username, session?.user?.email}
+              {comment.username}
+            </div>
+            <div
+              className="text-[11px] text-base-content/60 ml-2"
+              title={createdAtTitle}
+            >
+              {rel}
+              {isEdited ? " · edited" : ""}
             </div>
           </div>
 
@@ -187,7 +261,32 @@ const Comment = ({
           )}
         </div>
 
-        <div className="flex gap-2 text-base-content/60">
+        <div className="flex gap-2 items-center text-base-content/60">
+          {!comment.isDeleted && (
+            <div className="flex items-center gap-1">
+              <button
+                className={`btn btn-xs btn-ghost ${comment.currentUserVote === 1 ? "text-primary" : ""}`}
+                title="Upvote"
+                onClick={() =>
+                  onVote?.(comment.id, comment.currentUserVote === 1 ? 0 : 1)
+                }
+              >
+                <ArrowFatUp size={16} />
+              </button>
+              <span className={`text-xs font-semibold ${netScoreClass}`}>
+                {netScore}
+              </span>
+              <button
+                className={`btn btn-xs btn-ghost ${comment.currentUserVote === -1 ? "text-primary" : ""}`}
+                title="Downvote"
+                onClick={() =>
+                  onVote?.(comment.id, comment.currentUserVote === -1 ? 0 : -1)
+                }
+              >
+                <ArrowFatDown size={16} />
+              </button>
+            </div>
+          )}
           {canReply && (
             <button
               className="btn btn-xs btn-ghost"
@@ -199,7 +298,7 @@ const Comment = ({
               <Chat size={16} /> Reply
             </button>
           )}
-          {currentUserId === comment.userId && (
+          {canEdit && (
             <>
               <button
                 className="btn btn-xs btn-ghost"
@@ -276,6 +375,7 @@ const Comment = ({
                 addComment={addComment}
                 deleteComment={deleteComment}
                 updateComment={updateComment}
+                onVote={onVote}
                 setActiveComment={setActiveComment}
                 activeComment={activeComment}
                 newCommentRef={newCommentRef}

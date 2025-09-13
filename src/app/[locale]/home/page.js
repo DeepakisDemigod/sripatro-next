@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Footer from "@/components/Footer.js";
 import Header from "@/components/Header.js";
 import Patro from "@/components/Patro.js";
 import Tiles from "@/components/Tiles.js";
 import Comments from "@/components/Comments/Comments";
 import Menu from "@/components/Menu";
-import CalendarMulti from "@/components/CalendarMulti";
 
 import HoroscopeForm from "@/components/Horoscope/Horoscope";
 
 export default function Dashboard() {
+  const { data: session, status } = useSession();
+
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -25,16 +27,10 @@ export default function Dashboard() {
       <Header />
       <div className="w-full">
         <Tiles />
-        <div className="mt-6">
-          <div onClick={() => {}}>
-            <CalendarMulti defaultYear="2082" defaultMonth={1} showControls={false} />
-          </div>
-        </div>
+
         {/* <HoroscopeForm />*/}
 
         <Patro />
-
-        <Menu />
       </div>
       <Comments currentUserId="1" />
     </div>

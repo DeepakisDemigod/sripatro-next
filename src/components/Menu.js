@@ -4,34 +4,83 @@ import { useState, useEffect } from "react";
 import { CaretRight } from "phosphor-react";
 
 const panchang = [
-  
-{ label: "Daily Panchang", icon: "🗓️", tag: "AD", href: "/daily-panchang" },
+  { label: "Daily Panchang", icon: "🗓️", tag: "AD", href: "/daily-panchang" },
 ];
 
 const jyotish = [
-  { label: "Kundali", icon: "🪐", tag: "AD", href: "/kundali", desc: "Generate Kundali by birth details" },
-  { label: "Cheena", icon: "🧧", tag: "AD", href: "/nepali-cheena", desc: "Nepali Cheena astrology chart" },
+  {
+    label: "Kundali",
+    icon: "🪐",
+    tag: "AD",
+    href: "/kundali",
+    desc: "Generate Kundali by birth details",
+  },
+  {
+    label: "Cheena",
+    icon: "🧧",
+    tag: "AD",
+    href: "/nepali-cheena",
+    desc: "Nepali Cheena astrology chart",
+  },
 ];
 
 const daily = [
-  { label: "Shubh Saita", icon: "🪔", tag: "AD", href: "/shubh-saita", desc: "Find auspicious timings for rituals" },
-  { label: "Horoscope", icon: "🐏", tag: "AD", href: "/horoscope", desc: "Daily Horoscope for all zodiac signs" },
+  {
+    label: "Shubh Saita",
+    icon: "🪔",
+    tag: "AD",
+    href: "/shubh-saita",
+    desc: "Find auspicious timings for rituals",
+  },
+  {
+    label: "Horoscope",
+    icon: "🐏",
+    tag: "AD",
+    href: "/horoscope",
+    desc: "Daily Horoscope for all zodiac signs",
+  },
 ];
 
 const utilities = [
-  { label: "Date Converter", icon: "🗓", tag: "BS", href: "/nepali-date-converter", desc: "Convert between Nepali (BS) and English (AD) dates" },
-{ label: "Shradh Tithi", icon: "🎋", tag: "AD", href: "/shradh-tithi", desc: "Shradh Tithi and Date for 2025" },
+  {
+    label: "Date Converter",
+    icon: "🗓",
+    tag: "BS",
+    href: "/nepali-date-converter",
+    desc: "Convert between Nepali (BS) and English (AD) dates",
+  },
+  {
+    label: "Shradh Tithi",
+    icon: "🎋",
+    tag: "AD",
+    href: "/shradh-tithi",
+    desc: "Shradh Tithi and Date for 2025",
+  },
 
-  { label: "Weather", icon: "🌪️", tag: "AD", href: "/weather", desc: "Check today’s local weather" },
+  {
+    label: "Weather",
+    icon: "🌪️",
+    tag: "AD",
+    href: "/weather",
+    desc: "Check today’s local weather",
+  },
 ];
 
 const personalise = [
-  { label: "Settings", icon: "⚙️", tag: "AD", href: "/settings", desc: "Personalize your preferences" },
+  {
+    label: "Settings",
+    icon: "⚙️",
+    tag: "AD",
+    href: "/settings",
+    desc: "Personalize your preferences",
+  },
 ];
 
 const Section = ({ title, items }) => (
   <div className="mb-6">
-    <h3 className="px-4 pb-2 text-xs font-semibold text-base-content/70 uppercase tracking-wide">{title}</h3>
+    <h3 className="px-4 pb-2 text-xs font-semibold text-base-content/70 uppercase tracking-wide">
+      {title}
+    </h3>
     <div className="bg-base-100 rounded-2xl shadow-sm divide-y divide-base-200">
       {items.map(({ label, icon, href, desc }) => (
         <a
@@ -42,7 +91,9 @@ const Section = ({ title, items }) => (
           <div className="flex items-center gap-4">
             <div className="text-2xl">{icon}</div>
             <div>
-              <div className="text-sm font-medium text-base-content">{label}</div>
+              <div className="text-sm font-medium text-base-content">
+                {label}
+              </div>
               <div className="text-xs text-base-content/70">{desc}</div>
             </div>
           </div>
@@ -77,7 +128,7 @@ const Menu = () => {
   }
 
   return (
-    <div className="text-base-content max-w-3xl mx-auto my-4 px-2">
+    <div className="bg-base-100/10  text-base-content max-w-3xl mx-auto my-4 px-2">
       <Section title="Panchang" items={panchang} />
       <Section title="Jyotish" items={jyotish} />
       <Section title="Daily" items={daily} />
@@ -88,4 +139,3 @@ const Menu = () => {
 };
 
 export default Menu;
-

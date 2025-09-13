@@ -1,7 +1,6 @@
 "use client";
 import { Gear } from "phosphor-react";
 import React, { useEffect, useState, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
 
 // cookie helpers (small, no deps)
 function setCookie(name, value, days = 365) {
@@ -30,7 +29,11 @@ function getCookie(name) {
 export default function CalendarMulti({
   defaultYear = "2082",
   defaultMonth = 1,
-  showControls = true,
+  hideHeader = false,
+  // initialSettings: optional object to force which extras to show { tithi, nakshatra, rasi, enDate }
+  initialSettings = null,
+  // onDateClick: optional callback(cell) when a date cell is clicked
+  onDateClick = null,
 }) {
   const [year, setYear] = useState(defaultYear);
   const [month, setMonth] = useState(defaultMonth); // 1-based
@@ -47,11 +50,13 @@ export default function CalendarMulti({
   });
   const [showSettings, setShowSettings] = useState(false);
   const settingsRef = useRef(null);
-  const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
-    // read cookie on mount
+    // read cookie on mount only when initialSettings is not provided
+    if (initialSettings && typeof initialSettings === "object") {
+      setSettings((prev) => ({ ...prev, ...initialSettings }));
+      return;
+    }
     const s = getCookie("calendar_settings");
     if (s && typeof s === "object") setSettings((prev) => ({ ...prev, ...s }));
   }, []);
@@ -187,91 +192,85 @@ export default function CalendarMulti({
     setCookie("calendar_settings", next, 365);
   }
 
-  function handleGridClick() {
-    // only for compact/embedded usage when controls are hidden
-    if (showControls) return;
-    try {
-      const segments = (pathname || "").split("/").filter(Boolean);
-      const locale = segments[0] || "";
-      const target = locale ? `/${locale}/calendar` : `/calendar`;
-      router.push(target);
-    } catch (e) {
-      // fallback
-      router.push("/calendar");
-    }
-  }
-
   return (
     <div className="bg-base-100 p-4 rounded-lg shadow-sm w-full mx-auto max-w-3xl">
-      <div className="flex items-center justify-between mb-3">
-        <div className="font-semibold text-lg">{title}</div>
-        <div className="flex gap-2 items-center">
-          <div className="relative" ref={settingsRef}>
-            <button
-              className="btn btn-ghost btn-sm flex gap-1 items-center"
-              onClick={() => setShowSettings((s) => !s)}
-              aria-haspopup="true"
-              aria-expanded={showSettings}
-            >
-              <Gear size={20} weight="bold" />
-              <span>Customize</span>
-            </button>
-            {showSettings && (
-              <div className="absolute right-0 mt-2 w-48 bg-base-200 border rounded shadow-md p-3 z-50">
-                <div className="text-sm font-medium mb-2">Show extra info</div>
-                <label className="flex items-center gap-2 text-sm mb-1">
-                  <input
-                    type="checkbox"
-                    checked={!!settings.tithi}
-                    onChange={() => toggleSetting("tithi")}
-                    className="checkbox checkbox-sm"
-                  />
-                  Tithi
-                </label>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={!!settings.nakshatra}
-                    onChange={() => toggleSetting("nakshatra")}
-                    className="checkbox checkbox-sm"
-                  />
-                  Nakshatra
-                </label>
-                <label className="flex items-center gap-2 text-sm mt-1">
-                  <input
-                    type="checkbox"
-                    checked={!!settings.rasi}
-                    onChange={() => toggleSetting("rasi")}
-                    className="checkbox checkbox-sm"
-                  />
-                  Rasi
-                </label>
-                <label className="flex items-center gap-2 text-sm mt-1">
-                  <input
-                    type="checkbox"
-                    checked={!!settings.enDate}
-                    onChange={() => toggleSetting("enDate")}
-                    className="checkbox checkbox-sm"
-                  />
-                  English date
-                </label>
-              </div>
-            )}
-          </div>
+      {!hideHeader && (
+        <div className="flex items-center justify-between mb-3">
+          <div className="font-semibold text-lg">{title}</div>
+          <div className="flex gap-2 items-center">
+            <div className="relative" ref={settingsRef}>
+              <button
+                className="btn btn-ghost btn-sm flex gap-1 items-center"
+                onClick={() => setShowSettings((s) => !s)}
+                aria-haspopup="true"
+                aria-expanded={showSettings}
+              >
+                <Gear size={20} weight="bold" />
+                <span>Customize</span>
+              </button>
+              {showSettings && (
+                <div className="absolute right-0 mt-2 w-48 bg-base-200 border rounded shadow-md p-3 z-50">
+                  <div className="text-sm font-medium mb-2">
+                    Show extra info
+                  </div>
+                  <label className="flex items-center gap-2 text-sm mb-1">
+                    <input
+                      type="checkbox"
+                      checked={!!settings.tithi}
+                      onChange={() => toggleSetting("tithi")}
+                      className="checkbox checkbox-sm"
+                    />
+                    Tithi
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={!!settings.nakshatra}
+                      onChange={() => toggleSetting("nakshatra")}
+                      className="checkbox checkbox-sm"
+                    />
+                    Nakshatra
+                  </label>
+                  <label className="flex items-center gap-2 text-sm mt-1">
+                    <input
+                      type="checkbox"
+                      checked={!!settings.rasi}
+                      onChange={() => toggleSetting("rasi")}
+                      className="checkbox checkbox-sm"
+                    />
+                    Rasi
+                  </label>
+                  <label className="flex items-center gap-2 text-sm mt-1">
+                    <input
+                      type="checkbox"
+                      checked={!!settings.enDate}
+                      onChange={() => toggleSetting("enDate")}
+                      className="checkbox checkbox-sm"
+                    />
+                    English date
+                  </label>
+                </div>
+              )}
+            </div>
 
-          <button
-            className="btn btn-sm"
-            onClick={prev}
-            aria-label="previous month"
-            disabled={month <= 1}
-          >
-            Prev
-          </button>
-          <button className="btn btn-sm" onClick={next} aria-label="next month">
-            Next
-          </button>
+            <button
+              className="btn btn-sm"
+              onClick={prev}
+              aria-label="previous month"
+              disabled={month <= 1}
+            >
+              Prev
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={next}
+              aria-label="next month"
+            >
+              Next
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {loading && (
         <div className="py-8 text-center text-sm text-muted">Loading…</div>
@@ -316,7 +315,16 @@ export default function CalendarMulti({
                 return (
                   <div
                     key={idx}
-                    className="h-20 p-2 border border-base-200/90 flex flex-col justify-between bg-base-100"
+                    className="h-20 p-2 border border-base-200/90 flex flex-col justify-between bg-base-100 cursor-pointer"
+                    role={onDateClick ? "button" : undefined}
+                    tabIndex={onDateClick ? 0 : undefined}
+                    onClick={() => {
+                      if (onDateClick) onDateClick(cell);
+                    }}
+                    onKeyDown={(e) => {
+                      if (!onDateClick) return;
+                      if (e.key === "Enter" || e.key === " ") onDateClick(cell);
+                    }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex flex-col">
