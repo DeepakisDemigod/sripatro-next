@@ -16,7 +16,16 @@ export const createComment = async (text, parentId = null, path) => {
     credentials: "include",
     body: JSON.stringify({ page: path, parentId, body: text }),
   });
-  if (!res.ok) throw new Error("Failed to create comment");
+  if (!res.ok) {
+    let payload = null;
+    try {
+      payload = await res.json();
+    } catch {}
+    const err = new Error(payload?.error || "Failed to create comment");
+    err.status = res.status;
+    err.data = payload;
+    throw err;
+  }
   const data = await res.json();
   return data;
 };

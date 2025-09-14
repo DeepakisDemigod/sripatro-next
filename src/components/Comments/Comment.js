@@ -133,6 +133,7 @@ import {
 import { useMemo } from "react";
 import Avatar, { genConfig } from "react-nice-avatar";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 const MAX_DEPTH = 4;
 
 function formatRelativeTime(iso) {
@@ -198,7 +199,8 @@ const Comment = ({
 
   const [text, setText] = useState(comment.body);
   const [showReplies, setShowReplies] = useState(false);
-  const canReply = depth < MAX_DEPTH && !comment.isDeleted;
+  const isSignedIn = !!session?.user;
+  const canReply = depth < MAX_DEPTH && !comment.isDeleted && isSignedIn;
   const sessionUserId = session?.user?.id || session?.user?.email;
   const sessionUserName = session?.user?.name || session?.user?.email;
   const canEdit =
@@ -264,27 +266,34 @@ const Comment = ({
         <div className="flex gap-2 items-center text-base-content/60">
           {!comment.isDeleted && (
             <div className="flex items-center gap-1">
-              <button
-                className={`btn btn-xs btn-ghost ${comment.currentUserVote === 1 ? "text-primary" : ""}`}
-                title="Upvote"
-                onClick={() =>
-                  onVote?.(comment.id, comment.currentUserVote === 1 ? 0 : 1)
-                }
-              >
-                <ArrowFatUp size={16} />
-              </button>
+              {isSignedIn && (
+                <button
+                  className={`btn btn-xs btn-ghost ${comment.currentUserVote === 1 ? "text-primary" : ""}`}
+                  title="Upvote"
+                  onClick={() =>
+                    onVote?.(comment.id, comment.currentUserVote === 1 ? 0 : 1)
+                  }
+                >
+                  <ArrowFatUp size={16} />
+                </button>
+              )}
               <span className={`text-xs font-semibold ${netScoreClass}`}>
                 {netScore}
               </span>
-              <button
-                className={`btn btn-xs btn-ghost ${comment.currentUserVote === -1 ? "text-primary" : ""}`}
-                title="Downvote"
-                onClick={() =>
-                  onVote?.(comment.id, comment.currentUserVote === -1 ? 0 : -1)
-                }
-              >
-                <ArrowFatDown size={16} />
-              </button>
+              {isSignedIn && (
+                <button
+                  className={`btn btn-xs btn-ghost ${comment.currentUserVote === -1 ? "text-primary" : ""}`}
+                  title="Downvote"
+                  onClick={() =>
+                    onVote?.(
+                      comment.id,
+                      comment.currentUserVote === -1 ? 0 : -1
+                    )
+                  }
+                >
+                  <ArrowFatDown size={16} />
+                </button>
+              )}
             </div>
           )}
           {canReply && (
@@ -297,6 +306,15 @@ const Comment = ({
             >
               <Chat size={16} /> Reply
             </button>
+          )}
+          {!isSignedIn && !comment.isDeleted && depth < MAX_DEPTH && (
+            <Link
+              href="/auth/signin"
+              className="btn btn-xs btn-ghost"
+              title="Sign in to reply"
+            >
+              <Chat size={16} /> Reply
+            </Link>
           )}
           {canEdit && (
             <>

@@ -41,6 +41,7 @@ const Comments = ({ currentUserId }) => {
   const effectiveCurrentUserId =
     session?.user?.id || session?.user?.email || currentUserId || null;
   const [visibleRoots, setVisibleRoots] = useState(10);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!pathname) return;
@@ -49,12 +50,23 @@ const Comments = ({ currentUserId }) => {
       .catch(() => setComments([]));
   }, [pathname]);
 
-  const addComment = (text, parentId) => {
-    createComment(text, parentId, pathname).then((comment) => {
+  const addComment = async (text, parentId) => {
+    try {
+      const comment = await createComment(text, parentId, pathname);
       setComments((prev) => [...prev, comment]);
       setActiveComment({ id: comment.id, type: "new" });
       if (!parentId) setVisibleRoots((v) => v + 1);
-    });
+      setError("");
+      return comment;
+    } catch (err) {
+      if (err?.status === 401) {
+        setError("Please sign in to comment.");
+      } else {
+        setError(err?.message || "Failed to create comment.");
+      }
+      // Do not rethrow to avoid unhandled runtime errors in event handlers
+      return null;
+    }
   };
 
   const deleteCommentById = (id) => {
@@ -75,8 +87,9 @@ const Comments = ({ currentUserId }) => {
     });
   };
 
-  const handleVote = (id, value) => {
-    voteComment(id, value).then((res) => {
+  const handleVote = async (id, value) => {
+    try {
+      const res = await voteComment(id, value);
       setComments((prev) =>
         prev.map((c) =>
           c.id === id
@@ -89,7 +102,11 @@ const Comments = ({ currentUserId }) => {
             : c
         )
       );
-    });
+      setError("");
+    } catch (err) {
+      if (err?.status === 401) setError("Please sign in to vote.");
+      else setError(err?.message || "Failed to vote.");
+    }
   };
 
   useEffect(() => {
@@ -105,11 +122,16 @@ const Comments = ({ currentUserId }) => {
   const visible = roots.slice(0, visibleRoots);
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
+    <div className="max-w-6xl mx-auto mt-8">
       <div className="m-2">
         <h3 className="font-bold">Comments</h3>
       </div>
-      <CommentForm submitLabel="write" handleSubmit={addComment} />
+      {error && (
+        <div className="alert alert-warning mx-2 my-3">
+          <span className="text-sm">{error}</span>
+        </div>
+      )}
+      <CommentForm submitLabel="Post" handleSubmit={addComment} />
 
       {visible.map((comment) => (
         <Comment

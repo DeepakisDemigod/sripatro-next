@@ -6,7 +6,6 @@ import Footer from "@/components/Footer.js";
 import Header from "@/components/Header.js";
 import Patro from "@/components/Patro.js";
 import Tiles from "@/components/Tiles.js";
-import Comments from "@/components/Comments/Comments";
 import Menu from "@/components/Menu";
 
 import HoroscopeForm from "@/components/Horoscope/Horoscope";
@@ -32,7 +31,6 @@ export default function Dashboard() {
 
         <Patro />
       </div>
-      <Comments currentUserId="1" />
     </div>
   );
 }

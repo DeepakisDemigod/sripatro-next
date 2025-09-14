@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Offline | SriPatro</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Ubuntu,
+          Cantarell,
+          Noto Sans,
+          sans-serif;
+        display: grid;
+        min-height: 100vh;
+        place-items: center;
+        background: #f7f7f7;
+        color: #222;
+      }
+      .card {
+        max-width: 560px;
+        padding: 24px;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        border: 1px solid #eaeaea;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0 0 8px;
+      }
+      p {
+        margin: 0 0 16px;
+        color: #555;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 999px;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+      }
+      .muted {
+        font-size: 12px;
+        color: #777;
+        margin-top: 12px;
+      }
+      .logo {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+        border-radius: 12px;
+        margin: 0 auto 12px;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="40"
+        height="40"
+        fill="#000000"
+        viewBox="0 0 256 256"
+      >
+        <path
+          d="M216.88,207.93a12,12,0,1,1-17.76,16.14L147.78,167.6a56.06,56.06,0,0,0-52.71,7.1,12,12,0,0,1-14.14-19.4,79.35,79.35,0,0,1,41.92-15.12L103.51,118.9a104.18,104.18,0,0,0-40.06,19.55,12,12,0,0,1-14.9-18.81A128.46,128.46,0,0,1,85.61,99.21l-17.31-19a151.14,151.14,0,0,0-36.68,22.28A12,12,0,1,1,16.39,83.91a175.52,175.52,0,0,1,35-22.38L39.12,48.07A12,12,0,1,1,56.88,31.93ZM128,188a16,16,0,1,0,16,16A16,16,0,0,0,128,188Zm64.55-49.55a12,12,0,0,0,14.9-18.81A127.27,127.27,0,0,0,170,99.05a12,12,0,0,0-7.87,22.67A103.62,103.62,0,0,1,192.55,138.45Zm47.06-54.54A176.33,176.33,0,0,0,128,44c-3.94,0-7.93.13-11.86.39a12,12,0,1,0,1.59,24c3.4-.23,6.86-.34,10.27-.34a152.24,152.24,0,0,1,96.38,34.46,12,12,0,1,0,15.23-18.55Z"
+        ></path>
+      </svg>
+      <h1>You’re offline</h1>
+      <p>
+        It looks like your internet connection is down. You can retry once
+        you’re back online.
+      </p>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="location.reload()">
+          Retry
+        </button>
+        <button
+          class="btn text-base-content"
+          onclick="window.location.href='/'"
+        >
+          Go Home
+        </button>
+      </div>
+      <p class="muted">Tip: Some pages may still be available if cached.</p>
+    </main>
+  </body>
+</html>

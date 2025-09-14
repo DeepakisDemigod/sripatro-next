@@ -91,6 +91,7 @@ import LocaleSwitcher from "@/components/LocaleSwitcher";
 import AstrologerStatusSwitcher from "@/components/AstrologerStatusSwitcher";
 import ContactPopup from "@/components/ContactPopup";
 import { AstrologerOnlineProvider } from "@/context/AstrologerOnlineContext";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const gabarito = Gabarito({
   subsets: ["latin"],
@@ -125,6 +126,7 @@ export default async function LocaleLayout({ children, params }) {
               </div>
               {children}
               <ContactPopup />
+              <ServiceWorkerRegister />
             </NextIntlClientProvider>
           </AstrologerOnlineProvider>
         </SessionWrapper>
