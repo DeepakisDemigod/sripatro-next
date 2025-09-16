@@ -47,6 +47,7 @@ export default function CalendarMulti({
     nakshatra: false,
     rasi: false,
     enDate: false,
+    festivals: false,
   });
   const [showSettings, setShowSettings] = useState(false);
   const settingsRef = useRef(null);
@@ -76,6 +77,7 @@ export default function CalendarMulti({
       try {
         const now = new Date();
         const monthName = now.toLocaleString("en", { month: "long" });
+        const monthAbbr = now.toLocaleString("en", { month: "short" });
         const yearNum = now.getFullYear();
         // Bikram Sambat is roughly AD + 57
         const bsGuess = yearNum + 57;
@@ -83,15 +85,22 @@ export default function CalendarMulti({
         for (let m = 1; m <= 12; m++) {
           if (cancelled) return;
           try {
-            const res = await fetch(`/data/${bsGuess}/${m}.json`);
-            if (!res.ok) continue;
-            const json = await res.json();
+            let json = null;
+            let res = await fetch(`/data/${bsGuess}/${m}.json`);
+            if (res.ok) {
+              json = await res.json();
+            } else {
+              res = await fetch(`/data-db/${bsGuess}/${m}.json`);
+              if (res.ok) json = await res.json();
+            }
+            if (!json) continue;
             const meta =
               json && json.metadata && (json.metadata.en || json.metadata.np);
             if (
               meta &&
               String(meta).includes(String(yearNum)) &&
-              String(meta).includes(monthName)
+              (String(meta).includes(monthName) ||
+                String(meta).includes(monthAbbr))
             ) {
               if (!cancelled) {
                 setYear(String(bsGuess));
@@ -119,10 +128,53 @@ export default function CalendarMulti({
       setLoading(true);
       setErr(null);
       try {
-        const res = await fetch(`/data/${year}/${month}.json`);
-        if (!res.ok) throw new Error("no-data");
-        const json = await res.json();
-        if (mounted) setData(json);
+        const [baseResSettled, overlayResSettled] = await Promise.allSettled([
+          fetch(`/data/${year}/${month}.json`),
+          fetch(`/data-db/${year}/${month}.json`),
+        ]);
+
+        let baseJson = null;
+        let overlayJson = null;
+
+        if (baseResSettled.status === "fulfilled" && baseResSettled.value.ok) {
+          baseJson = await baseResSettled.value.json();
+        }
+        if (
+          overlayResSettled.status === "fulfilled" &&
+          overlayResSettled.value.ok
+        ) {
+          overlayJson = await overlayResSettled.value.json();
+        }
+
+        if (!baseJson && !overlayJson) throw new Error("no-data");
+
+        // Merge overlay festivals/holidays into base data by day index
+        let combined = baseJson || overlayJson;
+        if (baseJson && overlayJson) {
+          const baseDays = Array.isArray(baseJson.days) ? baseJson.days : [];
+          const overlayDays = Array.isArray(overlayJson.days)
+            ? overlayJson.days
+            : [];
+          const maxLen = Math.max(baseDays.length, overlayDays.length);
+          const mergedDays = new Array(maxLen).fill(null).map((_, i) => {
+            const b = baseDays[i] ? { ...baseDays[i] } : {};
+            const o = overlayDays[i] || null;
+            if (o) {
+              if (o.f) b.f = o.f;
+              if (o.h != null) b.h = !!o.h;
+              // keep original labels from base; we don't overwrite np/en here
+              // weekday comes from base; if missing, fall back to overlay's d
+              if (b.weekday == null && o.d != null) b.weekday = o.d;
+            }
+            return b;
+          });
+          combined = { ...baseJson, days: mergedDays };
+          // prefer base metadata; if missing, fallback to overlay metadata
+          if (!combined.metadata && overlayJson.metadata)
+            combined.metadata = overlayJson.metadata;
+        }
+
+        if (mounted) setData(combined);
       } catch (e) {
         if (mounted) {
           setData(null);
@@ -159,12 +211,51 @@ export default function CalendarMulti({
     }
   }
 
+  // determine if the displayed BS month includes today's Gregorian month/year
+  const __now = new Date();
+  const __todayDay = __now.getDate();
+  const __todayYearStr = String(__now.getFullYear());
+  const __todayMonthLong = __now.toLocaleString("en", { month: "long" });
+  const __todayMonthShort = __now.toLocaleString("en", { month: "short" });
+  const __metaEn = (data && data.metadata && data.metadata.en) || "";
+  const __showsTodayGregorianMonth =
+    __metaEn &&
+    __metaEn.includes(__todayYearStr) &&
+    (__metaEn.includes(__todayMonthLong) ||
+      __metaEn.includes(__todayMonthShort));
+
+  // annotate each day with inferred Gregorian month abbreviation (from metadata)
+  if (data && Array.isArray(data.days)) {
+    const monthsInMeta = (
+      __metaEn.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/g) || []
+    ).slice(0, 2);
+    let currentMonthIdx = 0;
+    let lastEN = null;
+    for (const d of data.days) {
+      const eRaw = d && (d.e ?? d.en);
+      const eNum = eRaw != null ? parseInt(eRaw, 10) : NaN;
+      if (Number.isFinite(eNum) && eNum >= 1 && eNum <= 31) {
+        if (lastEN != null && eNum < lastEN && monthsInMeta.length > 1) {
+          currentMonthIdx = Math.min(
+            currentMonthIdx + 1,
+            monthsInMeta.length - 1
+          );
+        }
+        d.__gregMonthAbbr = monthsInMeta[currentMonthIdx] || null;
+        lastEN = eNum;
+      } else {
+        d.__gregMonthAbbr = null;
+      }
+    }
+  }
+
   // build weeks from data.days where weekday: 1 = Sunday
   const weeks = [];
   if (data && Array.isArray(data.days)) {
     let curWeek = Array(7).fill(null);
     data.days.forEach((d) => {
-      const col = Math.max(0, Math.min(6, (d.weekday || 1) - 1));
+      const wd = (d && (d.weekday ?? d.d)) || 1; // support new schema `.d`
+      const col = Math.max(0, Math.min(6, wd - 1));
       curWeek[col] = d;
       if (col === 6) {
         weeks.push(curWeek);
@@ -193,7 +284,7 @@ export default function CalendarMulti({
   }
 
   return (
-    <div className="bg-base-100 p-4 rounded-lg shadow-sm w-full mx-auto max-w-3xl">
+    <div className="bg-base-100 p-4 rounded-lg shadow-sm overflow-x-scroll overflow-y-auto mx-auto w-full">
       {!hideHeader && (
         <div className="flex items-center justify-between mb-3">
           <div className="font-semibold text-lg">{title}</div>
@@ -243,6 +334,15 @@ export default function CalendarMulti({
                   <label className="flex items-center gap-2 text-sm mt-1">
                     <input
                       type="checkbox"
+                      checked={!!settings.festivals}
+                      onChange={() => toggleSetting("festivals")}
+                      className="checkbox checkbox-sm"
+                    />
+                    Festivals
+                  </label>
+                  <label className="flex items-center gap-2 text-sm mt-1">
+                    <input
+                      type="checkbox"
                       checked={!!settings.enDate}
                       onChange={() => toggleSetting("enDate")}
                       className="checkbox checkbox-sm"
@@ -283,14 +383,14 @@ export default function CalendarMulti({
 
       {!loading && data && (
         <>
-          <div className="grid grid-cols-7 text-center text-xs">
+          <div className="grid grid-cols-[repeat(7,8rem)] text-xs sticky top-0 bg-base-100 z-10 min-w-[56rem]">
             {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
               <div
                 key={`dow-${i}-${d}`}
                 className={
                   i === 6
-                    ? `py-1 text-lg text-left pl-2 font-extrabold border border-base-200/90 text-red-500`
-                    : `py-1 text-lg text-left pl-2 font-extrabold border border-base-200/90 text-base-content/95`
+                    ? `p-2 text-base text-left font-extrabold border border-base-200/90 text-red-500`
+                    : `p-2 text-base text-left font-extrabold border border-base-200/90 text-base-content/95`
                 }
               >
                 {d}
@@ -298,7 +398,7 @@ export default function CalendarMulti({
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-0">
+          <div className="grid grid-cols-[repeat(7,8rem)] gap-0 auto-rows-[minmax(5.5rem,auto)] min-w-[56rem]">
             {weeks.map((row, rIdx) =>
               row.map((cell, cIdx) => {
                 const idx = `${rIdx}-${cIdx}`;
@@ -306,16 +406,29 @@ export default function CalendarMulti({
                   return (
                     <div
                       key={idx}
-                      className="h-20 rounded-md bg-base-200/40"
+                      className="min-h-20 rounded-md bg-base-200/40"
                     ></div>
                   );
-                const labelNp = cell.np;
-                const labelEn = cell.en;
+                const labelNp = cell.n ?? cell.np;
+                const labelEn = cell.e ?? cell.en;
+                const tithiVal = cell.t ?? cell.Tithi;
+                const nakshatraVal = cell.Nakshatra; // fallback only if present
+                const isHoliday = !!cell.h;
                 const isSaturday = cIdx === 6;
+                const isToday = (() => {
+                  if (!__showsTodayGregorianMonth) return false;
+                  const enNum = Number(labelEn);
+                  if (Number.isNaN(enNum) || enNum !== __todayDay) return false;
+                  const monthAbbr = __now.toLocaleString("en", {
+                    month: "short",
+                  });
+                  const inferred = cell.__gregMonthAbbr || null;
+                  return inferred ? inferred === monthAbbr : true;
+                })();
                 return (
                   <div
                     key={idx}
-                    className="h-20 p-2 border border-base-200/90 flex flex-col justify-between bg-base-100 cursor-pointer"
+                    className="min-h-20 p-2 border border-base-200/90 flex flex-col justify-between bg-base-100 cursor-pointer"
                     role={onDateClick ? "button" : undefined}
                     tabIndex={onDateClick ? 0 : undefined}
                     onClick={() => {
@@ -326,30 +439,47 @@ export default function CalendarMulti({
                       if (e.key === "Enter" || e.key === " ") onDateClick(cell);
                     }}
                   >
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-2">
                       <div className="flex flex-col">
                         <div className="text-sm font-medium">
-                          <span
-                            className={`text-xl font-extrabold leading-none ${isSaturday ? "text-red-500" : ""}`}
-                          >
-                            {labelNp}
-                          </span>
+                          {isToday ? (
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white text-base font-extrabold leading-none">
+                              {labelNp}
+                            </span>
+                          ) : (
+                            <span
+                              className={`text-xl font-extrabold leading-none ${
+                                isSaturday || isHoliday ? "text-red-600" : ""
+                              }`}
+                            >
+                              {labelNp}
+                            </span>
+                          )}
                         </div>
                         {settings.enDate && labelEn ? (
                           <div
-                            className={`text-xs mt-0.5 ${isSaturday ? "text-red-500" : "text-muted"}`}
+                            className={`text-xs mt-0.5 ${
+                              isSaturday || isHoliday
+                                ? "text-red-600"
+                                : "text-muted"
+                            }`}
                           >
                             {labelEn}
                           </div>
                         ) : null}
                       </div>
-                      <div>
-                        {settings.tithi && cell.Tithi ? (
+                      {settings.festivals && cell.f ? (
+                        <div className="whitespace-normal text-base-content/80">
+                          {cell.f}
+                        </div>
+                      ) : null}
+                      <div className="shrink-0">
+                        {settings.tithi && tithiVal ? (
                           <div className="text-xs text-green-600 bg-green-600/10 px-2 py-0.5 rounded-full">
                             T
                           </div>
                         ) : null}
-                        {settings.nakshatra && cell.Nakshatra ? (
+                        {settings.nakshatra && nakshatraVal ? (
                           <div className="text-xs text-blue-600 bg-blue-600/10 px-2 py-0.5 rounded-full mt-1">
                             N
                           </div>
@@ -371,12 +501,12 @@ export default function CalendarMulti({
                           : null}
                       </div>
                     </div>
-                    <div className="text-xs text-muted">
-                      {settings.tithi && (
-                        <div className="truncate">{cell.Tithi}</div>
+                    <div className="text-xs text-muted overflow-x-auto space-y-0.5">
+                      {settings.tithi && tithiVal && (
+                        <div className="whitespace-nowrap">{tithiVal}</div>
                       )}
-                      {settings.nakshatra && (
-                        <div className="truncate">{cell.Nakshatra}</div>
+                      {settings.nakshatra && nakshatraVal && (
+                        <div className="whitespace-nowrap">{nakshatraVal}</div>
                       )}
                       {settings.rasi &&
                         (() => {
@@ -387,7 +517,7 @@ export default function CalendarMulti({
                               ? String(cell.MoonTiming).split(" ")[0]
                               : null);
                           return rasiVal ? (
-                            <div className="truncate">{rasiVal}</div>
+                            <div className="whitespace-nowrap">{rasiVal}</div>
                           ) : null;
                         })()}
                     </div>

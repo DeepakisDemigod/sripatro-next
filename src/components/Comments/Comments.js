@@ -124,7 +124,7 @@ const Comments = ({ currentUserId }) => {
   return (
     <div className="max-w-6xl mx-auto mt-8">
       <div className="m-2">
-        <h3 className="font-bold">Comments</h3>
+        <h3 className="font-bold">Conversations</h3>
       </div>
       {error && (
         <div className="alert alert-warning mx-2 my-3">

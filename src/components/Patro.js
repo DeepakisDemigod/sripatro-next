@@ -330,7 +330,7 @@ export default function LivePanchangCard() {
             <CalendarMulti
               hideHeader={true}
               initialSettings={{
-                tithi: true,
+                tithi: false,
                 enDate: true,
                 nakshatra: false,
                 rasi: false,

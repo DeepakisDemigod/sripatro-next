@@ -254,7 +254,7 @@ export default function DailyPanchangPage() {
 
           {/* Comments Section */}
           <div className="mt-10">
-            <h2 className="text-lg font-bold mb-4">Comments</h2>
+            {/* <h2 className="text-lg font-bold mb-4">Comments</h2> */}
             <Comments />
           </div>
         </div>

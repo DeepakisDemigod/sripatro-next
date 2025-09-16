@@ -994,7 +994,7 @@ const BirthPanchangUnified = ({
 
             {/* History: hide when embedded in modal */}
             {!embedded && (
-              <div className="mt-4 rounded-xl p-4 bg-base-100 shadow-sm border border-base-300">
+              <div className="mt-4 rounded-xl p-4 bg-base-100 border border-base-300">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-base-800">
                     Saved Panchangs
