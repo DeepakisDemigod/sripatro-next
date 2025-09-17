@@ -1,3 +1,25 @@
+## PWA
+
+This app is installable as a PWA. We include a web app manifest (`public/manifest.json`) and register a service worker (`public/sw.js`).
+
+- The layout injects `<link rel="manifest">` and `theme-color` meta.
+- Use the `SiteBanner` component to surface an install button (uses `react-use-pwa-install`).
+
+Example usage:
+
+```jsx
+import SiteBanner from "@/components/SiteBanner";
+
+export default function Home() {
+  return (
+    <>
+      <SiteBanner />
+      {/* ...rest of page... */}
+    </>
+  );
+}
+```
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

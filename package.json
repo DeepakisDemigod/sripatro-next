@@ -39,6 +39,7 @@
     "react-nice-avatar": "^1.5.0",
     "react-slick": "^0.30.3",
     "react-text-to-speech": "^2.1.2",
+    "react-use-pwa-install": "^1.0.3",
     "resend": "^4.6.0",
     "slick-carousel": "^1.8.1"
   },

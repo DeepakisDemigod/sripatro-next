@@ -26,6 +26,19 @@ function getCookie(name) {
   }
 }
 
+// numeral helpers for Nepali/Devanagari <-> Latin digits
+const __devDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
+function toDevanagariDigits(input) {
+  if (input == null) return "";
+  const s = String(input);
+  return s.replace(/[0-9]/g, (d) => __devDigits[Number(d)]);
+}
+function toLatinDigits(input) {
+  if (input == null) return "";
+  const s = String(input);
+  return s.replace(/[०१२३४५६७८९]/g, (ch) => String(__devDigits.indexOf(ch)));
+}
+
 export default function CalendarMulti({
   defaultYear = "2082",
   defaultMonth = 1,
@@ -34,6 +47,8 @@ export default function CalendarMulti({
   initialSettings = null,
   // onDateClick: optional callback(cell) when a date cell is clicked
   onDateClick = null,
+  // when true, always auto-detect the current month on mount regardless of defaults/search params
+  forceCurrentOnMount = false,
 }) {
   const [year, setYear] = useState(defaultYear);
   const [month, setMonth] = useState(defaultMonth); // 1-based
@@ -47,7 +62,9 @@ export default function CalendarMulti({
     nakshatra: false,
     rasi: false,
     enDate: false,
+    npDigits: false, // show Nepali date in Devanagari when true; default shows Latin digits
     festivals: false,
+    holidayDOW: "saturday", // 'saturday' (Nepal) or 'sunday' (India)
   });
   const [showSettings, setShowSettings] = useState(false);
   const settingsRef = useRef(null);
@@ -67,10 +84,12 @@ export default function CalendarMulti({
   useEffect(() => {
     // only run detection when user didn't override defaults
     if (
-      String(defaultYear) !== String(year) ||
-      Number(defaultMonth) !== Number(month)
-    )
+      !forceCurrentOnMount &&
+      (String(defaultYear) !== String(year) ||
+        Number(defaultMonth) !== Number(month))
+    ) {
       return;
+    }
 
     let cancelled = false;
     (async () => {
@@ -162,6 +181,7 @@ export default function CalendarMulti({
             if (o) {
               if (o.f) b.f = o.f;
               if (o.h != null) b.h = !!o.h;
+              if (o.t != null && String(o.t).trim() !== "") b.t = o.t;
               // keep original labels from base; we don't overwrite np/en here
               // weekday comes from base; if missing, fall back to overlay's d
               if (b.weekday == null && o.d != null) b.weekday = o.d;
@@ -349,6 +369,51 @@ export default function CalendarMulti({
                     />
                     English date
                   </label>
+                  <label className="flex items-center gap-2 text-sm mt-1">
+                    <input
+                      type="checkbox"
+                      checked={!!settings.npDigits}
+                      onChange={() => toggleSetting("npDigits")}
+                      className="checkbox checkbox-sm"
+                    />
+                    Nepali digits
+                  </label>
+                  <div className="mt-3 text-xs">
+                    <div className="font-medium mb-1">Weekly holiday</div>
+                    <div className="flex gap-2">
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name="holidayDOW"
+                          className="radio radio-xs"
+                          checked={settings.holidayDOW === "saturday"}
+                          onChange={() => {
+                            const next = {
+                              ...settings,
+                              holidayDOW: "saturday",
+                            };
+                            setSettings(next);
+                            setCookie("calendar_settings", next, 365);
+                          }}
+                        />
+                        Saturday
+                      </label>
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name="holidayDOW"
+                          className="radio radio-xs"
+                          checked={settings.holidayDOW === "sunday"}
+                          onChange={() => {
+                            const next = { ...settings, holidayDOW: "sunday" };
+                            setSettings(next);
+                            setCookie("calendar_settings", next, 365);
+                          }}
+                        />
+                        Sunday
+                      </label>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -383,15 +448,33 @@ export default function CalendarMulti({
 
       {!loading && data && (
         <>
+          {/* Month banner */}
+          <div className="mb-3 min-w-[56rem]">
+            <img
+              src={`/month-banner/${month}.jpg`}
+              alt={
+                (data &&
+                  data.metadata &&
+                  (data.metadata.np || data.metadata.en)) ||
+                `Month ${month}`
+              }
+              className="w-full h-auto max-h-[22rem] object-contain rounded-md border border-base-200/90 bg-base-100"
+              onError={(e) => {
+                // hide image if banner not available
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          </div>
           <div className="grid grid-cols-[repeat(7,8rem)] text-xs sticky top-0 bg-base-100 z-10 min-w-[56rem]">
             {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
               <div
                 key={`dow-${i}-${d}`}
-                className={
-                  i === 6
-                    ? `p-2 text-base text-left font-extrabold border border-base-200/90 text-red-500`
-                    : `p-2 text-base text-left font-extrabold border border-base-200/90 text-base-content/95`
-                }
+                className={`p-2 text-base text-left font-extrabold border border-base-200/90 ${
+                  (settings.holidayDOW === "saturday" && i === 6) ||
+                  (settings.holidayDOW === "sunday" && i === 0)
+                    ? "text-red-500"
+                    : "text-base-content/95"
+                }`}
               >
                 {d}
               </div>
@@ -409,12 +492,36 @@ export default function CalendarMulti({
                       className="min-h-20 rounded-md bg-base-200/40"
                     ></div>
                   );
-                const labelNp = cell.n ?? cell.np;
+                const labelNpRaw = cell.n ?? cell.np;
+                const labelNp = settings.npDigits
+                  ? toDevanagariDigits(labelNpRaw)
+                  : toLatinDigits(labelNpRaw);
                 const labelEn = cell.e ?? cell.en;
-                const tithiVal = cell.t ?? cell.Tithi;
+                const tithiVal = (() => {
+                  const overlayT = cell.t;
+                  if (overlayT != null && String(overlayT).trim() !== "")
+                    return overlayT;
+                  return cell.Tithi;
+                })();
                 const nakshatraVal = cell.Nakshatra; // fallback only if present
-                const isHoliday = !!cell.h;
+                const datasetHoliday = !!cell.h;
                 const isSaturday = cIdx === 6;
+                const isSunday = cIdx === 0;
+                const isWeeklyHoliday =
+                  (settings.holidayDOW === "saturday" && isSaturday) ||
+                  (settings.holidayDOW === "sunday" && isSunday);
+                const hasFestivalText = !!(cell.f && String(cell.f).trim());
+                // If the dataset marked the default weekly holiday as holiday but the user chose the other weekend,
+                // we ignore the dataset holiday for that weekday unless there is an explicit festival text.
+                const isHoliday = (() => {
+                  if (!datasetHoliday) return false;
+                  if (hasFestivalText) return true;
+                  if (settings.holidayDOW === "sunday" && isSaturday)
+                    return false;
+                  if (settings.holidayDOW === "saturday" && isSunday)
+                    return false;
+                  return true;
+                })();
                 const isToday = (() => {
                   if (!__showsTodayGregorianMonth) return false;
                   const enNum = Number(labelEn);
@@ -449,7 +556,9 @@ export default function CalendarMulti({
                           ) : (
                             <span
                               className={`text-xl font-extrabold leading-none ${
-                                isSaturday || isHoliday ? "text-red-600" : ""
+                                isWeeklyHoliday || isHoliday
+                                  ? "text-red-600"
+                                  : ""
                               }`}
                             >
                               {labelNp}
@@ -459,7 +568,7 @@ export default function CalendarMulti({
                         {settings.enDate && labelEn ? (
                           <div
                             className={`text-xs mt-0.5 ${
-                              isSaturday || isHoliday
+                              isWeeklyHoliday || isHoliday
                                 ? "text-red-600"
                                 : "text-muted"
                             }`}
