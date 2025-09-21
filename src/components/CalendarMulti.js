@@ -1,5 +1,6 @@
 "use client";
 import { Gear } from "phosphor-react";
+import NepaliDate from "nepali-date-converter";
 import React, { useEffect, useState, useRef } from "react";
 
 // cookie helpers (small, no deps)
@@ -49,6 +50,10 @@ export default function CalendarMulti({
   onDateClick = null,
   // when true, always auto-detect the current month on mount regardless of defaults/search params
   forceCurrentOnMount = false,
+  // compact: responsive 7-column grid (no fixed widths/min-w) suitable for small embeds
+  compact = false,
+  // hide the month banner image (used by home Patro card)
+  hideBanner = false,
 }) {
   const [year, setYear] = useState(defaultYear);
   const [month, setMonth] = useState(defaultMonth); // 1-based
@@ -94,13 +99,40 @@ export default function CalendarMulti({
     let cancelled = false;
     (async () => {
       try {
+        // Prefer exact BS detection using nepali-date-converter
+        const nd = NepaliDate.fromAD(new Date());
+        const bsY = nd.getYear();
+        const bsM = nd.getMonth() + 1; // 1-based
+
+        // Verify data exists for this BS month; fallback to old heuristic if not
+        try {
+          const res = await fetch(`/data/${bsY}/${bsM}.json`);
+          if (res.ok) {
+            if (!cancelled) {
+              setYear(String(bsY));
+              setMonth(bsM);
+              return;
+            }
+          } else {
+            const res2 = await fetch(`/data-db/${bsY}/${bsM}.json`);
+            if (res2.ok) {
+              if (!cancelled) {
+                setYear(String(bsY));
+                setMonth(bsM);
+                return;
+              }
+            }
+          }
+        } catch (e) {
+          // continue to heuristic
+        }
+
+        // Heuristic fallback using metadata text
         const now = new Date();
         const monthName = now.toLocaleString("en", { month: "long" });
         const monthAbbr = now.toLocaleString("en", { month: "short" });
         const yearNum = now.getFullYear();
-        // Bikram Sambat is roughly AD + 57
-        const bsGuess = yearNum + 57;
-
+        const bsGuess = nd.getYear(); // closer than AD+57
         for (let m = 1; m <= 12; m++) {
           if (cancelled) return;
           try {
@@ -304,7 +336,7 @@ export default function CalendarMulti({
   }
 
   return (
-    <div className="bg-base-100 p-4 rounded-lg shadow-sm overflow-x-scroll overflow-y-auto mx-auto w-full">
+    <div className="bg-base-100 p-4 rounded-lg shadow-sm overflow-x-auto overflow-y-auto mx-auto w-full">
       {!hideHeader && (
         <div className="flex items-center justify-between mb-3">
           <div className="font-semibold text-lg">{title}</div>
@@ -448,24 +480,28 @@ export default function CalendarMulti({
 
       {!loading && data && (
         <>
-          {/* Month banner */}
-          <div className="mb-3 min-w-[56rem]">
-            <img
-              src={`/month-banner/${month}.jpg`}
-              alt={
-                (data &&
-                  data.metadata &&
-                  (data.metadata.np || data.metadata.en)) ||
-                `Month ${month}`
-              }
-              className="w-full h-auto max-h-[22rem] object-contain rounded-md border border-base-200/90 bg-base-100"
-              onError={(e) => {
-                // hide image if banner not available
-                e.currentTarget.style.display = "none";
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-[repeat(7,8rem)] text-xs sticky top-0 bg-base-100 z-10 min-w-[56rem]">
+          {/* Month banner (hidden in compact or when hideBanner) */}
+          {!compact && !hideBanner && (
+            <div className="mb-3 min-w-[56rem]">
+              <img
+                src={`/month-banner/${month}.jpg`}
+                alt={
+                  (data &&
+                    data.metadata &&
+                    (data.metadata.np || data.metadata.en)) ||
+                  `Month ${month}`
+                }
+                className="w-full h-auto max-h-[22rem] object-contain rounded-md border border-base-200/90 bg-base-100"
+                onError={(e) => {
+                  // hide image if banner not available
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+          )}
+          <div
+            className={`grid ${compact ? "grid-cols-7" : "grid-cols-[repeat(7,8rem)] min-w-[56rem]"} text-xs sticky top-0 bg-base-100 z-10`}
+          >
             {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
               <div
                 key={`dow-${i}-${d}`}
@@ -481,7 +517,9 @@ export default function CalendarMulti({
             ))}
           </div>
 
-          <div className="grid grid-cols-[repeat(7,8rem)] gap-0 auto-rows-[minmax(5.5rem,auto)] min-w-[56rem]">
+          <div
+            className={`grid ${compact ? "grid-cols-7" : "grid-cols-[repeat(7,8rem)] min-w-[56rem]"} gap-0 ${compact ? "auto-rows-[minmax(3.5rem,auto)]" : "auto-rows-[minmax(5.5rem,auto)]"}`}
+          >
             {weeks.map((row, rIdx) =>
               row.map((cell, cIdx) => {
                 const idx = `${rIdx}-${cIdx}`;
@@ -489,7 +527,7 @@ export default function CalendarMulti({
                   return (
                     <div
                       key={idx}
-                      className="min-h-20 rounded-md bg-base-200/40"
+                      className={`${compact ? "min-h-16" : "min-h-20"} rounded-md bg-base-200/40`}
                     ></div>
                   );
                 const labelNpRaw = cell.n ?? cell.np;
@@ -535,7 +573,7 @@ export default function CalendarMulti({
                 return (
                   <div
                     key={idx}
-                    className="min-h-20 p-2 border border-base-200/90 flex flex-col justify-between bg-base-100 cursor-pointer"
+                    className={`${compact ? "min-h-16" : "min-h-20"} p-2 border border-base-200/90 flex flex-col justify-between bg-base-100 cursor-pointer`}
                     role={onDateClick ? "button" : undefined}
                     tabIndex={onDateClick ? 0 : undefined}
                     onClick={() => {
@@ -555,7 +593,7 @@ export default function CalendarMulti({
                             </span>
                           ) : (
                             <span
-                              className={`text-xl font-extrabold leading-none ${
+                              className={`${compact ? "text-lg" : "text-xl"} font-extrabold leading-none ${
                                 isWeeklyHoliday || isHoliday
                                   ? "text-red-600"
                                   : ""

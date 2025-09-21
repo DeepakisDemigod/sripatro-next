@@ -303,11 +303,11 @@ export default function LivePanchangCard() {
 
       {/* moon */}
       <div className="relative flex justify-center py-2">
-        {/* <img
+        <img
           src={moonSrc}
           alt={panchang.Tithi.name_en_IN}
           className="w-22 h-22 rounded-full border border-red-300/40 shadow-2xl"
-        /> */}
+        />
 
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="z-10 backdrop-blur-xs w-16 h-16 rounded-full flex items-center justify-center shadow-md">
@@ -318,7 +318,7 @@ export default function LivePanchangCard() {
         </div>
       </div>
       {/* Calendar accordion using daisyUI collapse */}
-      <div className="mt-3">
+      {/* <div className="mt-3">
         <div className="collapse collapse-arrow border rounded-md bg-base-200">
           <input type="checkbox" />
           <div className="collapse-title py-2 px-3 font-medium">
@@ -326,86 +326,100 @@ export default function LivePanchangCard() {
               ? `${panchang.Masa.name_en_IN} ${bs.year} (${new Date().toLocaleString("en", { month: "long", year: "numeric" })})`
               : "Show calendar"}
           </div>
-          <div className="collapse-content p-3">
-            <CalendarMulti
-              hideHeader={true}
-              initialSettings={{
-                tithi: false,
-                enDate: true,
-                nakshatra: false,
-                rasi: false,
-              }}
-              onDateClick={(cell) => {
-                try {
-                  const q = new URLSearchParams();
-                  if (cell && cell.ad && cell.ad.year) {
-                    q.set("year", cell.ad.year);
-                    q.set("month", cell.ad.month);
-                    q.set("day", cell.ad.day);
-                  }
-                  router.push(`/calendar?${q.toString()}`);
-                } catch (e) {
-                  router.push(`/calendar`);
-                }
-              }}
-            />
-          </div>
+          <div className="collapse-content p-3"> */}
+      <CalendarMulti
+        hideHeader={true}
+        hideBanner={true}
+        compact={true}
+        initialSettings={{
+          tithi: false,
+          enDate: true,
+          nakshatra: false,
+          rasi: false,
+          festivals: false,
+        }}
+        onDateClick={(cell) => {
+          try {
+            const q = new URLSearchParams();
+            if (cell && cell.ad && cell.ad.year) {
+              q.set("year", cell.ad.year);
+              q.set("month", cell.ad.month);
+              q.set("day", cell.ad.day);
+            }
+            router.push(`/calendar?${q.toString()}`);
+          } catch (e) {
+            router.push(`/calendar`);
+          }
+        }}
+      />
+      {/*     </div>
+         </div>
+  </div> */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Panchang details table */}
+        <div className="overflow-x-auto">
+          <table className="table table-sm">
+            <tbody className="text-sm">
+              <tr>
+                <td className="font-medium">Tithi</td>
+                <td>{tithiName || "-"}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Paksha</td>
+                <td>
+                  {panchang.Paksha
+                    ? `${panchang.Paksha.name_en_IN} Paksha`
+                    : "-"}
+                </td>
+              </tr>
+              <tr>
+                <td className="font-medium">Rasi</td>
+                <td>{panchang.Raasi ? panchang.Raasi.name_en_UK : "-"}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Nakshatra</td>
+                <td>
+                  {panchang.Nakshatra ? panchang.Nakshatra.name_en_IN : "-"}
+                </td>
+              </tr>
+              <tr>
+                <td className="font-medium">Yoga</td>
+                <td>{panchang.Yoga ? panchang.Yoga.name_en_IN : "-"}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Karna</td>
+                <td>{panchang.Karna ? panchang.Karna.name_en_IN : "-"}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-      <div className="flex flex-wrap justify-evenly ">
-        <div>
-          {/* Panchang details */}
-          <div className="py-1 space-y-1 text-sm">
-            <div>
-              <strong>Tithi:</strong> {tithiName}
-            </div>
-            <div>
-              <strong>Paksha:</strong>
-              {panchang.Paksha ? `, ${panchang.Paksha.name_en_IN} Paksha` : ""}
-            </div>
-            <div>
-              <strong>Rasi:</strong>{" "}
-              {panchang.Raasi ? panchang.Raasi.name_en_UK : "-"}
-            </div>
-            <div>
-              <strong>Nakshatra:</strong>{" "}
-              {panchang.Nakshatra ? panchang.Nakshatra.name_en_IN : "-"}
-            </div>
-            <div>
-              <strong>Yoga:</strong>{" "}
-              {panchang.Yoga ? panchang.Yoga.name_en_IN : "-"}
-            </div>
-            <div>
-              <strong>Karna:</strong>{" "}
-              {panchang.Karna ? panchang.Karna.name_en_IN : "-"}
-            </div>
-          </div>
-        </div>
-        <div>
-          {/* Sun & Moon timings */}
-          {sunMoon ? (
-            <div className="mt-4 border-t border-base-300 pt-2 text-sm space-y-1">
-              <div>
-                <strong>Sunrise:</strong> {formatTime(sunMoon.sunRise)}
-              </div>
-              <div>
-                <strong>Sunset:</strong> {formatTime(sunMoon.sunSet)}
-              </div>
-              <div>
-                <strong>Solar Noon:</strong> {formatTime(sunMoon.solarNoon)}
-              </div>
-              <div>
-                <strong>Moonrise:</strong> {formatTime(sunMoon.moonRise)}
-              </div>
-              <div>
-                <strong>Moonset:</strong> {formatTime(sunMoon.moonSet)}
-              </div>
-            </div>
-          ) : (
-            <div className="mt-4 text-sm text-gray-500">
-              Sun/Moon timings not available
-            </div>
-          )}
+
+        {/* Sun & Moon timings table */}
+        <div className="overflow-x-auto">
+          <table className="table table-sm">
+            <tbody className="text-sm">
+              <tr>
+                <td className="font-medium">Sunrise</td>
+                <td>{formatTime(sunMoon?.sunRise)}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Sunset</td>
+                <td>{formatTime(sunMoon?.sunSet)}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Solar Noon</td>
+                <td>{formatTime(sunMoon?.solarNoon)}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Moonrise</td>
+                <td>{formatTime(sunMoon?.moonRise)}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Moonset</td>
+                <td>{formatTime(sunMoon?.moonSet)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
