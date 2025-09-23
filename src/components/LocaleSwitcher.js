@@ -80,10 +80,10 @@ export default function LocaleSwitcher() {
           <option value="ne"> 🇳🇵 Nepali</option>
         </select>
       </label>
-      <span className="ml-2 text-xs text-green-600 font-semibold">
+      {/* <span className="ml-2 text-xs text-green-600 font-semibold">
         {astrologersOnline} astrologer{astrologersOnline === 1 ? "" : "s"}{" "}
         online
-      </span>
+      </span> */}
     </div>
   );
 }

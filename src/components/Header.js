@@ -1,11 +1,11 @@
 "use client";
-
 import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { Envelope } from "phosphor-react";
 import Menu from "./Menu";
+import InstallPWAButton from "./InstallPWAButton";
+import InstallAppCard from "./InstallAppCard";
 
 const drawerItems = [
   {
@@ -29,14 +29,15 @@ const drawerItems = [
 ];
 
 export default function Header() {
-  const { data: session } = useSession();
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const drawerCheckboxRef = useRef(null);
-  const [activeSubDrawer, setActiveSubDrawer] = useState(null);
+  const { data: session } = useSession();
 
   const handleCloseMainDrawer = () => {
     if (drawerCheckboxRef.current) {
       drawerCheckboxRef.current.checked = false;
     }
+    setIsMobileDrawerOpen(false);
   };
 
   // Desktop nav items
@@ -115,7 +116,10 @@ export default function Header() {
   return (
     <header className="backdrop-blur-sm border-b border-base-200 sticky top-0 z-50">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        {/* Header: hidden on mobile when drawer open, visible on lg always */}
+        <div
+          className={`${isMobileDrawerOpen ? "hidden lg:flex" : "flex"} justify-between items-center h-16`}
+        >
           <div className="flex items-center">
             <Link
               href="/home"
@@ -123,28 +127,36 @@ export default function Header() {
             >
               {/* Logo can be added here */}
               <div className="flex items-center gap-2">
-                {/*<Image
-                src="/logo.png"
-                alt="logo"
-                className="rounded-lg"
-                width={25}
-                height={25}
-              />*/}
-                <p className="text-base-900 font-extrabold text-xl">SriPatro</p>
+                <Image
+                  src="/logo.png"
+                  alt="logo"
+                  className="rounded-lg"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-base-900 font-extrabold text-2xl">
+                  SriPatro
+                </p>
               </div>
             </Link>
           </div>
-          <DesktopNav />
+
+          {session && <DesktopNav />}
+
           <div className="hidden lg:flex items-center space-x-2">
             <DesktopSession />
+            <InstallPWAButton className="btn btn-sm btn-outline" />
           </div>
+
           {/* Mobile hamburger */}
           <div className="lg:hidden flex items-center">
+            {/* Using label to toggle the checkbox — the checkbox onChange keeps state in sync */}
             <label
               htmlFor="mobile-drawer"
-              className="backdrop-blur-bg  rounded-md text-base-400"
+              className="backdrop-blur-bg rounded-md text-base-400 cursor-pointer"
               aria-label="Open menu"
             >
+              {/* derive 'active' class from isMobileDrawerOpen */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-7 w-7"
@@ -163,19 +175,28 @@ export default function Header() {
           </div>
         </div>
       </div>
+      {/* Play Store-like PWA install card under header bar (hidden when drawer open) */}
+      <InstallAppCard hidden={isMobileDrawerOpen} />
 
       {/* Mobile Drawer */}
-      <div className="drawer bg-base-100/90 lg:hidden z-40">
+      <div className="drawer bg-base-100/90 lg:hidden z-[80]">
         <input
           id="mobile-drawer"
           ref={drawerCheckboxRef}
           type="checkbox"
           className="drawer-toggle"
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setIsMobileDrawerOpen(checked);
+          }}
         />
         <div className="drawer-content "></div>
-        <div className="drawer-side">
-          <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
+        <div className="drawer-side z-[80]">
+          {/* overlay will toggle the checkbox (close drawer) */}
+          <label htmlFor="mobile-drawer" className="drawer-overlay" />
+
           <aside className="menu p-4 w-full min-h-full bg-base-100/90 text-base-content">
+            {/* Drawer header with logo + close button */}
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-2">
                 <Image
@@ -189,43 +210,30 @@ export default function Header() {
                   SriPatro
                 </p>
               </div>
+
+              {/* Close button: unchecks checkbox + reset state */}
               <label
                 htmlFor="mobile-drawer"
-                className="border border-base-200 backdrop-blur-sm text-2xl font-medium rounded-md text-base-400"
+                className="border border-base-200 backdrop-blur-sm text-2xl font-medium rounded-md text-base-400 cursor-pointer px-3 py-1"
                 aria-label="Close menu"
+                onClick={() => {
+                  if (drawerCheckboxRef.current)
+                    drawerCheckboxRef.current.checked = false;
+                  setIsMobileDrawerOpen(false);
+                }}
               >
                 ✕
               </label>
             </div>
-            {/* <ul className="menu space-y-1">
-              {drawerItems.map((item, index) => (
-                <li key={index} className="">
-                  {!item.subItems ? (
-                    <Link href={item.href} onClick={handleCloseMainDrawer}>
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <div>
-                      <span className="font-medium">{item.label}</span>
-                      <ul className="pl-4">
-                        {item.subItems.map((subItem, subIndex) => (
-                          <li key={subIndex}>
-                            <Link
-                              href={subItem.href}
-                              onClick={handleCloseMainDrawer}
-                              className="text-sm block py-1"
-                            >
-                              {subItem.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul> */}
-            <Menu />
+
+            {/* Drawer content */}
+            {session && <Menu />}
+
+            {/* Install UI for mobile: keep small button for browsers that support prompt */}
+            <div className="mt-2 pl-4">
+              <InstallPWAButton className="btn btn-outline w-full" />
+            </div>
+
             <div className="mt-4 pl-4">
               {session ? (
                 <div className="flex items-center justify-between">
@@ -259,11 +267,13 @@ export default function Header() {
                   </details>
                 </div>
               ) : (
-                <Link href="/auth/signin">
-                  <button className="btn bg-red-700  text-base font-bold text-white w-full rounded-lg">
-                    <span className="p-0 m-0">Sign In with Email</span>
-                  </button>
-                </Link>
+                <div className="flex items-center justify-center h-[40vh]">
+                  <Link href="/auth/signin">
+                    <button className="btn bg-red-700  text-base font-bold text-white w-full rounded-lg hover:bg-red-600">
+                      <span className="p-0 m-0">Sign In with Email</span>
+                    </button>
+                  </Link>
+                </div>
               )}
             </div>
           </aside>

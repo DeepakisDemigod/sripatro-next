@@ -93,6 +93,21 @@ import ContactPopup from "@/components/ContactPopup";
 import { AstrologerOnlineProvider } from "@/context/AstrologerOnlineContext";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
+export const metadata = {
+  manifest: "/manifest.json",
+  themeColor: "#b91c1c",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SriPatro",
+  },
+  applicationName: "SriPatro",
+};
+
 const gabarito = Gabarito({
   subsets: ["latin"],
   weight: ["400", "700", "800"],
@@ -121,7 +136,7 @@ export default async function LocaleLayout({ children, params }) {
                 <div className="flex flex-row">
                   <ThemeSwitcher />
                   <LocaleSwitcher />
-                  <AstrologerStatusSwitcher />
+                  {/* <AstrologerStatusSwitcher /> */}
                 </div>
               </div>
               {children}

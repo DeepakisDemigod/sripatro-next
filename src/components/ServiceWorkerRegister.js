@@ -22,6 +22,30 @@ export default function ServiceWorkerRegister() {
     };
 
     register();
+
+    const onBIP = (e) => {
+      // Stop the automatic mini-infobar and persist the event globally
+      e.preventDefault();
+      try {
+        window.__sripatro_bip = e;
+        window.dispatchEvent(new CustomEvent("sripatro:beforeinstallprompt"));
+      } catch {}
+    };
+
+    window.addEventListener("beforeinstallprompt", onBIP);
+
+    const onAppInstalled = () => {
+      try {
+        // Clear stored event if any once installed
+        window.__sripatro_bip = null;
+      } catch {}
+    };
+    window.addEventListener("appinstalled", onAppInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBIP);
+      window.removeEventListener("appinstalled", onAppInstalled);
+    };
   }, []);
 
   return null;
