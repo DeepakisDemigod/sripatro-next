@@ -43,19 +43,31 @@ export default function InstallAppCard({ hidden = false }) {
     };
     window.addEventListener("appinstalled", onInstalled);
 
-    const onVisibility = () => {
-      // When user returns from uninstalling, re-evaluate
-      setInstalled(checkInstalled());
-      if (!checkInstalled() && window.__sripatro_bip) {
-        setDeferredPrompt(window.__sripatro_bip);
+    const reEval = () => {
+      const isInstalled = checkInstalled();
+      setInstalled(isInstalled);
+      if (!isInstalled) {
+        // Attempt to restore prompt if still available
+        if (window.__sripatro_bip) setDeferredPrompt(window.__sripatro_bip);
       }
     };
-    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("visibilitychange", reEval);
+    window.addEventListener("focus", reEval);
+
+    // Experimental: check for related installed apps (Chromium based)
+    if (navigator.getInstalledRelatedApps) {
+      navigator.getInstalledRelatedApps().then((related) => {
+        if (related && related.length > 0) {
+          setInstalled(true);
+        }
+      }).catch(()=>{});
+    }
 
     return () => {
       window.removeEventListener("sripatro:beforeinstallprompt", onBIP);
       window.removeEventListener("appinstalled", onInstalled);
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", reEval);
+      window.removeEventListener("focus", reEval);
     };
   }, []);
 
@@ -102,7 +114,7 @@ export default function InstallAppCard({ hidden = false }) {
           </div>
           <div className="flex items-center gap-2">
             {installed ? (
-              <button className=" pr-2 flex items-center gap-1 rounded-full bg-green-600/40 border border-green-600 text-green-600">
+              <button className=" pr-2 flex items-center gap-1 rounded-full bg-green-600/40 border border-green-600 text-green-600" title="App detected as installed (standalone mode)">
                 <CheckCircle size={29} />
                 <span>Installed</span>
               </button>
@@ -110,6 +122,7 @@ export default function InstallAppCard({ hidden = false }) {
               <button
                 onClick={onInstall}
                 className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-600 border border-green-600 text-white"
+                title="Install SriPatro (browser prompt)"
               >
                 <DownloadSimple />
                 <span>Install</span>
@@ -132,6 +145,18 @@ export default function InstallAppCard({ hidden = false }) {
                   }
                 >
                   Re-check
+                </button>
+                <button
+                  className="btn btn-sm btn-outline"
+                  title="Reset installed state manually"
+                  onClick={() => {
+                    setInstalled(checkInstalled());
+                    if (!checkInstalled() && window.__sripatro_bip) {
+                      setDeferredPrompt(window.__sripatro_bip);
+                    }
+                  }}
+                >
+                  Sync
                 </button>
               </div>
             )}

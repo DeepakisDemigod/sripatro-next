@@ -1,8 +1,10 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import Problem from "@/components/Problem";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link"
+import Link from "next/link";
+import WithWithout from "@/components/WithWithout";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -15,12 +17,42 @@ export default function Home() {
           <h1 className="text-5xl font-bold text-base-900 mb-4 text-center">
             Free Software for Nepali Astrologers
           </h1>
-          <p className="text-lg font-semibold text-base-800 mb-3">
-           one stop place for every astrology info
+          <p className="text-lg text-center  font-semibold text-base-800 mb-3">
+            one stop place for every astrology info
           </p>
-<div className="flex justify-center">
-	 <Link href="/home"> <button className="btn bg-red-600 text-white text-lg px-8 my-2 rounded font-extrabold">Try Tools Now</button></Link>
-	  </div>
+          <div className="flex justify-center">
+            <Link href="/home">
+              {" "}
+              <button className="btn bg-red-600 text-white text-lg px-8 my-2 rounded-full font-extrabold">
+                Get Started
+              </button>
+            </Link>
+          </div>
+          <div className="avatar-group -space-x-6 text-center justify-center my-4">
+            <div className="avatar">
+              <div className="w-12">
+                <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
+              </div>
+            </div>
+            <div className="avatar">
+              <div className="w-12">
+                <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
+              </div>
+            </div>
+            <div className="avatar">
+              <div className="w-12">
+                <img src="https://img.daisyui.com/images/profile/demo/averagebulk@192.webp" />
+              </div>
+            </div>
+            <div className="avatar avatar-placeholder">
+              <div className="bg-neutral text-neutral-content w-12">
+                <span>+99</span>
+              </div>
+            </div>
+          </div>
+          <h1 className="font-bold text-md text0-center">
+            Loved By 123 Astrologers
+          </h1>
           <ul className="list-none space-y-2 text-base text-base-content px-6">
             {[
               "Live Panchang",
@@ -51,6 +83,8 @@ export default function Home() {
           </ul>
         </div>
       </div>
+      <Problem />
+      <WithWithout />
       <Footer />
     </div>
   );
