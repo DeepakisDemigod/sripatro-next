@@ -1,6 +1,5 @@
 import { getAllPosts } from "@/lib/getMetaData";
 import Link from "next/link";
-import BlogSubscribeForm from '@/components/BlogSubscribeForm';
 
 export const metadata = { title: "All Blog Posts | SriPatro" };
 
@@ -24,9 +23,6 @@ export default function GlobalBlogIndex() {
       {locales.length === 0 && (
         <p className="text-base-content/60">No posts yet.</p>
       )}
-      <div className="mb-12">
-        <BlogSubscribeForm />
-      </div>
       <div className="space-y-12">
         {locales.map((locale) => (
           <section key={locale}>
