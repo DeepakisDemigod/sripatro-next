@@ -18,7 +18,7 @@ export default function Home() {
             Free Software for Nepali Astrologers
           </h1>
           <p className="text-lg text-center  font-semibold text-base-800 mb-3">
-            one stop place for every astrology info
+            one stop place for astrology
           </p>
           <div className="flex justify-center">
             <Link href="/home">
