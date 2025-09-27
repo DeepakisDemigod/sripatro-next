@@ -4,7 +4,7 @@ import Problem from "@/components/Problem";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import WithWithout from "@/components/WithWithout";
+import WithWithout from "@/components/WIthWithout";
 
 export default function Home() {
   const t = useTranslations("HomePage");
