@@ -28,7 +28,7 @@ export async function connectDB() {
   if (isConnected) return;
   try {
     await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
+      // useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     isConnected = true;

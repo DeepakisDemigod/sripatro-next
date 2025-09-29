@@ -81,7 +81,6 @@ export default async function LocaleLayout({ children, params }) {
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
-import { Gabarito } from "next/font/google";
 import { getMessages } from "next-intl/server";
 import "./globals.css";
 import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import wrapper
@@ -95,7 +94,6 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export const metadata = {
   manifest: "/manifest.json",
-  themeColor: "#b91c1c",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
@@ -108,14 +106,8 @@ export const metadata = {
   applicationName: "SriPatro",
 };
 
-const gabarito = Gabarito({
-  subsets: ["latin"],
-  weight: ["400", "700", "800"],
-  variable: "--font-gabarito",
-});
-
 export default async function LocaleLayout({ children, params }) {
-  const { locale } = await params;
+  const { locale } = params;
 
   //export default async function LocaleLayout(props) {
   // const { locale } = await props.params;
@@ -125,28 +117,23 @@ export default async function LocaleLayout({ children, params }) {
   }
 
   const messages = await getMessages({ locale });
-
   return (
-    <html lang={locale}>
-      <body className={`${gabarito.variable} antialiased`}>
-        <SessionWrapper>
-          <AstrologerOnlineProvider>
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-row">
-                  <ThemeSwitcher />
-                  <LocaleSwitcher />
-                  {/* <AstrologerStatusSwitcher /> */}
-                </div>
-              </div>
-              {children}
-              <ContactPopup />
-              <ServiceWorkerRegister />
-            </NextIntlClientProvider>
-          </AstrologerOnlineProvider>
-        </SessionWrapper>
-      </body>
-    </html>
+    <SessionWrapper>
+      <AstrologerOnlineProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row">
+              <ThemeSwitcher />
+              <LocaleSwitcher />
+              {/* <AstrologerStatusSwitcher /> */}
+            </div>
+          </div>
+          {children}
+          <ContactPopup />
+          <ServiceWorkerRegister />
+        </NextIntlClientProvider>
+      </AstrologerOnlineProvider>
+    </SessionWrapper>
   );
 }
 

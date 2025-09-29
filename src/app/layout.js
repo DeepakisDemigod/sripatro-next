@@ -1,4 +1,5 @@
 import "./[locale]/globals.css";
+import { Gabarito } from "next/font/google";
 
 export const metadata = {
   title: "SriPatro",
@@ -13,6 +14,12 @@ export const viewport = {
   themeColor: "#b91c1c",
 };
 
+const gabarito = Gabarito({
+  subsets: ["latin"],
+  weight: ["400", "700", "800"],
+  variable: "--font-gabarito",
+});
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -24,7 +31,7 @@ export default function RootLayout({ children }) {
           href="/rss.xml"
         />
       </head>
-      <body>{children}</body>
+      <body className={`${gabarito.variable} antialiased`}>{children}</body>
     </html>
   );
 }
