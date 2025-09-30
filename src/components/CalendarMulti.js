@@ -1,7 +1,7 @@
 "use client";
-import { Gear } from "phosphor-react";
+import { Gear, CheckCircle, Circle, X } from "phosphor-react";
 import NepaliDate from "nepali-date-converter";
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 // cookie helpers (small, no deps)
 function setCookie(name, value, days = 365) {
@@ -72,7 +72,6 @@ export default function CalendarMulti({
     holidayDOW: "saturday", // 'saturday' (Nepal) or 'sunday' (India)
   });
   const [showSettings, setShowSettings] = useState(false);
-  const settingsRef = useRef(null);
 
   useEffect(() => {
     // read cookie on mount only when initialSettings is not provided
@@ -317,20 +316,26 @@ export default function CalendarMulti({
     if (curWeek.some(Boolean)) weeks.push(curWeek);
   }
 
-  // handle clicks outside settings to close
   useEffect(() => {
-    function onDocClick(e) {
-      if (!showSettings) return;
-      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
-        setShowSettings(false);
-      }
+    if (!showSettings) return;
+
+    function onKeyDown(e) {
+      if (e.key === "Escape") setShowSettings(false);
     }
-    document.addEventListener("click", onDocClick);
-    return () => document.removeEventListener("click", onDocClick);
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [showSettings]);
 
   function toggleSetting(key) {
     const next = { ...settings, [key]: !settings[key] };
+    setSettings(next);
+    setCookie("calendar_settings", next, 365);
+  }
+
+  function updateHoliday(day) {
+    if (settings.holidayDOW === day) return;
+    const next = { ...settings, holidayDOW: day };
     setSettings(next);
     setCookie("calendar_settings", next, 365);
   }
@@ -341,114 +346,15 @@ export default function CalendarMulti({
         <div className="flex items-center justify-between mb-3">
           <div className="font-semibold text-lg">{title}</div>
           <div className="flex gap-2 items-center">
-            <div className="relative" ref={settingsRef}>
-              <button
-                className="btn btn-ghost btn-sm flex gap-1 items-center"
-                onClick={() => setShowSettings((s) => !s)}
-                aria-haspopup="true"
-                aria-expanded={showSettings}
-              >
-                <Gear size={20} weight="bold" />
-                <span>Customize</span>
-              </button>
-              {showSettings && (
-                <div className="absolute right-0 mt-2 w-48 bg-base-200 border rounded shadow-md p-3 z-50">
-                  <div className="text-sm font-medium mb-2">
-                    Show extra info
-                  </div>
-                  <label className="flex items-center gap-2 text-sm mb-1">
-                    <input
-                      type="checkbox"
-                      checked={!!settings.tithi}
-                      onChange={() => toggleSetting("tithi")}
-                      className="checkbox checkbox-sm"
-                    />
-                    Tithi
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={!!settings.nakshatra}
-                      onChange={() => toggleSetting("nakshatra")}
-                      className="checkbox checkbox-sm"
-                    />
-                    Nakshatra
-                  </label>
-                  <label className="flex items-center gap-2 text-sm mt-1">
-                    <input
-                      type="checkbox"
-                      checked={!!settings.rasi}
-                      onChange={() => toggleSetting("rasi")}
-                      className="checkbox checkbox-sm"
-                    />
-                    Rasi
-                  </label>
-                  <label className="flex items-center gap-2 text-sm mt-1">
-                    <input
-                      type="checkbox"
-                      checked={!!settings.festivals}
-                      onChange={() => toggleSetting("festivals")}
-                      className="checkbox checkbox-sm"
-                    />
-                    Festivals
-                  </label>
-                  <label className="flex items-center gap-2 text-sm mt-1">
-                    <input
-                      type="checkbox"
-                      checked={!!settings.enDate}
-                      onChange={() => toggleSetting("enDate")}
-                      className="checkbox checkbox-sm"
-                    />
-                    English date
-                  </label>
-                  <label className="flex items-center gap-2 text-sm mt-1">
-                    <input
-                      type="checkbox"
-                      checked={!!settings.npDigits}
-                      onChange={() => toggleSetting("npDigits")}
-                      className="checkbox checkbox-sm"
-                    />
-                    Nepali digits
-                  </label>
-                  <div className="mt-3 text-xs">
-                    <div className="font-medium mb-1">Weekly holiday</div>
-                    <div className="flex gap-2">
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="radio"
-                          name="holidayDOW"
-                          className="radio radio-xs"
-                          checked={settings.holidayDOW === "saturday"}
-                          onChange={() => {
-                            const next = {
-                              ...settings,
-                              holidayDOW: "saturday",
-                            };
-                            setSettings(next);
-                            setCookie("calendar_settings", next, 365);
-                          }}
-                        />
-                        Saturday
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="radio"
-                          name="holidayDOW"
-                          className="radio radio-xs"
-                          checked={settings.holidayDOW === "sunday"}
-                          onChange={() => {
-                            const next = { ...settings, holidayDOW: "sunday" };
-                            setSettings(next);
-                            setCookie("calendar_settings", next, 365);
-                          }}
-                        />
-                        Sunday
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <button
+              className="btn btn-ghost btn-sm flex gap-1 items-center"
+              onClick={() => setShowSettings(true)}
+              aria-haspopup="dialog"
+              aria-expanded={showSettings}
+            >
+              <Gear size={20} weight="bold" />
+              <span>Customize</span>
+            </button>
 
             <button
               className="btn btn-sm"
@@ -675,6 +581,190 @@ export default function CalendarMulti({
           </div>
         </>
       )}
+      {showSettings && (
+        <SettingsModal
+          settings={settings}
+          onToggle={toggleSetting}
+          onHolidayChange={updateHoliday}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
     </div>
+  );
+}
+
+function SettingsModal({ settings, onToggle, onHolidayChange, onClose }) {
+  const toggleOptions = [
+    { key: "tithi", label: "Tithi", description: "Display the lunar day." },
+    {
+      key: "nakshatra",
+      label: "Nakshatra",
+      description: "Show the current lunar mansion.",
+    },
+    {
+      key: "rasi",
+      label: "Rasi",
+      description: "Add the zodiac sign for each day.",
+    },
+    {
+      key: "festivals",
+      label: "Festivals",
+      description: "Highlight festival names inside the cells.",
+    },
+    {
+      key: "enDate",
+      label: "English date",
+      description: "Display the matched Gregorian date.",
+    },
+    {
+      key: "npDigits",
+      label: "Nepali digits",
+      description: "Switch date numbers to Devanagari script.",
+    },
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-base-900/70 backdrop-blur-sm px-4 py-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Customize calendar"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg bg-base-100 border border-base-300 rounded-3xl shadow-2xl p-6 space-y-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold">Customize calendar</h2>
+            <p className="text-sm text-base-500 mt-1">
+              Choose the additional details you&apos;d like to see on every day.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            aria-label="Close settings"
+          >
+            <X size={18} weight="bold" />
+          </button>
+        </div>
+
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-base-500">
+            Day details
+          </h3>
+          <div className="space-y-2">
+            {toggleOptions.map((opt) => (
+              <ToggleOption
+                key={opt.key}
+                label={opt.label}
+                description={opt.description}
+                checked={!!settings[opt.key]}
+                onToggle={() => onToggle(opt.key)}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-base-500">
+            Weekly holiday
+          </h3>
+          <div
+            role="radiogroup"
+            className="grid grid-cols-1 gap-2 sm:grid-cols-2"
+            aria-label="Weekly holiday selection"
+          >
+            <ChoiceOption
+              label="Saturday"
+              description="Follow the Nepal weekend."
+              selected={settings.holidayDOW === "saturday"}
+              onSelect={() => onHolidayChange("saturday")}
+            />
+            <ChoiceOption
+              label="Sunday"
+              description="Follow the Indian weekend."
+              selected={settings.holidayDOW === "sunday"}
+              onSelect={() => onHolidayChange("sunday")}
+            />
+          </div>
+        </section>
+
+        <div className="flex justify-end">
+          <button type="button" className="btn btn-primary" onClick={onClose}>
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToggleOption({ label, description, checked, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`w-full flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${checked ? "border-primary/70 bg-primary/10" : "border-base-300 bg-base-200/40 hover:bg-base-200"}`}
+      role="switch"
+      aria-checked={checked}
+    >
+      <span className="flex-1">
+        <span className="block text-base font-medium text-base-content">
+          {label}
+        </span>
+        {description ? (
+          <span className="mt-0.5 block text-xs text-base-500">
+            {description}
+          </span>
+        ) : null}
+      </span>
+      <span
+        className={`flex h-7 w-7 items-center justify-center rounded-full border transition ${checked ? "border-primary bg-primary text-base-100" : "border-base-300 bg-base-100 text-base-400"}`}
+        aria-hidden="true"
+      >
+        {checked ? (
+          <CheckCircle size={18} weight="fill" />
+        ) : (
+          <Circle size={18} />
+        )}
+      </span>
+    </button>
+  );
+}
+
+function ChoiceOption({ label, description, selected, onSelect }) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`w-full flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${selected ? "border-primary/70 bg-primary/10" : "border-base-300 bg-base-200/40 hover:bg-base-200"}`}
+      role="radio"
+      aria-checked={selected}
+    >
+      <span className="flex-1">
+        <span className="block text-base font-medium text-base-content">
+          {label}
+        </span>
+        {description ? (
+          <span className="mt-0.5 block text-xs text-base-500">
+            {description}
+          </span>
+        ) : null}
+      </span>
+      <span
+        className={`flex h-7 w-7 items-center justify-center rounded-full border transition ${selected ? "border-primary bg-primary text-base-100" : "border-base-300 bg-base-100 text-base-400"}`}
+        aria-hidden="true"
+      >
+        {selected ? (
+          <CheckCircle size={18} weight="fill" />
+        ) : (
+          <Circle size={18} />
+        )}
+      </span>
+    </button>
   );
 }
