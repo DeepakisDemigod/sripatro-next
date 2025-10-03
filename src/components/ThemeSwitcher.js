@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAstrologerOnline } from "@/context/AstrologerOnlineContext";
 import { Sun, Moon } from "phosphor-react";
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState("light");
-  const { astrologersOnline } = useAstrologerOnline();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -16,8 +14,6 @@ export default function ThemeSwitcher() {
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-
-    // No polling here, handled by context
   }, [theme]);
 
   const toggleTheme = () => {

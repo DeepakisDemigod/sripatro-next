@@ -36,8 +36,6 @@ export default function LocaleSwitcher() {
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAstrologerOnline } from "@/context/AstrologerOnlineContext";
 import { useLocale } from "next-intl";
 import { useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -47,11 +45,6 @@ export default function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const localeActive = useLocale();
-  const { astrologersOnline } = useAstrologerOnline();
-
-  useEffect(() => {
-    // No polling here, handled by context
-  }, []);
 
   const onSelectChange = (e) => {
     const nextLocale = e.target.value;

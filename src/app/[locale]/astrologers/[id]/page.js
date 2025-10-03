@@ -1,7 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import BookingForm from "@/components/BookingForm";
-import BookingChat from "@/components/BookingChat";
 
 export default async function Page({ params }) {
   await connectDB();
@@ -30,14 +28,10 @@ export default async function Page({ params }) {
               {s.title} - <span className="text-black">₹{s.price}</span>
             </h4>
             <p className="mb-2 text-gray-700">{s.description}</p>
-            <BookingForm
-              astrologerId={astro._id}
-              service={s}
-              astrologerEmail={astro.email}
-            />
-            {/* Chat UI for this service booking (shown after booking is made) */}
-            {/* You may want to conditionally render BookingChat only if a booking exists */}
-            {/* <BookingChat bookingId={bookingId} userEmail={userEmail} astrologerEmail={astro.email} /> */}
+            <p className="text-sm text-gray-500">
+              Booking is currently unavailable. Please reach out via the
+              feedback form if you need assistance.
+            </p>
           </div>
         ))}
       </div>

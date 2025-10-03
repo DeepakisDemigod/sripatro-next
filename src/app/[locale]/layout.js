@@ -87,9 +87,7 @@ import SessionWrapper from "../../components/SessionWrapper.js"; // 👈 import 
 
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
-import AstrologerStatusSwitcher from "@/components/AstrologerStatusSwitcher";
 import ContactPopup from "@/components/ContactPopup";
-import { AstrologerOnlineProvider } from "@/context/AstrologerOnlineContext";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export const metadata = {
@@ -119,20 +117,17 @@ export default async function LocaleLayout({ children, params }) {
   const messages = await getMessages({ locale });
   return (
     <SessionWrapper>
-      <AstrologerOnlineProvider>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row">
-              <ThemeSwitcher />
-              <LocaleSwitcher />
-              {/* <AstrologerStatusSwitcher /> */}
-            </div>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row">
+            <ThemeSwitcher />
+            <LocaleSwitcher />
           </div>
-          {children}
-          <ContactPopup />
-          <ServiceWorkerRegister />
-        </NextIntlClientProvider>
-      </AstrologerOnlineProvider>
+        </div>
+        {children}
+        <ContactPopup />
+        <ServiceWorkerRegister />
+      </NextIntlClientProvider>
     </SessionWrapper>
   );
 }

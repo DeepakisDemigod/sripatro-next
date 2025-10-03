@@ -651,19 +651,21 @@ function MonthInsights({
   return (
     <section className={`mt-6 space-y-6 ${isCompact ? "" : "min-w-[56rem]"}`}>
       {hasFestivals && (
-        <div className="rounded-3xl border border-base-300 bg-base-200/50 p-5 shadow-inner space-y-3">
-          <h3 className="text-lg font-semibold text-base-content">
+        <div className="rounded-3xl border border-base-300 bg-base-100/50 p-5 shadow-inner space-y-3">
+          <h3 className="text-lg font-semibold text-base-content text-left">
             {monthLabel
               ? `${monthLabel} को विदा तथा पर्वहरु`
               : "विदा तथा पर्वहरु"}
           </h3>
           <ul className="space-y-1.5 text-sm leading-relaxed text-base-700">
             {festivals.map((item, idx) => (
-              <li key={`${item.day}-${idx}`} className="flex gap-2">
-                <span className="font-semibold text-base-content">
+              <li key={`${item.day}-${idx}`} className="flex gap-2 m-1 ">
+                <span className="font-semibold text-base-content bg-blue-600 rounded-full text-white px-1">
                   {item.day}
                 </span>
-                <span className="flex-1 text-pretty">{item.description}</span>
+                <span className="flex-1 text-left text-pretty">
+                  {item.description}
+                </span>
               </li>
             ))}
           </ul>
@@ -672,7 +674,7 @@ function MonthInsights({
 
       {(hasMarriage || hasBratabandha || hasPasni) && (
         <div className="rounded-3xl border border-base-300 bg-base-200/40 p-5 space-y-4">
-          <h3 className="text-lg font-semibold text-base-content">
+          <h3 className="text-lg font-semibold text-base-content text-left">
             बिबाह, ब्रतबन्ध, पास्नी
           </h3>
           {hasMarriage && (
@@ -695,10 +697,10 @@ function InsightList({ label, items }) {
 
   return (
     <div className="space-y-1 text-sm text-base-700">
-      <p className="font-medium text-base-content">{label}:</p>
+      <p className="font-medium text-base-content text-left">{label}:</p>
       <ul className="list-disc pl-6 space-y-1">
         {items.map((entry, idx) => (
-          <li key={`${label}-${idx}`} className="text-pretty">
+          <li key={`${label}-${idx}`} className="text-left text-pretty">
             {entry}
           </li>
         ))}
