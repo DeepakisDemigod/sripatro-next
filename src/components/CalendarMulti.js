@@ -1,7 +1,7 @@
 "use client";
 import { Gear, CheckCircle, Circle, X } from "phosphor-react";
 import NepaliDate from "nepali-date-converter";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // cookie helpers (small, no deps)
 function setCookie(name, value, days = 365) {
@@ -223,6 +223,16 @@ export default function CalendarMulti({
           // prefer base metadata; if missing, fallback to overlay metadata
           if (!combined.metadata && overlayJson.metadata)
             combined.metadata = overlayJson.metadata;
+
+          ["holiFest", "marriage", "bratabandha", "pasni", "notes"].forEach(
+            (key) => {
+              if (overlayJson[key] != null) {
+                combined[key] = overlayJson[key];
+              } else if (combined[key] == null && baseJson[key] != null) {
+                combined[key] = baseJson[key];
+              }
+            }
+          );
         }
 
         if (mounted) setData(combined);
@@ -340,6 +350,24 @@ export default function CalendarMulti({
     setCookie("calendar_settings", next, 365);
   }
 
+  const festivalEntries = useMemo(
+    () => parseNepaliFestivalList(data?.holiFest),
+    [data?.holiFest]
+  );
+  const marriageList = useMemo(
+    () => (Array.isArray(data?.marriage) ? data.marriage.filter(Boolean) : []),
+    [data?.marriage]
+  );
+  const bratabandhaList = useMemo(
+    () =>
+      Array.isArray(data?.bratabandha) ? data.bratabandha.filter(Boolean) : [],
+    [data?.bratabandha]
+  );
+  const pasniList = useMemo(
+    () => (Array.isArray(data?.pasni) ? data.pasni.filter(Boolean) : []),
+    [data?.pasni]
+  );
+
   return (
     <div className="bg-base-100 p-4 rounded-lg shadow-sm overflow-x-auto overflow-y-auto mx-auto w-full">
       {!hideHeader && (
@@ -349,7 +377,7 @@ export default function CalendarMulti({
             <button
               className="btn btn-ghost btn-sm flex gap-1 items-center"
               onClick={() => setShowSettings(true)}
-              aria-haspopup="dialog"
+              aria-haspopup="    dialog"
               aria-expanded={showSettings}
             >
               <Gear size={20} weight="bold" />
@@ -579,6 +607,15 @@ export default function CalendarMulti({
               })
             )}
           </div>
+
+          <MonthInsights
+            monthLabel={data?.metadata?.np || title}
+            festivals={festivalEntries}
+            marriageList={marriageList}
+            bratabandhaList={bratabandhaList}
+            pasniList={pasniList}
+            isCompact={compact}
+          />
         </>
       )}
       {showSettings && (
@@ -589,6 +626,83 @@ export default function CalendarMulti({
           onClose={() => setShowSettings(false)}
         />
       )}
+    </div>
+  );
+}
+
+function MonthInsights({
+  monthLabel,
+  festivals,
+  marriageList,
+  bratabandhaList,
+  pasniList,
+  isCompact,
+}) {
+  const hasFestivals = Array.isArray(festivals) && festivals.length > 0;
+  const hasMarriage = Array.isArray(marriageList) && marriageList.length > 0;
+  const hasBratabandha =
+    Array.isArray(bratabandhaList) && bratabandhaList.length > 0;
+  const hasPasni = Array.isArray(pasniList) && pasniList.length > 0;
+
+  if (!hasFestivals && !hasMarriage && !hasBratabandha && !hasPasni) {
+    return null;
+  }
+
+  return (
+    <section className={`mt-6 space-y-6 ${isCompact ? "" : "min-w-[56rem]"}`}>
+      {hasFestivals && (
+        <div className="rounded-3xl border border-base-300 bg-base-200/50 p-5 shadow-inner space-y-3">
+          <h3 className="text-lg font-semibold text-base-content">
+            {monthLabel
+              ? `${monthLabel} को विदा तथा पर्वहरु`
+              : "विदा तथा पर्वहरु"}
+          </h3>
+          <ul className="space-y-1.5 text-sm leading-relaxed text-base-700">
+            {festivals.map((item, idx) => (
+              <li key={`${item.day}-${idx}`} className="flex gap-2">
+                <span className="font-semibold text-base-content">
+                  {item.day}
+                </span>
+                <span className="flex-1 text-pretty">{item.description}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(hasMarriage || hasBratabandha || hasPasni) && (
+        <div className="rounded-3xl border border-base-300 bg-base-200/40 p-5 space-y-4">
+          <h3 className="text-lg font-semibold text-base-content">
+            बिबाह, ब्रतबन्ध, पास्नी
+          </h3>
+          {hasMarriage && (
+            <InsightList label="बिबाह लगन" items={marriageList} />
+          )}
+          {hasBratabandha && (
+            <InsightList label="ब्रतबन्ध शुभ साइत" items={bratabandhaList} />
+          )}
+          {hasPasni && (
+            <InsightList label="पास्नी शुभ साइत" items={pasniList} />
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function InsightList({ label, items }) {
+  if (!Array.isArray(items) || items.length === 0) return null;
+
+  return (
+    <div className="space-y-1 text-sm text-base-700">
+      <p className="font-medium text-base-content">{label}:</p>
+      <ul className="list-disc pl-6 space-y-1">
+        {items.map((entry, idx) => (
+          <li key={`${label}-${idx}`} className="text-pretty">
+            {entry}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -767,4 +881,27 @@ function ChoiceOption({ label, description, selected, onSelect }) {
       </span>
     </button>
   );
+}
+
+function parseNepaliFestivalList(rawList) {
+  if (!Array.isArray(rawList) || rawList.length === 0) return [];
+
+  const text = rawList.join(" ").replace(/\s+/g, " ").trim();
+  if (!text) return [];
+
+  const nepDigits = "०१२३४५६७८९";
+  const pattern = new RegExp(`([${nepDigits}]+)\\s*([^${nepDigits}]+)`, "g");
+  const results = [];
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    const dayRaw = (match[1] || "").trim();
+    const descRaw = (match[2] || "").trim();
+    if (!dayRaw || !descRaw) continue;
+
+    const description = descRaw.replace(/[、,;]+$/, "").trim();
+    results.push({ day: dayRaw, description });
+  }
+
+  return results;
 }
