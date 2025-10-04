@@ -29,7 +29,7 @@ export async function connectDB() {
   try {
     await mongoose.connect(MONGODB_URI, {
       // useNewUrlParser: true,
-      useUnifiedTopology: true,
+      // useUnifiedTopology: true,
     });
     isConnected = true;
     console.log("MongoDB connected via Mongoose");

@@ -1,6 +1,7 @@
 "use client";
 import { Gear, CheckCircle, Circle, X } from "phosphor-react";
 import NepaliDate from "nepali-date-converter";
+import { MhahPanchang } from "mhah-panchang";
 import { useEffect, useMemo, useState } from "react";
 
 // cookie helpers (small, no deps)
@@ -40,6 +41,63 @@ function toLatinDigits(input) {
   return s.replace(/[०१२३४५६७८९]/g, (ch) => String(__devDigits.indexOf(ch)));
 }
 
+const choghadiyaData = {
+  day: [
+    ["Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg"],
+    ["Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit"],
+    ["Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog"],
+    ["Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh"],
+    ["Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh"],
+    ["Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char"],
+    ["Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal"],
+  ],
+  night: [
+    ["Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh"],
+    ["Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char"],
+    ["Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal"],
+    ["Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg"],
+    ["Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit"],
+    ["Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog"],
+    ["Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh"],
+  ],
+};
+
+const auspiciousSlots = ["Amrit"];
+const goodSlots = ["Shubh", "Labh"];
+const neutralSlots = ["Char"];
+const badSlots = ["Rog", "Udveg"];
+const inauspiciousSlots = ["Kaal"];
+
+function getChoghadiyaClass(value) {
+  if (auspiciousSlots.includes(value)) return "bg-green-600 text-white";
+  if (goodSlots.includes(value)) return "bg-green-200 text-green-900";
+  if (neutralSlots.includes(value)) return "bg-gray-200 text-gray-700";
+  if (badSlots.includes(value)) return "bg-red-200 text-red-900";
+  if (inauspiciousSlots.includes(value)) return "bg-red-600 text-white";
+  return "bg-base-200 text-base-content";
+}
+
+function timeToSeconds(timeStr) {
+  const [time, period] = String(timeStr).trim().split(" ");
+  const [h, m = "0", s = "0"] = time.split(":");
+  let hours = Number(h) % 12;
+  if (period === "PM" && Number(h) !== 12) hours += 12;
+  if (period === "AM" && Number(h) === 12) hours = 0;
+  return hours * 3600 + Number(m) * 60 + Number(s);
+}
+
+function secondsTo12HrTime(totalSeconds) {
+  const normalized = ((totalSeconds % (24 * 3600)) + 24 * 3600) % (24 * 3600);
+  const h = Math.floor(normalized / 3600);
+  const m = Math.floor((normalized % 3600) / 60);
+  const s = Math.floor(normalized % 60);
+  const hour12 = ((h + 11) % 12) + 1;
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${hour12.toString().padStart(2, "0")}:${m
+    .toString()
+    .padStart(2, "0")}:${s.toString().padStart(2, "0")} ${ampm}`;
+}
+
 export default function CalendarMulti({
   defaultYear = "2082",
   defaultMonth = 1,
@@ -60,6 +118,19 @@ export default function CalendarMulti({
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [detailState, setDetailState] = useState({
+    loading: false,
+    error: null,
+    panchang: null,
+    sunData: null,
+    daySegments: [],
+    nightSegments: [],
+    sunrise: null,
+    sunset: null,
+    choghadiyaError: null,
+  });
 
   // settings: which extra info to show. persisted in cookie 'calendar_settings'
   const [settings, setSettings] = useState({
@@ -258,6 +329,177 @@ export default function CalendarMulti({
     setMonth((m) => m + 1);
   }
 
+  function deriveSelectedDay(cell) {
+    if (!cell) return null;
+    const bsDayRaw = cell?.n ?? cell?.np ?? "";
+    const bsDayStr = toLatinDigits(bsDayRaw);
+    const bsDay = parseInt(bsDayStr, 10);
+    if (!Number.isFinite(bsDay)) return null;
+
+    const bsYearNum = Number(year);
+    const bsMonthNum = Number(month);
+    if (!Number.isFinite(bsYearNum) || !Number.isFinite(bsMonthNum)) {
+      return null;
+    }
+
+    try {
+      const bsDate = new NepaliDate(bsYearNum, bsMonthNum - 1, bsDay);
+      const adDate = bsDate.toJsDate();
+      return {
+        cell,
+        bsDay,
+        bsMonth: bsMonthNum,
+        bsYear: bsYearNum,
+        bsDate,
+        adDate,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function openDayModal(cell) {
+    const derived = deriveSelectedDay(cell);
+    if (!derived) return;
+    setSelectedDay(derived);
+    setModalOpen(true);
+    if (onDateClick) {
+      try {
+        onDateClick(cell, derived);
+      } catch (e) {
+        console.error("onDateClick handler threw", e);
+      }
+    }
+  }
+
+  function closeDayModal() {
+    setModalOpen(false);
+    setSelectedDay(null);
+  }
+
+  function formatDateYMD(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  async function computeChoghadiyaForDate(adDate) {
+    const lat = 28.7041;
+    const lng = 77.1025;
+    const todayStr = formatDateYMD(adDate);
+    const tomorrow = new Date(adDate.getTime());
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = formatDateYMD(tomorrow);
+    const dayIndex = adDate.getDay();
+
+    const baseResponse = {
+      daySegments: [],
+      nightSegments: [],
+      sunrise: null,
+      sunset: null,
+      error: null,
+    };
+
+    try {
+      const [todayRes, tomorrowRes] = await Promise.all([
+        fetch(
+          `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lng}&date=${todayStr}`
+        ),
+        fetch(
+          `https://api.sunrisesunset.io/json?lat=${lat}&lng=${lng}&date=${tomorrowStr}`
+        ),
+      ]);
+
+      const todayJson = await todayRes.json();
+      const tomorrowJson = await tomorrowRes.json();
+
+      if (todayJson.status !== "OK" || tomorrowJson.status !== "OK") {
+        throw new Error("sunrise-fetch-failed");
+      }
+
+      const todaySunrise = timeToSeconds(todayJson.results.sunrise);
+      const todaySunset = timeToSeconds(todayJson.results.sunset);
+      const tomorrowSunrise = timeToSeconds(tomorrowJson.results.sunrise);
+
+      const dayDuration = todaySunset - todaySunrise;
+      const nightDuration =
+        (24 * 3600 - todaySunset + tomorrowSunrise + 24 * 3600) % (24 * 3600);
+      const segmentDuration = dayDuration / 8;
+      const nightSegmentDuration = nightDuration / 8;
+
+      const dayNames = choghadiyaData.day[dayIndex];
+      const nightNames = choghadiyaData.night[dayIndex];
+
+      const daySegments = Array.from({ length: 8 }).map((_, i) => {
+        const segStart = todaySunrise + i * segmentDuration;
+        const segEnd = segStart + segmentDuration;
+        return {
+          start: secondsTo12HrTime(segStart),
+          end: secondsTo12HrTime(segEnd),
+          name: dayNames?.[i] ?? "",
+        };
+      });
+
+      const nightSegments = Array.from({ length: 8 }).map((_, i) => {
+        const segStart = todaySunset + i * nightSegmentDuration;
+        const segEnd = segStart + nightSegmentDuration;
+        return {
+          start: secondsTo12HrTime(segStart),
+          end: secondsTo12HrTime(segEnd),
+          name: nightNames?.[i] ?? "",
+        };
+      });
+
+      return {
+        daySegments,
+        nightSegments,
+        sunrise: todayJson.results.sunrise,
+        sunset: todayJson.results.sunset,
+        error: null,
+      };
+    } catch (error) {
+      const startSec = timeToSeconds("05:46:22");
+      const endSec = timeToSeconds("19:26:56");
+      const dayDuration = endSec - startSec;
+      const nightDuration = 24 * 3600 - dayDuration;
+      const segmentDuration = dayDuration / 8;
+      const nightSegmentDuration = nightDuration / 8;
+
+      const dayNames = choghadiyaData.day[dayIndex];
+      const nightNames = choghadiyaData.night[dayIndex];
+
+      const fallbackDay = Array.from({ length: 8 }).map((_, i) => {
+        const segStart = startSec + i * segmentDuration;
+        const segEnd = segStart + segmentDuration;
+        return {
+          start: secondsTo12HrTime(segStart),
+          end: secondsTo12HrTime(segEnd),
+          name: dayNames?.[i] ?? "",
+        };
+      });
+
+      const fallbackNight = Array.from({ length: 8 }).map((_, i) => {
+        const segStart = endSec + i * nightSegmentDuration;
+        const segEnd = segStart + nightSegmentDuration;
+        return {
+          start: secondsTo12HrTime(segStart),
+          end: secondsTo12HrTime(segEnd),
+          name: nightNames?.[i] ?? "",
+        };
+      });
+
+      return {
+        daySegments: fallbackDay,
+        nightSegments: fallbackNight,
+        sunrise: secondsTo12HrTime(startSec),
+        sunset: secondsTo12HrTime(endSec),
+        error:
+          "Error fetching sunrise/sunset data. Showing approximate segments.",
+      };
+    }
+  }
+
   let title = `${year} / ${month}`;
   if (data && data.metadata) {
     const np = data.metadata.np;
@@ -337,6 +579,72 @@ export default function CalendarMulti({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [showSettings]);
 
+  useEffect(() => {
+    if (!modalOpen) return;
+
+    function onKeyDown(e) {
+      if (e.key === "Escape") closeDayModal();
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [modalOpen]);
+
+  useEffect(() => {
+    if (!modalOpen || !selectedDay?.adDate) return;
+
+    let cancelled = false;
+    const adDate = new Date(selectedDay.adDate.getTime());
+    const mhah = new MhahPanchang();
+
+    setDetailState({
+      loading: true,
+      error: null,
+      panchang: null,
+      sunData: null,
+      daySegments: [],
+      nightSegments: [],
+      sunrise: null,
+      sunset: null,
+      choghadiyaError: null,
+    });
+
+    (async () => {
+      try {
+        const panchangData = mhah.calendar(adDate, 28.7041, 77.1025);
+        const sunData = mhah.sunTimer(adDate, 28.7041, 77.1025);
+        const choghadiya = await computeChoghadiyaForDate(adDate);
+
+        if (cancelled) return;
+
+        setDetailState({
+          loading: false,
+          error: null,
+          panchang: panchangData,
+          sunData,
+          daySegments: choghadiya.daySegments,
+          nightSegments: choghadiya.nightSegments,
+          sunrise: choghadiya.sunrise,
+          sunset: choghadiya.sunset,
+          choghadiyaError: choghadiya.error,
+        });
+      } catch (error) {
+        if (cancelled) return;
+        setDetailState((prev) => ({
+          ...prev,
+          loading: false,
+          error:
+            error?.message ||
+            "Unable to load Panchang information for this date.",
+        }));
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [modalOpen, selectedDay?.adDate]);
+
   function toggleSetting(key) {
     const next = { ...settings, [key]: !settings[key] };
     setSettings(next);
@@ -368,37 +676,75 @@ export default function CalendarMulti({
     [data?.pasni]
   );
 
+  const showBannerBackground = !compact && !hideBanner;
+  const bannerUrl = showBannerBackground ? `/month-banner/${month}.jpg` : null;
+
   return (
     <div className="bg-base-100 p-4 rounded-lg shadow-sm overflow-x-auto overflow-y-auto mx-auto w-full">
       {!hideHeader && (
-        <div className="flex items-center justify-between mb-3">
-          <div className="font-semibold text-lg">{title}</div>
-          <div className="flex gap-2 items-center">
-            <button
-              className="btn btn-ghost btn-sm flex gap-1 items-center"
-              onClick={() => setShowSettings(true)}
-              aria-haspopup="    dialog"
-              aria-expanded={showSettings}
-            >
-              <Gear size={20} weight="bold" />
-              <span>Customize</span>
-            </button>
+        <div
+          className={`relative mb-3 rounded-2xl border border-base-300 overflow-hidden ${
+            !compact ? "min-w-[56rem]" : ""
+          }`}
+        >
+          {bannerUrl && (
+            <>
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${bannerUrl})` }}
+                aria-hidden="true"
+              />
+              <div
+                className="absolute inset-0 bg-base-900/35 backdrop-blur-[1px]"
+                aria-hidden="true"
+              />
+            </>
+          )}
+          <div
+            className={`relative flex items-center justify-between gap-3 px-4 py-3 ${
+              bannerUrl ? "text-base-100" : ""
+            }`}
+          >
+            <div className="font-semibold text-lg">{title}</div>
+            <div className="flex gap-2 items-center">
+              <button
+                className={`btn btn-sm flex gap-1 items-center ${
+                  bannerUrl
+                    ? "btn-outline border-base-100/70 text-base-100 hover:bg-base-100/15 hover:text-base-100"
+                    : "btn-ghost"
+                }`}
+                onClick={() => setShowSettings(true)}
+                aria-haspopup="dialog"
+                aria-expanded={showSettings}
+              >
+                <Gear size={20} weight="bold" />
+                <span>Customize</span>
+              </button>
 
-            <button
-              className="btn btn-sm"
-              onClick={prev}
-              aria-label="previous month"
-              disabled={month <= 1}
-            >
-              Prev
-            </button>
-            <button
-              className="btn btn-sm"
-              onClick={next}
-              aria-label="next month"
-            >
-              Next
-            </button>
+              <button
+                className={`btn btn-sm ${
+                  bannerUrl
+                    ? "btn-outline border-base-100/70 text-base-100 hover:bg-base-100/15 hover:text-base-100"
+                    : ""
+                }`}
+                onClick={prev}
+                aria-label="previous month"
+                disabled={month <= 1}
+              >
+                Prev
+              </button>
+              <button
+                className={`btn btn-sm ${
+                  bannerUrl
+                    ? "btn-outline border-base-100/70 text-base-100 hover:bg-base-100/15 hover:text-base-100"
+                    : ""
+                }`}
+                onClick={next}
+                aria-label="next month"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -414,25 +760,6 @@ export default function CalendarMulti({
 
       {!loading && data && (
         <>
-          {/* Month banner (hidden in compact or when hideBanner) */}
-          {!compact && !hideBanner && (
-            <div className="mb-3 min-w-[56rem]">
-              <img
-                src={`/month-banner/${month}.jpg`}
-                alt={
-                  (data &&
-                    data.metadata &&
-                    (data.metadata.np || data.metadata.en)) ||
-                  `Month ${month}`
-                }
-                className="w-full h-auto max-h-[22rem] object-contain rounded-md border border-base-200/90 bg-base-100"
-                onError={(e) => {
-                  // hide image if banner not available
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            </div>
-          )}
           <div
             className={`grid ${compact ? "grid-cols-7" : "grid-cols-[repeat(7,8rem)] min-w-[56rem]"} text-xs sticky top-0 bg-base-100 z-10`}
           >
@@ -510,12 +837,12 @@ export default function CalendarMulti({
                     className={`${compact ? "min-h-16" : "min-h-20"} p-2 border border-base-200/90 flex flex-col justify-between bg-base-100 cursor-pointer`}
                     role={onDateClick ? "button" : undefined}
                     tabIndex={onDateClick ? 0 : undefined}
-                    onClick={() => {
-                      if (onDateClick) onDateClick(cell);
-                    }}
+                    onClick={() => openDayModal(cell)}
                     onKeyDown={(e) => {
-                      if (!onDateClick) return;
-                      if (e.key === "Enter" || e.key === " ") onDateClick(cell);
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openDayModal(cell);
+                      }
                     }}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -626,6 +953,276 @@ export default function CalendarMulti({
           onClose={() => setShowSettings(false)}
         />
       )}
+      <DayDetailModal
+        open={modalOpen}
+        onClose={closeDayModal}
+        selectedDay={selectedDay}
+        detailState={detailState}
+      />
+    </div>
+  );
+}
+
+function DayDetailModal({ open, onClose, selectedDay, detailState }) {
+  if (!open || !selectedDay) return null;
+
+  const { cell, bsDate, adDate } = selectedDay;
+
+  const bsLabelNp = bsDate?.format ? bsDate.format("YYYY MMMM D", "np") : "";
+  const bsLabelEn = bsDate?.format ? bsDate.format("YYYY MMMM D", "en") : "";
+  const adFull = adDate
+    ? adDate.toLocaleDateString("en-GB", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+  const adShort = adDate
+    ? adDate.toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+
+  const tithiLabel = cell?.t || cell?.Tithi || "-";
+  const nakshatraLabel = cell?.Nakshatra || cell?.nakshatra || "-";
+  const rasiLabel = cell?.Rasi || cell?.rasi || "-";
+  const festivalText = cell?.f && String(cell.f).trim() ? cell.f : null;
+  const noteText = cell?.notes && String(cell.notes).trim() ? cell.notes : null;
+
+  const {
+    loading,
+    error,
+    panchang,
+    sunData,
+    daySegments,
+    nightSegments,
+    sunrise,
+    sunset,
+    choghadiyaError,
+  } = detailState || {};
+
+  const formatTime = (value) => {
+    if (!value) return "-";
+    try {
+      return new Date(value).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return String(value);
+    }
+  };
+
+  const panchangRows = [
+    {
+      label: "Masa",
+      value: panchang?.Masa?.name_en_IN || panchang?.Masa?.name_np || "-",
+    },
+    {
+      label: "Paksha",
+      value: panchang?.Paksha?.name_en_IN
+        ? `${panchang.Paksha.name_en_IN} Paksha`
+        : "-",
+    },
+    {
+      label: "Tithi",
+      value: panchang?.Tithi?.name_en_IN || tithiLabel || "-",
+    },
+    {
+      label: "Nakshatra",
+      value: panchang?.Nakshatra?.name_en_IN || nakshatraLabel || "-",
+    },
+    {
+      label: "Rasi",
+      value: panchang?.Raasi?.name_en_UK || rasiLabel || "-",
+    },
+    {
+      label: "Yoga",
+      value: panchang?.Yoga?.name_en_IN || "-",
+    },
+    {
+      label: "Karna",
+      value: panchang?.Karna?.name_en_IN || "-",
+    },
+  ];
+
+  const sunRows = [
+    {
+      label: "Sunrise",
+      value: sunData?.sunRise ? formatTime(sunData.sunRise) : sunrise || "-",
+    },
+    {
+      label: "Sunset",
+      value: sunData?.sunSet ? formatTime(sunData.sunSet) : sunset || "-",
+    },
+    {
+      label: "Solar Noon",
+      value: sunData?.solarNoon ? formatTime(sunData.solarNoon) : "-",
+    },
+    {
+      label: "Moonrise",
+      value: sunData?.moonRise ? formatTime(sunData.moonRise) : "-",
+    },
+    {
+      label: "Moonset",
+      value: sunData?.moonSet ? formatTime(sunData.moonSet) : "-",
+    },
+  ];
+
+  const renderChoghadiyaSection = (title, segments) => (
+    <div className="space-y-3">
+      <h4 className="text-base font-semibold text-base-content">{title}</h4>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {segments.map((seg, idx) => (
+          <div
+            key={`${title}-${idx}`}
+            className={`rounded-xl border border-base-300 p-3 flex flex-col gap-1 ${getChoghadiyaClass(seg.name)}`}
+          >
+            <div className="text-xs font-semibold uppercase tracking-wide">
+              Slot {idx + 1}
+            </div>
+            <div className="text-sm font-bold">
+              {seg.start} - {seg.end}
+            </div>
+            <div className="text-sm">{seg.name || "-"}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
+      <div
+        className="absolute inset-0 bg-base-900/70 backdrop-blur-sm"
+        aria-hidden="true"
+        onClick={onClose}
+      />
+      <div
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-base-100 border border-base-300 rounded-3xl shadow-2xl p-6 space-y-6"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Day details"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-base-500">{adFull}</p>
+            <h2 className="text-2xl font-semibold text-base-content">
+              {bsLabelNp || tithiLabel || "Selected Day"}
+            </h2>
+            <p className="text-sm text-base-500">{bsLabelEn}</p>
+            <p className="text-sm text-base-500">{adShort}</p>
+            {festivalText ? (
+              <div className="mt-2 rounded-2xl bg-primary/10 border border-primary/30 px-3 py-2 text-sm text-primary/90">
+                <span className="font-semibold mr-1">Festival:</span>
+                {festivalText}
+              </div>
+            ) : null}
+            {noteText ? (
+              <div className="mt-2 rounded-2xl bg-warning/10 border border-warning/40 px-3 py-2 text-sm text-warning-700">
+                <span className="font-semibold mr-1">Notes:</span>
+                {noteText}
+              </div>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            aria-label="Close day details"
+          >
+            <X size={18} weight="bold" />
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="py-10 flex items-center justify-center">
+            <div
+              className="loading loading-spinner loading-lg text-primary"
+              aria-label="Loading details"
+            ></div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {error ? (
+              <div className="alert alert-error text-sm">
+                <span>{error}</span>
+              </div>
+            ) : null}
+
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="rounded-2xl border border-base-300 bg-base-200/40 p-5 space-y-3">
+                <h3 className="text-lg font-semibold text-base-content">
+                  Panchang Summary
+                </h3>
+                <table className="table table-sm">
+                  <tbody>
+                    {panchangRows.map((row) => (
+                      <tr key={row.label}>
+                        <td className="font-medium text-sm text-base-content/80">
+                          {row.label}
+                        </td>
+                        <td className="text-sm text-base-content">
+                          {row.value || "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="rounded-2xl border border-base-300 bg-base-200/40 p-5 space-y-3">
+                <h3 className="text-lg font-semibold text-base-content">
+                  Sun & Moon Timings
+                </h3>
+                <table className="table table-sm">
+                  <tbody>
+                    {sunRows.map((row) => (
+                      <tr key={row.label}>
+                        <td className="font-medium text-sm text-base-content/80">
+                          {row.label}
+                        </td>
+                        <td className="text-sm text-base-content">
+                          {row.value || "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {sunrise && sunset ? (
+                  <p className="text-xs text-base-500">
+                    * Sunrise/Sunset from sunrise-sunset.io ({sunrise} /{" "}
+                    {sunset})
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-lg font-semibold text-base-content">
+                  चौघडिया (Choghadiya)
+                </h3>
+                {choghadiyaError ? (
+                  <span className="text-xs text-warning-600">
+                    {choghadiyaError}
+                  </span>
+                ) : null}
+              </div>
+              <div className="space-y-6">
+                {daySegments && daySegments.length > 0
+                  ? renderChoghadiyaSection("Day", daySegments)
+                  : null}
+                {nightSegments && nightSegments.length > 0
+                  ? renderChoghadiyaSection("Night", nightSegments)
+                  : null}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -649,9 +1246,11 @@ function MonthInsights({
   }
 
   return (
-    <section className={`mt-6 space-y-6 ${isCompact ? "" : "min-w-[56rem]"}`}>
+    <section
+      className={`flex gap-2 items-start mt-6 space-y-6 ${isCompact ? "" : "min-w-[56rem]"}`}
+    >
       {hasFestivals && (
-        <div className="rounded-3xl border border-base-300 bg-base-100/50 p-5 shadow-inner space-y-3">
+        <div className="bg-base-100/50 shadow-inner space-y-3">
           <h3 className="text-lg font-semibold text-base-content text-left">
             {monthLabel
               ? `${monthLabel} को विदा तथा पर्वहरु`
@@ -660,7 +1259,7 @@ function MonthInsights({
           <ul className="space-y-1.5 text-sm leading-relaxed text-base-700">
             {festivals.map((item, idx) => (
               <li key={`${item.day}-${idx}`} className="flex gap-2 m-1 ">
-                <span className="font-semibold text-base-content bg-blue-600 rounded-full text-white px-1">
+                <span className="font-semibold bg-blue-600 rounded-full text-white px-1">
                   {item.day}
                 </span>
                 <span className="flex-1 text-left text-pretty">

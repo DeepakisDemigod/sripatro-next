@@ -2,9 +2,9 @@ import CalendarMulti from "@/components/CalendarMulti";
 import Header from "@/components/Header";
 import Head from "next/head";
 
-export default function CalendarPage({ params, searchParams }) {
+export default async function CalendarPage({ params, searchParams }) {
   // searchParams may contain year and month from the Patro onDateClick handler
-  const { year, month } = searchParams || {};
+  const { year, month } = (await searchParams) || {};
 
   const props = {};
   if (year) props.defaultYear = String(year);
