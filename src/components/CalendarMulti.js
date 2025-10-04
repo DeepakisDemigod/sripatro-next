@@ -102,6 +102,7 @@ export default function CalendarMulti({
   defaultYear = "2082",
   defaultMonth = 1,
   hideHeader = false,
+  showCompactTitle = false,
   // initialSettings: optional object to force which extras to show { tithi, nakshatra, rasi, enDate }
   initialSettings = null,
   // onDateClick: optional callback(cell) when a date cell is clicked
@@ -749,6 +750,14 @@ export default function CalendarMulti({
         </div>
       )}
 
+      {hideHeader && showCompactTitle && (
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <div className="text-lg font-semibold text-base-content/90">
+            {title}
+          </div>
+        </div>
+      )}
+
       {loading && (
         <div className="py-8 text-center text-sm text-muted">Loading…</div>
       )}
@@ -1256,7 +1265,7 @@ function MonthInsights({
               ? `${monthLabel} को विदा तथा पर्वहरु`
               : "विदा तथा पर्वहरु"}
           </h3>
-          <ul className="space-y-1.5 text-sm leading-relaxed text-base-700">
+          <ul className="space-y-1.5 text-md leading-relaxed text-base-700">
             {festivals.map((item, idx) => (
               <li key={`${item.day}-${idx}`} className="flex gap-2 m-1 ">
                 <span className="font-semibold bg-blue-600 rounded-full text-white px-1">

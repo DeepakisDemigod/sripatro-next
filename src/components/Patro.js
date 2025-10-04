@@ -274,8 +274,8 @@ export default function LivePanchangCard() {
             <span className="text-xs font-semibold uppercase">Live</span>
           </div>
 
-          <div className="pb-2 text-left text-base-800 text-sm font-semibold">
-            <p className="text-xs font-bold text-base-800">
+          <div className="pb-2 text-left text-base-800 text-md font-semibold">
+            <p className="text-md font-bold text-base-800">
               {samvatsarName} नाम सम्वत्सर
             </p>
 
@@ -294,67 +294,12 @@ export default function LivePanchangCard() {
           </div>
         </div>
 
-        <div className="text-right text-sm">
+        <div className="text-right text-md">
           <div className="font-medium">{weekday}</div>
           <div className="text-md font-semibold">{adFull}</div>
           <div className="text-base-800">({bsFull})</div>
         </div>
       </div>
-
-      {/* moon */}
-      <div className="relative flex justify-center py-2">
-        <img
-          src={moonSrc}
-          alt={panchang.Tithi.name_en_IN}
-          className="w-22 h-22 rounded-full border border-red-300/40 shadow-2xl"
-        />
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="z-10 backdrop-blur-xs w-16 h-16 rounded-full flex items-center justify-center shadow-md">
-            <span className="text-6xl font-bold text-red-600  customfont">
-              {TITHI_TO_NEPALI_NUM[panchang?.Tithi?.name_en_IN] || "?"}
-            </span>
-          </div>
-        </div>
-      </div>
-      {/* Calendar accordion using daisyUI collapse */}
-      {/* <div className="mt-3">
-        <div className="collapse collapse-arrow border rounded-md bg-base-200">
-          <input type="checkbox" />
-          <div className="collapse-title py-2 px-3 font-medium">
-            {panchang.Masa && panchang.Masa.name_en_IN
-              ? `${panchang.Masa.name_en_IN} ${bs.year} (${new Date().toLocaleString("en", { month: "long", year: "numeric" })})`
-              : "Show calendar"}
-          </div>
-          <div className="collapse-content p-3"> */}
-      <CalendarMulti
-        hideHeader={true}
-        hideBanner={true}
-        compact={true}
-        initialSettings={{
-          tithi: false,
-          enDate: true,
-          nakshatra: false,
-          rasi: false,
-          festivals: false,
-        }}
-        onDateClick={(cell) => {
-          try {
-            const q = new URLSearchParams();
-            if (cell && cell.ad && cell.ad.year) {
-              q.set("year", cell.ad.year);
-              q.set("month", cell.ad.month);
-              q.set("day", cell.ad.day);
-            }
-            router.push(`/calendar?${q.toString()}`);
-          } catch (e) {
-            router.push(`/calendar`);
-          }
-        }}
-      />
-      {/*     </div>
-         </div>
-  </div> */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Panchang details table */}
         <div className="overflow-x-auto">
@@ -422,6 +367,62 @@ export default function LivePanchangCard() {
           </table>
         </div>
       </div>
+
+      {/* moon */}
+      <div className="relative flex justify-center py-2">
+        <img
+          src={moonSrc}
+          alt={panchang.Tithi.name_en_IN}
+          className="w-22 h-22 rounded-full border border-red-300/40 shadow-2xl"
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="z-10 backdrop-blur-xs w-16 h-16 rounded-full flex items-center justify-center shadow-md">
+            <span className="text-6xl font-bold text-red-600  customfont">
+              {TITHI_TO_NEPALI_NUM[panchang?.Tithi?.name_en_IN] || "?"}
+            </span>
+          </div>
+        </div>
+      </div>
+      {/* Calendar accordion using daisyUI collapse */}
+      {/* <div className="mt-3">
+        <div className="collapse collapse-arrow border rounded-md bg-base-200">
+          <input type="checkbox" />
+          <div className="collapse-title py-2 px-3 font-medium">
+            {panchang.Masa && panchang.Masa.name_en_IN
+              ? `${panchang.Masa.name_en_IN} ${bs.year} (${new Date().toLocaleString("en", { month: "long", year: "numeric" })})`
+              : "Show calendar"}
+          </div>
+          <div className="collapse-content p-3"> */}
+      <CalendarMulti
+        hideHeader={true}
+        hideBanner={true}
+        compact={true}
+        showCompactTitle={true}
+        initialSettings={{
+          tithi: false,
+          enDate: true,
+          nakshatra: false,
+          rasi: false,
+          festivals: false,
+        }}
+        onDateClick={(cell) => {
+          try {
+            const q = new URLSearchParams();
+            if (cell && cell.ad && cell.ad.year) {
+              q.set("year", cell.ad.year);
+              q.set("month", cell.ad.month);
+              q.set("day", cell.ad.day);
+            }
+            router.push(`/calendar?${q.toString()}`);
+          } catch (e) {
+            router.push(`/calendar`);
+          }
+        }}
+      />
+      {/*     </div>
+         </div>
+  </div> */}
     </div>
   );
 }

@@ -100,7 +100,7 @@ export default function SunMoonCycle({ lat, lng, imgSrc }) {
       : getPercentage(dusk, dawn, locationNow);
 
   return (
-    <div className="w-full rounded-xl bg-base-100 text-center border border-base-300">
+    <div className="max-w-3xl mx-auto rounded-xl bg-base-100 text-center border border-base-300">
       <h2 className="text-xl font-bold">
         {isDay ? "DayTime" : "NightTime"} Cycle
       </h2>
