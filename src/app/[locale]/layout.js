@@ -89,6 +89,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import ContactPopup from "@/components/ContactPopup";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import DockNavigation from "@/components/DockNavigation";
 
 export const metadata = {
   manifest: "/manifest.json",
@@ -118,13 +119,16 @@ export default async function LocaleLayout({ children, params }) {
   return (
     <SessionWrapper>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row">
-            <ThemeSwitcher />
-            <LocaleSwitcher />
+        <DockNavigation />
+        <div className="min-h-screen bg-base-200 lg:pl-64">
+          <div className="px-4 sm:px-6 lg:px-8 pb-24 lg:pb-0">
+            <div className="flex justify-end gap-2 py-4">
+              <ThemeSwitcher />
+              <LocaleSwitcher />
+            </div>
+            {children}
           </div>
         </div>
-        {children}
         <ContactPopup />
         <ServiceWorkerRegister />
       </NextIntlClientProvider>
