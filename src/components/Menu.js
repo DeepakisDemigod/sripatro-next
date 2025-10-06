@@ -78,6 +78,30 @@ const personalise = [
   },
 ];
 
+const company = [
+  {
+    label: "About",
+    icon: "🌿",
+    tag: "",
+    href: "/about",
+    desc: "Meet the maker and the mission behind SriPatro",
+  },
+  {
+    label: "Contact Us",
+    icon: "✉️",
+    tag: "",
+    href: "/contact-us",
+    desc: "Reach support, partnerships, or the press team",
+  },
+  {
+    label: "Privacy Policy",
+    icon: "🔒",
+    tag: "",
+    href: "/privacy-policy",
+    desc: "Learn how we protect your data and rituals",
+  },
+];
+
 const Section = ({ title, items }) => (
   <div className="mb-6">
     <h3 className="px-4 pb-2 text-xs font-semibold text-base-content/70 uppercase tracking-wide">
@@ -154,6 +178,7 @@ const Menu = () => {
         <Section title="Daily" items={daily} />
         <Section title="Utilities" items={utilities} />
         <Section title="Personalise" items={personalise} />
+        <Section title="Company" items={company} />
       </div>
     </>
   );

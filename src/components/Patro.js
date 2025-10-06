@@ -1,6 +1,93 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+// Choghadiya data and helpers (from CalendarMulti.js)
+const choghadiyaData = {
+  day: [
+    ["Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg"],
+    ["Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit"],
+    ["Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog"],
+    ["Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh"],
+    ["Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh"],
+    ["Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char"],
+    ["Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal"],
+  ],
+  night: [
+    ["Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh"],
+    ["Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char"],
+    ["Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal"],
+    ["Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg"],
+    ["Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit"],
+    ["Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog"],
+    ["Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh"],
+  ],
+};
+
+function timeToSeconds(timeStr) {
+  const [time, period] = String(timeStr).trim().split(" ");
+  const [h, m = "0", s = "0"] = time.split(":");
+  let hours = Number(h) % 12;
+  if (period === "PM" && Number(h) !== 12) hours += 12;
+  if (period === "AM" && Number(h) === 12) hours = 0;
+  return hours * 3600 + Number(m) * 60 + Number(s);
+}
+function secondsTo12HrTime(totalSeconds) {
+  const normalized = ((totalSeconds % (24 * 3600)) + 24 * 3600) % (24 * 3600);
+  const h = Math.floor(normalized / 3600);
+  const m = Math.floor((normalized % 3600) / 60);
+  const s = Math.floor(normalized % 60);
+  const hour12 = ((h + 11) % 12) + 1;
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${hour12.toString().padStart(2, "0")}:${m
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+function getCurrentChoghadiya(now, sunrise, sunset) {
+  // sunrise/sunset: "hh:mm:ss AM/PM"
+  const dayIndex = now.getDay();
+  const nowSec =
+    now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const sunriseSec = timeToSeconds(sunrise);
+  const sunsetSec = timeToSeconds(sunset);
+  let segments, names, isDay;
+  if (nowSec >= sunriseSec && nowSec < sunsetSec) {
+    // Day choghadiya
+    isDay = true;
+    const duration = sunsetSec - sunriseSec;
+    const segDur = duration / 8;
+    segments = Array.from({ length: 8 }).map((_, i) => [
+      sunriseSec + i * segDur,
+      sunriseSec + (i + 1) * segDur,
+    ]);
+    names = choghadiyaData.day[dayIndex];
+  } else {
+    // Night choghadiya
+    isDay = false;
+    // Night: from sunset to next day's sunrise
+    const nextSunriseSec = sunriseSec + 24 * 3600;
+    const duration = nextSunriseSec - sunsetSec;
+    const segDur = duration / 8;
+    segments = Array.from({ length: 8 }).map((_, i) => [
+      sunsetSec + i * segDur,
+      sunsetSec + (i + 1) * segDur,
+    ]);
+    names = choghadiyaData.night[dayIndex];
+  }
+  for (let i = 0; i < 8; ++i) {
+    const [start, end] = segments[i];
+    if (nowSec >= start && nowSec < end) {
+      return {
+        slot: `${secondsTo12HrTime(start)}–${secondsTo12HrTime(end)}`,
+        name: names[i],
+        isDay,
+        timeLeft: end - nowSec,
+        endTime: end,
+      };
+    }
+  }
+  return null;
+}
 import { useRouter } from "next/navigation";
 import CalendarMulti from "@/components/CalendarMulti";
 import { MhahPanchang } from "mhah-panchang";
@@ -181,12 +268,19 @@ export default function LivePanchangCard() {
   const [panchang, setPanchang] = useState(null);
   const [sunMoon, setSunMoon] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [choghadiya, setChoghadiya] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Update choghadiya every second
+  useEffect(() => {
+    if (!sunMoon?.sunRise || !sunMoon?.sunSet) return;
+    setChoghadiya(getCurrentChoghadiya(now, sunMoon.sunRise, sunMoon.sunSet));
+  }, [now, sunMoon]);
 
   useEffect(() => {
     const obj = new MhahPanchang();
@@ -205,6 +299,7 @@ export default function LivePanchangCard() {
     }
   }, []);
 
+  // ...existing code...
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto bg-base-100 rounded-2xl border border-base-300 overflow-hidden p-4 space-y-4 animate-pulse">
@@ -232,6 +327,14 @@ export default function LivePanchangCard() {
   });
   const bs = NepaliDate.fromAD(now);
   const bsFull = bs.format("YYYY MMMM D", "np");
+
+  // Choghadiya display helpers
+  function formatTimeLeft(sec) {
+    if (sec <= 0) return "Ended";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}m ${s}s`;
+  }
 
   const pakshaRaw = panchang?.Paksha?.name_en_IN || "";
   const isShukla = pakshaRaw.toLowerCase() === "shukla";
@@ -370,59 +473,8 @@ export default function LivePanchangCard() {
 
       {/* moon */}
       <div className="relative flex justify-center py-2">
-        <img
-          src={moonSrc}
-          alt={panchang.Tithi.name_en_IN}
-          className="w-22 h-22 rounded-full border border-red-300/40 shadow-2xl"
-        />
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="z-10 backdrop-blur-xs w-16 h-16 rounded-full flex items-center justify-center shadow-md">
-            <span className="text-6xl font-bold text-red-600  customfont">
-              {TITHI_TO_NEPALI_NUM[panchang?.Tithi?.name_en_IN] || "?"}
-            </span>
-          </div>
-        </div>
+        {/* moon image and related content here, if any */}
       </div>
-      {/* Calendar accordion using daisyUI collapse */}
-      {/* <div className="mt-3">
-        <div className="collapse collapse-arrow border rounded-md bg-base-200">
-          <input type="checkbox" />
-          <div className="collapse-title py-2 px-3 font-medium">
-            {panchang.Masa && panchang.Masa.name_en_IN
-              ? `${panchang.Masa.name_en_IN} ${bs.year} (${new Date().toLocaleString("en", { month: "long", year: "numeric" })})`
-              : "Show calendar"}
-          </div>
-          <div className="collapse-content p-3"> */}
-      <CalendarMulti
-        hideHeader={true}
-        hideBanner={true}
-        compact={true}
-        showCompactTitle={true}
-        initialSettings={{
-          tithi: false,
-          enDate: true,
-          nakshatra: false,
-          rasi: false,
-          festivals: false,
-        }}
-        onDateClick={(cell) => {
-          try {
-            const q = new URLSearchParams();
-            if (cell && cell.ad && cell.ad.year) {
-              q.set("year", cell.ad.year);
-              q.set("month", cell.ad.month);
-              q.set("day", cell.ad.day);
-            }
-            router.push(`/calendar?${q.toString()}`);
-          } catch (e) {
-            router.push(`/calendar`);
-          }
-        }}
-      />
-      {/*     </div>
-         </div>
-  </div> */}
     </div>
   );
 }

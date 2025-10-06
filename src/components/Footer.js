@@ -95,6 +95,18 @@ const Footer = () => {
               <Link href="/about" className="transition hover:text-primary">
                 About
               </Link>
+              <Link
+                href="/contact-us"
+                className="transition hover:text-primary"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/privacy-policy"
+                className="transition hover:text-primary"
+              >
+                Privacy
+              </Link>
               <Link href="/settings" className="transition hover:text-primary">
                 Preferences
               </Link>

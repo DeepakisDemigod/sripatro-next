@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Menu from "./Menu";
 import InstallPWAButton from "./InstallPWAButton";
 import InstallAppCard from "./InstallAppCard";
@@ -32,6 +33,21 @@ export default function Header() {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const drawerCheckboxRef = useRef(null);
   const { data: session } = useSession();
+  const router = useRouter();
+  const userInitial =
+    session?.user?.email?.charAt(0)?.toUpperCase() ||
+    session?.user?.name?.charAt(0)?.toUpperCase() ||
+    "?";
+
+  const handleSignOut = async () => {
+    try {
+      const data = await signOut({ redirect: false, callbackUrl: "/" });
+      router.push(data?.url ?? "/");
+    } catch (error) {
+      console.error("Failed to sign out", error);
+      router.push("/");
+    }
+  };
 
   const handleCloseMainDrawer = () => {
     if (drawerCheckboxRef.current) {
@@ -79,34 +95,33 @@ export default function Header() {
   // Desktop session block
   const DesktopSession = () =>
     session ? (
-      <div className="flex space-x-2">
-        <span className="text-sm truncate ">{session.user?.email}</span>
-        <details className="dropdown dropdown-end">
-          <summary className="btn btn-ghost btn-sm">•••</summary>
-          <ul className="menu dropdown-content bg-base-200 border rounded-md shadow w-40 z-10">
-            <li>
-              <Link href="/dashboard">Dashboard</Link>
-            </li>
-            <li className="px-4">
-              <button
-                type="button"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  await signOut({ redirect: false });
-                  window.location.href = "/";
-                }}
-                className="w-full text-left"
-              >
-                SignOut
-              </button>
-            </li>
-            <li>
-              <Link href="https://sripatro.canny.io">Suggest a Feature</Link>
-            </li>
-          </ul>
-        </details>
-      </div>
+      <details className="dropdown dropdown-end">
+        <summary
+          className="flex items-center cursor-pointer gap-2"
+          tabIndex={0}
+          aria-label="User menu"
+        >
+          <div className="avatar placeholder">
+            <div className="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center">
+              <span className="text-lg font-semibold">{userInitial}</span>
+            </div>
+          </div>
+        </summary>
+        <ul className="menu dropdown-content bg-base-200 border rounded-md shadow w-44 z-10">
+          <li>
+            <Link href="/dashboard">Dashboard</Link>
+          </li>
+          <li className="px-4 py-1">
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="w-full text-left"
+            >
+              Sign Out
+            </button>
+          </li>
+        </ul>
+      </details>
     ) : (
       <Link href="/auth/signin">
         <button className="btn btn-sm bg-red-700 text-white">LOGIN</button>
@@ -236,32 +251,33 @@ export default function Header() {
 
             <div className="mt-4 pl-4">
               {session ? (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm truncate">{session.user?.email}</p>
+                <div className="flex items-center justify-end">
                   <details className="dropdown dropdown-end">
-                    <summary className="btn btn-ghost btn-sm">•••</summary>
-                    <ul className="menu dropdown-content bg-base-200 border rounded-md shadow w-40 z-10">
+                    <summary
+                      className="flex items-center cursor-pointer"
+                      aria-label="User menu"
+                      tabIndex={0}
+                    >
+                      <div className="avatar placeholder">
+                        <div className="bg-primary text-primary-content rounded-full w-12 h-12 flex items-center justify-center">
+                          <span className="text-lg font-semibold">
+                            {userInitial}
+                          </span>
+                        </div>
+                      </div>
+                    </summary>
+                    <ul className="menu dropdown-content bg-base-200 border rounded-md shadow w-44 z-10">
                       <li>
                         <Link href="/dashboard">Dashboard</Link>
                       </li>
                       <li className="px-4 ">
                         <button
                           type="button"
-                          onClick={async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            await signOut({ redirect: false });
-                            window.location.href = "/";
-                          }}
+                          onClick={handleSignOut}
                           className="w-full text-left"
                         >
-                          SignOut
+                          Sign Out
                         </button>
-                      </li>
-                      <li>
-                        <Link href="https://sripatro.canny.io/">
-                          Suggest a Feature
-                        </Link>
                       </li>
                     </ul>
                   </details>

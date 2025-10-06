@@ -60,6 +60,9 @@ export default function DockNavigation() {
   const pathname = usePathname() || "/";
   const locale = resolveLocalePath(pathname);
 
+  // Hide dock on the root locale pages like '/en' or '/en/'
+  if (pathname === `/${locale}` || pathname === `/${locale}/`) return null;
+
   return (
     <>
       {/* Desktop sidebar */}
@@ -80,7 +83,7 @@ export default function DockNavigation() {
           </nav>
         </div>
         <div className="px-4 py-6 text-xs text-base-content/50">
-          Made with ❤️ for the Nepali diaspora.
+          Made with ❤️ for the Nepalese
         </div>
       </aside>
 
@@ -99,7 +102,7 @@ export default function DockNavigation() {
                   href={resolvedHref}
                   aria-label={item.label}
                   aria-current={isActive ? "page" : undefined}
-                  className={`group flex flex-col items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 ${
+                  className={`group flex flex-col items-center gap-1 rounded-full px-1 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 ${
                     isActive
                       ? "text-primary"
                       : "text-base-content/60 hover:text-base-content"

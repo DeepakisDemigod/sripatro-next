@@ -313,6 +313,17 @@ export const authOptions = {
         console.error("signIn event upsert error:", err);
       }
     },
+    async signOut({ token }) {
+      try {
+        await connectDB();
+        const email = token?.email;
+        if (email) {
+          await User.findOneAndUpdate({ email }, { $set: { isOnline: false } });
+        }
+      } catch (err) {
+        console.error("signOut event update error:", err);
+      }
+    },
   },
 };
 
