@@ -1,90 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { DownloadSimple, CheckCircle } from "phosphor-react";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 export default function InstallAppCard({ hidden = false }) {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [installed, setInstalled] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [showIOSHelp, setShowIOSHelp] = useState(false);
-
-  // Check if already installed (standalone / iOS) or previously installed
-  const checkInstalled = () => {
-    if (typeof window === "undefined") return false;
-    const displayStandalone =
-      window.matchMedia &&
-      window.matchMedia("(display-mode: standalone)").matches;
-    const iosStandalone =
-      typeof window.navigator !== "undefined" && window.navigator.standalone;
-    return Boolean(displayStandalone || iosStandalone);
-  };
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    setInstalled(checkInstalled());
-
-    // If global BIP was captured earlier, pick it up immediately
-    if (window.__sripatro_bip) {
-      setDeferredPrompt(window.__sripatro_bip);
-    }
-
-    const onBIP = () => {
-      setDeferredPrompt(window.__sripatro_bip || null);
-    };
-    window.addEventListener("sripatro:beforeinstallprompt", onBIP);
-
-    const onInstalled = () => {
-      setInstalled(true);
-      // Clear any deferred prompt, and rely on display-mode checks
-      setDeferredPrompt(null);
-    };
-    window.addEventListener("appinstalled", onInstalled);
-
-    const reEval = () => {
-      const isInstalled = checkInstalled();
-      setInstalled(isInstalled);
-      if (!isInstalled) {
-        // Attempt to restore prompt if still available
-        if (window.__sripatro_bip) setDeferredPrompt(window.__sripatro_bip);
-      }
-    };
-    document.addEventListener("visibilitychange", reEval);
-    window.addEventListener("focus", reEval);
-
-    // Experimental: check for related installed apps (Chromium based)
-    if (navigator.getInstalledRelatedApps) {
-      navigator.getInstalledRelatedApps().then((related) => {
-        if (related && related.length > 0) {
-          setInstalled(true);
-        }
-      }).catch(()=>{});
-    }
-
-    return () => {
-      window.removeEventListener("sripatro:beforeinstallprompt", onBIP);
-      window.removeEventListener("appinstalled", onInstalled);
-      document.removeEventListener("visibilitychange", reEval);
-      window.removeEventListener("focus", reEval);
-    };
-  }, []);
-
-  const canInstall = useMemo(() => !!deferredPrompt, [deferredPrompt]);
-
-  const onInstall = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    try {
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        setInstalled(true);
-      }
-    } finally {
-      setDeferredPrompt(null);
-    }
-  };
+  const {
+    installed,
+    canInstall,
+    promptInstall,
+    restoreDeferredPrompt,
+    refreshInstalledState,
+  } = useInstallPrompt();
 
   if (hidden || dismissed) return null;
 
@@ -114,13 +44,16 @@ export default function InstallAppCard({ hidden = false }) {
           </div>
           <div className="flex items-center gap-2">
             {installed ? (
-              <button className=" pr-2 flex items-center gap-1 rounded-full bg-green-600/40 border border-green-600 text-green-600" title="App detected as installed (standalone mode)">
+              <button
+                className=" pr-2 flex items-center gap-1 rounded-full bg-green-600/40 border border-green-600 text-green-600"
+                title="App detected as installed (standalone mode)"
+              >
                 <CheckCircle size={29} />
                 <span>Installed</span>
               </button>
             ) : canInstall ? (
               <button
-                onClick={onInstall}
+                onClick={promptInstall}
                 className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-600 border border-green-600 text-white"
                 title="Install SriPatro (browser prompt)"
               >
@@ -140,9 +73,7 @@ export default function InstallAppCard({ hidden = false }) {
                 <button
                   className="btn btn-sm"
                   title="Re-check install availability"
-                  onClick={() =>
-                    setDeferredPrompt(window.__sripatro_bip || null)
-                  }
+                  onClick={restoreDeferredPrompt}
                 >
                   Re-check
                 </button>
@@ -150,10 +81,7 @@ export default function InstallAppCard({ hidden = false }) {
                   className="btn btn-sm btn-outline"
                   title="Reset installed state manually"
                   onClick={() => {
-                    setInstalled(checkInstalled());
-                    if (!checkInstalled() && window.__sripatro_bip) {
-                      setDeferredPrompt(window.__sripatro_bip);
-                    }
+                    refreshInstalledState();
                   }}
                 >
                   Sync

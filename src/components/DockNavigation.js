@@ -31,7 +31,8 @@ function resolveLocalePath(pathname) {
 
 function NavItem({ item, pathname, locale }) {
   const resolvedHref = `/${locale}${item.href}`.replace(/\/+/g, "/");
-  const isActive = pathname === resolvedHref || pathname.startsWith(`${resolvedHref}/`);
+  const isActive =
+    pathname === resolvedHref || pathname.startsWith(`${resolvedHref}/`);
   const Icon = item.icon;
 
   return (
@@ -89,7 +90,8 @@ export default function DockNavigation() {
           {navItems.map((item) => {
             const resolvedHref = `/${locale}${item.href}`.replace(/\/+/g, "/");
             const isActive =
-              pathname === resolvedHref || pathname.startsWith(`${resolvedHref}/`);
+              pathname === resolvedHref ||
+              pathname.startsWith(`${resolvedHref}/`);
             const Icon = item.icon;
             return (
               <li key={item.href} className="flex-1">
